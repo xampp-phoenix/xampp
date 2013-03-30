@@ -1,0 +1,21 @@
+
+Changes with XAMPP 1.8.1 
+  *) PHPMYADMIN: Bind requests on the loopback address in config.inc.php (tcp/ipv4))
+
+Changes with XAMPP 1.8.1 Beta3
+  *) CONTROL PANEL: Update to version 3.1.0 Beta 5
+  *) PHP: Update to PHP 5.4.7 
+  *) TOMCAT: Update to Tomcat 7.0.30    
+
+
+Changes with XAMPP 1.8.1 Beta2
+  *) CONTROL PANEL: Update to version 3.1.0 Beta 4
+  *) INSTALLER: Some tests if the VC++ 2008 runtime is installed
+  *) SETUP: Add php function test (php -v) in setup_xampp.bat
+  *) SETUP: Add new php test file: setup_xampp_test.bat       
+  
+
+Changes with XAMPP 1.8.1 Beta1
+  *) INSTALLER: Implement component selection page
+  *) PHP: Add php-webdriver for phpunit (see webdriver-test-example.php) in the preinstalled PEAR      
+
