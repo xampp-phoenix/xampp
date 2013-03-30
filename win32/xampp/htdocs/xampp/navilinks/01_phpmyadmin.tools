@@ -1,0 +1,1 @@
+<a class="n" target="_top" onclick="h(this);" href="/phpmyadmin/"><?php echo $TEXT['navi-phpmyadmin']; ?></a><br>

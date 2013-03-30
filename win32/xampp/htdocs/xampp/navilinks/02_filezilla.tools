@@ -1,0 +1,1 @@
+<a class="n" target="content" onclick="h(this);" href="filezilla.php"><?php echo $TEXT['navi-filezilla'];?></a><br>
