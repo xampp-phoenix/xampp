@@ -15,7 +15,7 @@
   !define PRODUCT_PUBLISHER "Kay Vogelgesang, Kai Oswald Seidler, ApacheFriends"
   !define PRODUCT_WEB_SITE "http://www.apachefriends.org"
   !define WORK_DIR "G:\bitnami\workspace"
-  !define WORK_XAMPP_DIR "${WORK_XAMPP_DIR}\tmp\xampp"
+  !define WORK_XAMPP_DIR "${WORK_DIR}\tmp\xampp"
   Caption "XAMPP ${PRODUCT_VERSION} win32"
   InstallDirRegKey HKLM "Software\xampp" "Install_Dir"
   Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
