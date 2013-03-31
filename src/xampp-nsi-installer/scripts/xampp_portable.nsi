@@ -96,8 +96,8 @@
   Var OPT_PMA
 
 InstallDir "c:\xampp-portable"
-Icon "F:\xampp-dev\svn\trunk\xampp\src\xampp-nsi-installer\icons\xampp-icon.ico"
-UninstallIcon "F:\xampp-dev\svn\trunk\xampp\src\xampp-nsi-installer\icons\xampp-icon-uninstall.ico"
+Icon "${WORK_DIR}\xampp\src\xampp-nsi-installer\icons\xampp-icon.ico"
+UninstallIcon "${WORK_DIR}\xampp\src\xampp-nsi-installer\icons\xampp-icon-uninstall.ico"
 ShowInstDetails show
 ShowUninstDetails show
 
