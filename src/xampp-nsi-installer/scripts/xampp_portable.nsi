@@ -14,7 +14,8 @@
   !define PRODUCT_VERSION "1.8.1"
   !define PRODUCT_PUBLISHER "Kay Vogelgesang, Kai Oswald Seidler, ApacheFriends"
   !define PRODUCT_WEB_SITE "http://www.apachefriends.org"
-  !define WORK_DIR "G:\bitnami\workspace\tmp\xampp"
+  !define WORK_DIR "G:\bitnami\workspace"
+  !define WORK_XAMPP_DIR "${WORK_XAMPP_DIR}\tmp\xampp"
   Caption "XAMPP ${PRODUCT_VERSION} win32"
   InstallDirRegKey HKLM "Software\xampp" "Install_Dir"
   Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -256,44 +257,44 @@ FunctionEnd
 Section "-XAMPP Files"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR"
-File "${WORK_DIR}\setup_xampp.bat"
-File "${WORK_DIR}\readme_en.txt"
-File "${WORK_DIR}\xampp-control.exe"
-File "${WORK_DIR}\xampp-control.ini"
-File "${WORK_DIR}\xampp_start.exe"
-File "${WORK_DIR}\xampp_stop.exe"
-File "${WORK_DIR}\apache_start.bat"
-File "${WORK_DIR}\apache_stop.bat"
-File "${WORK_DIR}\catalina_service.bat"
-File "${WORK_DIR}\catalina_start.bat"
-File "${WORK_DIR}\catalina_stop.bat"
-File "${WORK_DIR}\mysql_start.bat"
-File "${WORK_DIR}\mysql_stop.bat"
-File "${WORK_DIR}\passwords.txt"
-File "${WORK_DIR}\readme_de.txt"
-File "${WORK_DIR}\test_php.bat"
+File "${WORK_XAMPP_DIR}\setup_xampp.bat"
+File "${WORK_XAMPP_DIR}\readme_en.txt"
+File "${WORK_XAMPP_DIR}\xampp-control.exe"
+File "${WORK_XAMPP_DIR}\xampp-control.ini"
+File "${WORK_XAMPP_DIR}\xampp_start.exe"
+File "${WORK_XAMPP_DIR}\xampp_stop.exe"
+File "${WORK_XAMPP_DIR}\apache_start.bat"
+File "${WORK_XAMPP_DIR}\apache_stop.bat"
+File "${WORK_XAMPP_DIR}\catalina_service.bat"
+File "${WORK_XAMPP_DIR}\catalina_start.bat"
+File "${WORK_XAMPP_DIR}\catalina_stop.bat"
+File "${WORK_XAMPP_DIR}\mysql_start.bat"
+File "${WORK_XAMPP_DIR}\mysql_stop.bat"
+File "${WORK_XAMPP_DIR}\passwords.txt"
+File "${WORK_XAMPP_DIR}\readme_de.txt"
+File "${WORK_XAMPP_DIR}\test_php.bat"
 
 SetOutPath "$INSTDIR\cgi-bin"
-File /r "${WORK_DIR}\cgi-bin\*.*"
+File /r "${WORK_XAMPP_DIR}\cgi-bin\*.*"
 SetOutPath "$INSTDIR\contrib"
-File /r "${WORK_DIR}\contrib\*.*"
+File /r "${WORK_XAMPP_DIR}\contrib\*.*"
 SetOutPath "$INSTDIR\htdocs"
-File /r "${WORK_DIR}\htdocs\*.*"
+File /r "${WORK_XAMPP_DIR}\htdocs\*.*"
 SetOutPath "$INSTDIR\install"
-File /r "${WORK_DIR}\install\*.*"
+File /r "${WORK_XAMPP_DIR}\install\*.*"
 SetOutPath "$INSTDIR\licenses"
-File /r "${WORK_DIR}\licenses\*.*"
+File /r "${WORK_XAMPP_DIR}\licenses\*.*"
 SetOutPath "$INSTDIR\locale"
-File /r "${WORK_DIR}\locale\*.*"
+File /r "${WORK_XAMPP_DIR}\locale\*.*"
 CreateDirectory "$INSTDIR\mailoutput"
 SetOutPath "$INSTDIR\mailtodisk"
-File /r "${WORK_DIR}\mailtodisk\*.*"
+File /r "${WORK_XAMPP_DIR}\mailtodisk\*.*"
 SetOutPath "$INSTDIR\security"
-File /r "${WORK_DIR}\security\*.*"
+File /r "${WORK_XAMPP_DIR}\security\*.*"
 SetOutPath "$INSTDIR\webdav"
-File /r "${WORK_DIR}\webdav\*.*"
+File /r "${WORK_XAMPP_DIR}\webdav\*.*"
 SetOutPath "$INSTDIR\tmp"
-File /r "${WORK_DIR}\tmp\*.*"
+File /r "${WORK_XAMPP_DIR}\tmp\*.*"
 
 ${WriteLineToFile} `$INSTDIR\xampp-control-portable.ini` ``
 ${WriteLineToFile} `$INSTDIR\xampp-control-portable.ini` `[Common]`
@@ -323,7 +324,7 @@ SectionGroup "Server"
 Section "Apache"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\apache"
-File /r "${WORK_DIR}\apache\*.*"
+File /r "${WORK_XAMPP_DIR}\apache\*.*"
 SectionIn RO
 ${WriteLineToFile} `$INSTDIR\xampp-control-portable.ini` `Apache=1`
 SectionEnd
@@ -331,14 +332,14 @@ SectionEnd
 Section "MySQL"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\mysql"
-File /r "${WORK_DIR}\mysql\*.*"
+File /r "${WORK_XAMPP_DIR}\mysql\*.*"
 StrCpy $OPT_MYSQL "true"
 SectionEnd
 
 Section "Tomcat"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\tomcat"
-File /r "${WORK_DIR}\tomcat\*.*"
+File /r "${WORK_XAMPP_DIR}\tomcat\*.*"
 StrCpy $OPT_TOMCAT "true"
 SectionEnd
 SectionGroupEnd
@@ -348,14 +349,14 @@ SectionGroup "Program languages"
 Section "PHP"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\php"
-File /r "${WORK_DIR}\php\*.*"
+File /r "${WORK_XAMPP_DIR}\php\*.*"
 SectionIn RO
 SectionEnd
 
 Section "Perl"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\perl"
-File /r "${WORK_DIR}\perl\*.*"
+File /r "${WORK_XAMPP_DIR}\perl\*.*"
 StrCpy $OPT_PERL "true"
 SectionEnd
 SectionGroupEnd
@@ -365,14 +366,14 @@ SectionGroup "Tools"
 Section "phpMyAdmin"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\phpmyadmin"
-File /r "${WORK_DIR}\phpmyadmin\*.*"
+File /r "${WORK_XAMPP_DIR}\phpmyadmin\*.*"
 StrCpy $OPT_PMA "true"
 SectionEnd
 
 Section "Fake Sendmail"
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR\sendmail"
-File /r "${WORK_DIR}\sendmail\*.*"
+File /r "${WORK_XAMPP_DIR}\sendmail\*.*"
 SectionEnd
 
 SectionGroupEnd
