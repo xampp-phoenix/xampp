@@ -1,23 +1,22 @@
-###### ApacheFriends XAMPP Version 1.8.1 ######
+###### ApacheFriends XAMPP Version 7.1.11 ######
 
 Important! PHP in this package needs the Microsoft Visual C++ 2008 Redistributable package from
 http://www.microsoft.com/en-us/download/details.aspx?id=5582. Please ensure that the VC++ 2008 runtime
 libraries are installed on your system.    
 
-  + Apache 2.4.3
-  + MySQL 5.5.27 (Community Server)
-  + PHP 5.4.7 (VC9 X86 32bit thread safe) + PEAR 
-  + phpMyAdmin 3.5.2.2
-  + OpenSSL 1.0.1c
-  + ADOdb 5.17
-  + Mercury Mail Transport System v4.62 (not included in the portable version)
+  + Apache 2.4.29
+  + MariaDB 10.1.28
+  + PHP 7.1.11 (VC14 X86 32bit thread safe) + PEAR
+  + phpMyAdmin 4.7.4
+  + OpenSSL 1.0.2f
+  + ADOdb 518a
+  + Mercury Mail Transport System v4.63 (not included in the portable version)
   + FileZilla FTP Server 0.9.41 (not included in the portable version)
   + Webalizer 2.23-04 (not included in the portable version) 
   + Strawberry Perl 5.16.1.1 Portable
-  + Tomcat 7.0.30 
-  + XAMPP Control Panel Version 3.1.0 by hackattack142 (Great Thanks!!))
+  + Tomcat 7.0.56
+  + XAMPP Control Panel Version 3.2.2 by hackattack142 (Great Thanks!!))
     See: http://www.apachefriends.org/f/viewtopic.php?f=16&t=46743
-  + XAMPP Security
   + XAMPP mailToDisk 1.0 (write emails via PHP on local disk in <xampp>\mailoutput. Activated in the php.ini as mail default.)
 
 --------------------------------------------------------------- 
@@ -26,7 +25,7 @@ libraries are installed on your system.
  
   + 64 MB RAM (RECOMMENDED)
   + 750 MB free fixed disk 
-  + Windows 2003, XP (RECOMMENDED), VISTA, Windows 7
+  + Windows XP, VISTA, Windows 7, Windows 8, Windows 10
 
 ---------------------------------------------------------------
 
@@ -50,7 +49,7 @@ Step 2: If installation ends successfully, start the Apache 2 with
 Step 3: Start your browser and type http://127.0.0.1 or http://localhost in the location bar. You should see our pre-made
 start page with certain examples and test screens.
 
-Step 4: PHP (with mod_php, as *.php, *.php3, *.php4, *.php5, *.phtml), Perl by default with *.cgi, SSI with *.shtml are all located in => C:\xampp\htdocs\.
+Step 4: PHP (with mod_php, as *.php), Perl by default with *.cgi, SSI with *.shtml are all located in => C:\xampp\htdocs\.
 Examples:
 - C:\xampp\htdocs\test.php => http://localhost/test.php
 - C:\xampp\htdocs\myhome\test.php => http://localhost/myhome/test.php
@@ -126,14 +125,6 @@ in XAMPP:
 - The MySQL daemon is accessible via network.
 - phpMyAdmin is accessible via network.
 - Examples are accessible via network.
-
-To fix most of the security weaknesses simply call the following URL:
-
-	http://localhost/security/
-
-The root password for MySQL and phpMyAdmin, and also a XAMPP directory protection can being established here.
-
-* NOTE: Some example sites can only access by the local systems, means over localhost. 
 
 ---------------------------------------------------------------
 

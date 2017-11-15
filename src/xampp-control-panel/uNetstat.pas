@@ -6,7 +6,7 @@ uses
   GnuGettext, Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms,
   Dialogs, ComCtrls, StdCtrls, Buttons, uNetstatTable, uTools, ExtCtrls,
-  uProcesses;
+  uProcesses_new;
 
 type
   tNetState = (nsActive, nsOld, nsNew, nsUpdatingActive, nsUpdatingNew);
@@ -175,7 +175,6 @@ begin
         lvSockets.Canvas.Font.Color := clWindowText;
         lvSockets.Canvas.Brush.Color := clWindow;
       end;
-    // nsOld:      begin ListView1.Canvas.Font.Color := clGrayText;    ListView1.Canvas.Brush.Color:=clWindow; end;
     nsOld:
       begin
         lvSockets.Canvas.Font.Color := clWhite;
@@ -210,14 +209,21 @@ procedure TfNetstat.RefreshTable(ResetStates: Boolean);
 var
   i: integer;
   NE: tNetEntry;
-  ProcInfo: tProcInfo;
   PID, Addr, AddrR, Port: Cardinal;
   PIDName: string;
   AddrStr: string;
+  name: string;
 begin
-  NetStatTable.UpdateTable;
+  //NetStatTable.UpdateTable;
+
+  if NetStatTable.updating = 1 then
+    exit;
 
   lvSockets.Items.BeginUpdate;
+
+  //fMain.updateTimerNetworking(False);
+
+  NetStatTable.updating_table := 1;
 
   if ResetStates then
     ClearnetEntryList;
@@ -241,10 +247,10 @@ begin
 
       AddrStr := Cardinal2IP(Addr);
       Port := NetStatTable.pTcpTable.table[i].dwLocalPort;
-      ProcInfo := Processes.GetProcInfo(PID);
-      if ProcInfo <> nil then
+      name := Processes.GetProcessName(PID);
+      if name <> '' then
       begin
-        PIDName := ProcInfo.ExePath;
+        PIDName := name;
         NE := FindNetEntry(AddrR, Port, PID, PIDName);
         if NE = nil then
         begin
@@ -259,7 +265,6 @@ begin
           lvSockets.Items.Count := lvSockets.Items.Count + 1;
 
           fMain.AddLog(cModuleName, Format(_('New listening socket: %s:%d'), [NE.AddrStr, NE.Port]), ltDebug);
-
         end
         else
         begin
@@ -283,6 +288,10 @@ begin
       fMain.AddLog(cModuleName, Format(_('Listening socket closed: %s:%d'), [NE.AddrStr, NE.Port]), ltDebug);
     end;
   end;
+
+  NetStatTable.updating_table := 0;
+
+  //fMain.updateTimerNetworking(True);
 
   NetEntryList.Sort(CustomSortProc);
   lvSockets.Items.EndUpdate;

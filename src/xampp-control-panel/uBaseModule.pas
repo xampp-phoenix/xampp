@@ -86,10 +86,8 @@ procedure tBaseModule.SetServiceButton(isActive: boolean);
 begin
   bbService.Glyph := nil;
   if isActive then
-    //fMain.ImageList.GetBitmap(0, bbService.Glyph);
     fMain.ImageList.GetBitmap(11, bbService.Glyph);
   if not isActive then
-    //fMain.ImageList.GetBitmap(5, bbService.Glyph);
     fMain.ImageList.GetBitmap(10, bbService.Glyph);
 end;
 

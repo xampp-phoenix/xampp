@@ -35,8 +35,8 @@ echo [XAMPP]: Using JAVA_HOME=%JAVA_HOME%
 echo [XAMPP]: Using CATALINA_HOME=%CATALINA_HOME%
 echo [XAMPP]: Using JRE_HOME=%JRE_HOME%
 
-echo Try to stop Tomcat6 service
-net stop Tomcat6
+echo Try to stop Tomcat7 service
+net stop Tomcat7
 echo Uninstall Tomcat as an Service
 .\bin\service.bat remove Tomcat7
 

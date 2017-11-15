@@ -2,8 +2,8 @@ object fConfig: TfConfig
   Left = 463
   Top = 124
   Caption = 'Configuration of Control Panel'
-  ClientHeight = 495
-  ClientWidth = 449
+  ClientHeight = 519
+  ClientWidth = 448
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,8 +17,8 @@ object fConfig: TfConfig
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   DesignSize = (
-    449
-    495)
+    448
+    519)
   PixelsPerInch = 120
   TextHeight = 17
   object lblEditor: TLabel
@@ -44,7 +44,7 @@ object fConfig: TfConfig
     Caption = 'Browser (empty = system default)'
   end
   object bSelectEditor: TBitBtn
-    Left = 403
+    Left = 402
     Top = 29
     Width = 34
     Height = 32
@@ -82,11 +82,12 @@ object fConfig: TfConfig
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     TabOrder = 0
     OnClick = bSelectEditorClick
+    ExplicitLeft = 403
   end
   object eEditor: TEdit
     Left = 10
     Top = 31
-    Width = 385
+    Width = 384
     Height = 25
     Margins.Left = 4
     Margins.Top = 4
@@ -94,10 +95,11 @@ object fConfig: TfConfig
     Margins.Bottom = 4
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
+    ExplicitWidth = 385
   end
   object bSave: TBitBtn
-    Left = 339
-    Top = 452
+    Left = 338
+    Top = 476
     Width = 98
     Height = 33
     Margins.Left = 4
@@ -136,11 +138,12 @@ object fConfig: TfConfig
     ModalResult = 1
     TabOrder = 2
     OnClick = bSaveClick
-    ExplicitTop = 485
+    ExplicitLeft = 339
+    ExplicitTop = 452
   end
   object bAbort: TBitBtn
-    Left = 233
-    Top = 452
+    Left = 232
+    Top = 476
     Width = 98
     Height = 33
     Margins.Left = 4
@@ -179,10 +182,11 @@ object fConfig: TfConfig
     ModalResult = 3
     TabOrder = 3
     OnClick = bAbortClick
-    ExplicitTop = 485
+    ExplicitLeft = 233
+    ExplicitTop = 452
   end
   object bSelectBrowser: TBitBtn
-    Left = 403
+    Left = 402
     Top = 85
     Width = 34
     Height = 33
@@ -220,11 +224,12 @@ object fConfig: TfConfig
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     TabOrder = 4
     OnClick = bSelectBrowserClick
+    ExplicitLeft = 403
   end
   object eBrowser: TEdit
     Left = 10
     Top = 89
-    Width = 385
+    Width = 384
     Height = 25
     Margins.Left = 4
     Margins.Top = 4
@@ -232,12 +237,13 @@ object fConfig: TfConfig
     Margins.Bottom = 4
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 5
+    ExplicitWidth = 385
   end
   object cbDebug: TCheckBox
     Left = 19
-    Top = 312
+    Top = 339
     Width = 195
-    Height = 22
+    Height = 21
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -248,7 +254,7 @@ object fConfig: TfConfig
   end
   object cbDebugDetails: TComboBox
     Left = 252
-    Top = 310
+    Top = 337
     Width = 185
     Height = 25
     Margins.Left = 4
@@ -264,7 +270,7 @@ object fConfig: TfConfig
   object grpAutostart: TGroupBox
     Left = 9
     Top = 122
-    Width = 428
+    Width = 427
     Height = 124
     Margins.Left = 4
     Margins.Top = 4
@@ -273,13 +279,14 @@ object fConfig: TfConfig
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Autostart of modules '
     TabOrder = 8
+    ExplicitWidth = 428
     DesignSize = (
-      428
+      427
       124)
     object lblAutostart: TLabel
       Left = 10
       Top = 81
-      Width = 405
+      Width = 404
       Height = 35
       Margins.Left = 4
       Margins.Top = 4
@@ -299,6 +306,7 @@ object fConfig: TfConfig
       ParentColor = False
       ParentFont = False
       WordWrap = True
+      ExplicitWidth = 405
     end
     object cbASApache: TCheckBox
       Left = 10
@@ -359,9 +367,9 @@ object fConfig: TfConfig
   end
   object cbCheckDefaultPorts: TCheckBox
     Left = 19
-    Top = 282
+    Top = 309
     Width = 289
-    Height = 22
+    Height = 21
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -372,9 +380,9 @@ object fConfig: TfConfig
   end
   object bLanguage: TBitBtn
     Left = 20
-    Top = 356
+    Top = 383
     Width = 195
-    Height = 33
+    Height = 32
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -385,9 +393,9 @@ object fConfig: TfConfig
   end
   object bConfigUserdefined: TBitBtn
     Left = 20
-    Top = 404
+    Top = 431
     Width = 195
-    Height = 33
+    Height = 32
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -401,9 +409,9 @@ object fConfig: TfConfig
   end
   object cbTomcatVisible: TCheckBox
     Left = 19
-    Top = 252
+    Top = 279
     Width = 289
-    Height = 22
+    Height = 21
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -414,23 +422,31 @@ object fConfig: TfConfig
   end
   object bLogSettings: TButton
     Left = 252
-    Top = 404
+    Top = 431
     Width = 185
-    Height = 33
+    Height = 32
     Caption = 'Log Options'
     TabOrder = 13
     OnClick = bLogSettingsClick
   end
   object bServiceSettings: TButton
     Left = 252
-    Top = 356
+    Top = 383
     Width = 185
-    Height = 34
+    Height = 33
     Caption = 'Service and Port Settings'
     TabOrder = 14
     OnClick = bServiceSettingsClick
   end
-  object OpenDialog1: TOpenDialog
+  object cbMinimized: TCheckBox
+    Left = 20
+    Top = 253
+    Width = 221
+    Height = 17
+    Caption = 'Start Control Panel Minimized'
+    TabOrder = 15
+  end
+  object OpenDialog: TOpenDialog
     DefaultExt = 'exe'
     Filter = 'Executables (*.exe)|*.exe|All files (*.*)|*.*'
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]

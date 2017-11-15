@@ -2,7 +2,7 @@ unit uApache;
 
 interface
 
-uses GnuGettext, uBaseModule, SysUtils, Classes, Windows, ExtCtrls, StdCtrls, Buttons, uNetstatTable, uTools, uProcesses, Messages, uServices;
+uses GnuGettext, uBaseModule, SysUtils, Classes, Windows, ExtCtrls, StdCtrls, Buttons, uNetstatTable, uTools, uProcesses_new, Messages, uServices;
 
 type
   tApacheLogType = (altAccess, altError);
@@ -16,10 +16,9 @@ type
     procedure Start; override;
     procedure Stop; override;
     procedure Admin; override;
+    procedure CheckPorts;
     procedure UpdateStatus; override;
     procedure CheckIsService; reintroduce;
-    procedure EditConfig(ConfigFile: string); reintroduce;
-    procedure ShowLogs(LogType: tApacheLogType); reintroduce;
     procedure AddLog(Log: string; LogType: tLogType = ltDefault); reintroduce;
     constructor Create(pbbService: TBitBtn; pStatusPanel: tPanel; pPIDLabel, pPortLabel: tLabel; pStartStopButton, pAdminButton: TBitBtn);
     destructor Destroy; override;
@@ -30,7 +29,6 @@ implementation
 uses uMain;
 
 const
-  // cServiceName = 'Apache2.2';
   cModuleName = 'Apache';
 
   { tApache }
@@ -71,53 +69,45 @@ begin
   if isService then
   begin
     s := _('Service installed');
-    path:=GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Apache));
+    path := GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Apache));
   end
   else
     s := _('Service not installed');
   AddLog(Format(_('Checking for service (name="%s"): %s'), [RemoveWhiteSpace(Config.ServiceNames.Apache), s]), ltDebug);
-  if (path<>'') then
+  if (path <> '') then
   begin
-    if (Pos(LowerCase(basedir + 'apache\bin\' + Config.BinaryNames.Apache), LowerCase(path))<>0) then
+    if (Pos(LowerCase(basedir + 'apache\bin\' + Config.BinaryNames.Apache), LowerCase(path)) <> 0) then
       AddLog(Format(_('Service Path: %s'), [path]), ltDebug)
     else
     begin
       pStatus.Color := cErrorColor;
-      AddLog(_('Apache Service detected with wrong path'), ltError);
-      AddLog(_('Change XAMPP Apache settings or'), ltError);
+      AddLog(Format(_('%s Service detected with wrong path'), [cModuleName]), ltError);
+      AddLog(Format(_('Change XAMPP %s and Control Panel settings or'), [cModuleName]), ltError);
       AddLog(_('Uninstall/disable the other service manually first'), ltError);
-      AddLog(Format(_('Found Path: %s'), [Path]), ltError);
+      AddLog(Format(_('Found Path: %s'), [path]), ltError);
       AddLog(Format(_('Expected Path: "%sapache\bin\%s" -k runservice'), [basedir, Config.BinaryNames.Apache]), ltError);
     end
   end
   else
-      AddLog(_('Service Path: Service Not Installed'), ltDebug);
+    AddLog(_('Service Path: Service Not Installed'), ltDebug);
 end;
 
 constructor tApache.Create;
 var
-  PortBlocker: string;
-  ServerApp, ReqTool: string;
-  p: integer;
-  Ports: array [0 .. 1] of integer;
-  path: string;
-  // =(Config.ServicePorts.Apache,Config.ServicePorts.ApacheSSL);
+  ServerApp: string;
 begin
   inherited;
-  Ports[0] := Config.ServicePorts.Apache;
-  Ports[1] := Config.ServicePorts.ApacheSSL;
   ModuleName := cModuleName;
   OldPIDCount := 0;
   GlobalStatus := 'starting';
   AddLog(_('Initializing module...'), ltDebug);
   ServerApp := basedir + 'apache\bin\' + Config.BinaryNames.Apache;
-  ReqTool := basedir + 'apache\bin\pv.exe';
   AddLog(_('Checking for module existence...'), ltDebug);
   if not FileExists(ServerApp) then
   begin
     pStatus.Color := cErrorColor;
-    AddLog(_('Problem detected: Apache Not Found!'), ltError);
-    AddLog(_('Disabling Apache buttons'), ltError);
+    AddLog(Format(_('Problem detected: %s Not Found!'), [cModuleName]), ltError);
+    AddLog(Format(_('Disabling %s buttons'), [cModuleName]), ltError);
     AddLog(_('Run this program from your XAMPP root directory!'), ltError);
     bAdmin.Enabled := False;
     bbService.Enabled := False;
@@ -126,54 +116,14 @@ begin
 
   if not Config.EnableServices.Apache then
   begin
-    AddLog(_('Apache Service is disabled.'), ltDebug);
-    fmain.bApacheService.Enabled := false;
+    AddLog(Format(_('%s Service is disabled.'), [cModuleName]), ltDebug);
+    fmain.bApacheService.Enabled := False;
   end;
 
   AddLog(_('Checking for required tools...'), ltDebug);
-//  if not FileExists(ReqTool) then
-//  begin
-//    AddLog(_('Possible problem detected: Required Tool pv.exe Not Found!'), ltError);
-//  end;
 
   CheckIsService;
-  path:=GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Apache));
-
-  if Config.EnableChecks.CheckDefaultPorts then
-  begin
-    AddLog(_('Checking default ports...'), ltDebug);
-
-    for p := Low(Ports) to High(Ports) do
-    begin
-      PortBlocker := NetStatTable.isPortInUse(Ports[p]);
-      if (PortBlocker <> '') then
-      begin
-        //if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
-        AddLog(Format(_('Portblocker Detected: %s'), [PortBlocker]), ltDebug);
-        AddLog(Format(_('Checking for App: %s'), [ServerApp]), ltDebug);
-        if isservice then
-          AddLog(Format(_('Checking for Service: %s'), [path]), ltDebug);
-        if (pos(LowerCase(ServerApp), LowerCase(PortBlocker))<>0) then
-        begin
-          // AddLog(Format(_('"%s" seems to be running on port %d?'),[ServerApp,Ports[p]]),ltError);
-          AddLog(Format(_('XAMPP Apache is already running on port %d'), [Ports[p]]), ltInfo);
-        end
-        else if (pos(LowerCase(PortBlocker), LowerCase(path))<>0) and (isService = True) then
-        begin
-          AddLog(Format(_('XAMPP Apache Service is already running on port %d'), [Ports[p]]), ltInfo);
-        end
-        else
-        begin
-          pStatus.Color := cErrorColor;
-          AddLog(_('Problem detected!'), ltError);
-          AddLog(Format(_('Port %d in use by "%s"!'), [Ports[p], PortBlocker]), ltError);
-          AddLog(_('Apache WILL NOT start without the configured ports free!'), ltError);
-          AddLog(_('You need to uninstall/disable/reconfigure the blocking application'), ltError);
-          AddLog(_('or reconfigure Apache to listen on a different port'), ltError);
-        end;
-      end;
-    end;
-  end;
+  CheckPorts;
 end;
 
 destructor tApache.Destroy;
@@ -181,14 +131,67 @@ begin
   inherited;
 end;
 
-procedure tApache.EditConfig(ConfigFile: string);
+procedure tApache.CheckPorts;
 var
-  App, Param: string;
+  PortBlocker: string;
+  PortBlockerPID: integer;
+  path: string;
+  p: integer;
+  ServerApp: string;
+  pbpath: string;
+  pbspath: string;
+  Ports: array [0 .. 1] of integer;
 begin
-  App := Config.EditorApp;
-  Param := basedir + ConfigFile;
-  AddLog(Format(_('Executing %s %s'), [App, Param]), ltDebug);
-  ExecuteFile(App, Param, '', SW_SHOW);
+  ServerApp := basedir + 'apache\bin\' + Config.BinaryNames.Apache;
+  Ports[0] := Config.ServicePorts.Apache;
+  Ports[1] := Config.ServicePorts.ApacheSSL;
+
+  path := GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Apache));
+
+  if Config.EnableChecks.CheckDefaultPorts then
+  begin
+    AddLog(_('Checking default ports...'), ltDebug);
+    for p := Low(Ports) to High(Ports) do
+    begin
+      PortBlockerPID := NetStatTable.isPortInUsePID(Ports[p]);
+      if (PortBlockerPID > 0) then
+      begin
+        PortBlocker := Processes.GetProcessName(PortBlockerPID);
+        AddLog(Format(_('Portblocker Detected: %s'), [PortBlocker]), ltDebug);
+        AddLog(Format(_('Checking for App: %s'), [ServerApp]), ltDebug);
+        if isService then
+          AddLog(Format(_('Checking for Service: %s'), [path]), ltDebug);
+        //if (Pos(LowerCase(ServerApp), LowerCase(PortBlocker)) <> 0) then
+        pbpath := Processes.GetProcessPath(PortBlockerPID);
+        pbspath := GetServiceWithPid(PortBlockerPID);
+        AddLog(Format(_('Portblocker Path: %s'), [pbpath]), ltDebug);
+        AddLog(Format(_('Portblocker Service Path: %s'), [pbspath]), ltDebug);
+        if (Pos(LowerCase(ServerApp), LowerCase(pbpath)) <> 0) then
+        begin
+          AddLog(Format(_('XAMPP %s is already running on port %d'), [cModuleName, Ports[p]]), ltInfo);
+        end
+        //else if (Pos(LowerCase(PortBlocker), LowerCase(path)) <> 0) and (isService = True) then
+        else if (Pos(LowerCase(pbspath), LowerCase(path)) <> 0) and (isService = True) and (Pos(LowerCase(ServerApp), LowerCase(pbspath)) <> 0) then
+        begin
+          AddLog(Format(_('XAMPP %s Service is already running on port %d'), [cModuleName, Ports[p]]), ltInfo);
+          //AddLog(Format(_('Service Path: %s'), [GetServiceWithPid(PortBlockerPID)]), ltDebug);
+        end
+        else
+        begin
+          pStatus.Color := cErrorColor;
+          if (pbspath <> '') then
+            PortBlocker := pbspath
+          else
+            PortBlocker := pbpath;
+          AddLog(_('Problem detected!'), ltError);
+          AddLog(Format(_('Port %d in use by "%s" with PID %d!'), [Ports[p], PortBlocker, PortBlockerPID]), ltError);
+          AddLog(Format(_('%s WILL NOT start without the configured ports free!'), [cModuleName]), ltError);
+          AddLog(_('You need to uninstall/disable/reconfigure the blocking application'), ltError);
+          AddLog(Format(_('or reconfigure %s and the Control Panel to listen on a different port'), [cModuleName]), ltError);
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure tApache.ServiceInstall;
@@ -223,48 +226,26 @@ begin
     AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
 end;
 
-procedure tApache.ShowLogs(LogType: tApacheLogType);
-var
-  App, Param: string;
-begin
-  App := Config.EditorApp;
-  if LogType = altAccess then
-    Param := basedir + 'apache\logs\access.log';
-  if LogType = altError then
-    Param := basedir + 'apache\logs\error.log';
-  AddLog(Format(_('Executing "%s %s"'), [App, Param]), ltDebug);
-  ExecuteFile(App, Param, '', SW_SHOW);
-end;
-
 procedure tApache.Start;
 var
   App, ErrMsg: string;
   RC: Cardinal;
 begin
   GlobalStatus := 'starting';
-  if isService then
+  CheckPorts;
+  if isService and Config.EnableServices.Apache then
   begin
     AddLog(Format(_('Attempting to start %s service...'), [cModuleName]));
-    //App := Format('start "%s"', [RemoveWhiteSpace(Config.ServiceNames.Apache)]);
-    //AddLog(Format(_('Executing "%s"'), ['net ' + App]), ltDebug);
-    //RC := RunAsAdmin('net', App, SW_HIDE);
-    RC := StartService(RemoveWhiteSpace(Config.ServiceNames.Apache));
+    App := Format('start "%s"', [RemoveWhiteSpace(Config.ServiceNames.Apache)]);
+    AddLog(Format(_('Executing "%s"'), ['net ' + App]), ltDebug);
+    RC := RunAsAdmin('net', App, SW_HIDE);
+    // RC := StartService(RemoveWhiteSpace(Config.ServiceNames.Apache));
     if (RC = 0) or (RC = 1077) then
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
     else
     begin
       ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
       AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
-      //AddLog(Format(_('%s'), [ErrMsg]), ltError);
-      if (Pos('SideBySide', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', ErrMsg) <> 0 )
-        or (Pos('SideBySide', ErrMsg) <> 0) then
-      begin
-        AddLog(_('You appear to be missing the VC9 Runtime Files'), ltError);
-        AddLog(_('You need to download and install the Microsoft Visual C++ 2008 SP1 (x86) Runtimes'), ltError);
-        AddLog(_('http://www.microsoft.com/download/en/details.aspx?id=5582'), ltError);
-      end;
     end;
   end
   else
@@ -272,23 +253,13 @@ begin
     AddLog(Format(_('Attempting to start %s app...'), [cModuleName]));
     App := basedir + 'apache\bin\' + Config.BinaryNames.Apache;
     AddLog(Format(_('Executing "%s"'), [App]), ltDebug);
-    RC := RunProcess(App, SW_HIDE, false);
+    RC := RunProcess(App, SW_HIDE, False);
     if RC = 0 then
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
     else
     begin
       ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
       AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
-      //AddLog(Format(_('%s'), [ErrMsg]), ltError);
-      if (Pos('SideBySide', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', ErrMsg) <> 0 )
-        or (Pos('SideBySide', ErrMsg) <> 0) then
-      begin
-        AddLog(_('You appear to be missing the VC9 Runtime Files'), ltError);
-        AddLog(_('You need to download and install the Microsoft Visual C++ 2008 SP1 (x86) Runtimes'), ltError);
-        AddLog(_('http://www.microsoft.com/download/en/details.aspx?id=5582'), ltError);
-      end;
     end;
   end;
 end;
@@ -296,34 +267,24 @@ end;
 procedure tApache.Stop;
 var
   i, pPID: integer;
-  //App, ErrMsg: string;
+  App: string;
   ErrMsg: string;
   RC: Cardinal;
 begin
   GlobalStatus := 'stopping';
-  if isService then
+  if isService and Config.EnableServices.Apache then
   begin
     AddLog(Format(_('Attempting to stop %s service...'), [cModuleName]));
-    //App := Format('stop "%s"', [RemoveWhiteSpace(Config.ServiceNames.Apache)]);
-    //AddLog(Format(_('Executing "%s"'), ['net ' + App]), ltDebug);
-    //RC := RunAsAdmin('net', App, SW_HIDE);
-    RC := StopService(RemoveWhiteSpace(Config.ServiceNames.Apache));
+    App := Format('stop "%s"', [RemoveWhiteSpace(Config.ServiceNames.Apache)]);
+    AddLog(Format(_('Executing "%s"'), ['net ' + App]), ltDebug);
+    RC := RunAsAdmin('net', App, SW_HIDE);
+    // RC := StopService(RemoveWhiteSpace(Config.ServiceNames.Apache));
     if RC = 0 then
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
     else
     begin
       ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
       AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
-      //AddLog(Format(_('%s'), [ErrMsg]), ltError);
-      if (Pos('SideBySide', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', SystemErrorMessage(RC)) <> 0)
-        or (Pos('VC9', ErrMsg) <> 0 )
-        or (Pos('SideBySide', ErrMsg) <> 0) then
-      begin
-        AddLog(_('You appear to be missing the VC9 Runtime Files'), ltError);
-        AddLog(_('You need to download and install the Microsoft Visual C++ 2008 SP1 (x86) Runtimes'), ltError);
-        AddLog(_('http://www.microsoft.com/download/en/details.aspx?id=5582'), ltError);
-      end;
     end;
   end
   else
@@ -334,32 +295,14 @@ begin
       begin
         pPID := integer(PIDList[i]);
         AddLog(_('Attempting to stop') + ' ' + cModuleName + ' ' + Format('(PID: %d)', [pPID]));
-        //App := Format(basedir + 'apache\bin\pv.exe -f -k -q -i %d', [pPID]);
-        //AddLog(Format(_('Executing "%s"'), [App]), ltDebug);
-        //RC := RunProcess(App, SW_HIDE, false);
+        // App := Format(basedir + 'apache\bin\pv.exe -f -k -q -i %d', [pPID]);
+        // AddLog(Format(_('Executing "%s"'), [App]), ltDebug);
+        // RC := RunProcess(App, SW_HIDE, false);
         if not TerminateProcessByID(pPID) then
         begin
           AddLog(Format(_('Problem killing PID %d'), [pPID]), ltError);
           AddLog(_('Check that you have the proper privileges'), ltError);
         end;
-//        RC := 0;
-//        if RC = 0 then
-//          AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
-//        else
-//        begin
-//          ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
-//          AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
-//          //AddLog(Format(_('%s'), [ErrMsg]), ltError);
-//          if (Pos('SideBySide', SystemErrorMessage(RC)) <> 0)
-//            or (Pos('VC9', SystemErrorMessage(RC)) <> 0)
-//            or (Pos('VC9', ErrMsg) <> 0 )
-//            or (Pos('SideBySide', ErrMsg) <> 0) then
-//          begin
-//            AddLog(_('You appear to be missing the VC9 Runtime Files'), ltError);
-//            AddLog(_('You need to download and install the Microsoft Visual C++ 2008 SP1 (x86) Runtimes'), ltError);
-//            AddLog(_('http://www.microsoft.com/download/en/details.aspx?id=5582'), ltError);
-//          end;
-//        end;
       end;
     end
     else
@@ -372,26 +315,59 @@ end;
 procedure tApache.UpdateStatus;
 var
   p: integer;
-  ProcInfo: TProcInfo;
+  // ProcInfo: TProcInfo;
   s: string;
   Ports: string;
+  pname: string;
+  ppath: string;
+  currPID: integer;
   ErrorStatus: integer;
 begin
-  isRunning := false;
+  isRunning := False;
   PIDList.Clear;
   ErrorStatus := 0;
-  for p := 0 to Processes.ProcessList.Count - 1 do
+  // for p := 0 to Processes.ProcessList.Count - 1 do
+  // begin
+  // ProcInfo := Processes.ProcessList[p];
+  // if (pos(Config.BinaryNames.Apache, ProcInfo.Module) = 1) then
+  // begin
+  // if (pos(IntToStr(Config.ServicePorts.Apache),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+  // (pos(IntToStr(Config.ServicePorts.ApacheSSL),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+  // (pos(LowerCase(BaseDir), LowerCase(ProcInfo.ExePath)) <> 0) then
+  // begin
+  // isRunning := true;
+  // PIDList.Add(Pointer(ProcInfo.PID));
+  // end;
+  // end;
+  // end;
+
+  for p := 0 to Processes.ProcessList2.Count - 1 do
   begin
-    ProcInfo := Processes.ProcessList[p];
-    if (pos(Config.BinaryNames.Apache, ProcInfo.Module) = 1) then
+    pname := Processes.ProcessList2[p];
+    if (Pos(LowerCase(Config.BinaryNames.Apache), LowerCase(pname)) = 1) then
     begin
-      //AddLog(Format(_('Process Path: %s'), [ProcInfo.ExePath]), ltDebug);
-      if (pos(IntToStr(Config.ServicePorts.Apache),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.ApacheSSL),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(LowerCase(BaseDir), LowerCase(ProcInfo.ExePath)) <> 0) then
+      currPID := integer(Processes.ProcessList2.Objects[p]);
+      if (isService) then
       begin
-        isRunning := true;
-        PIDList.Add(Pointer(ProcInfo.PID));
+        ppath := LowerCase(GetServiceWithPid(currPID));
+        if ((Pos(IntToStr(Config.ServicePorts.Apache), NetStatTable.GetPorts4PID(currPID)) <> 0) and (Pos(LowerCase(basedir), ppath) <> 0)) or
+          ((Pos(IntToStr(Config.ServicePorts.ApacheSSL), NetStatTable.GetPorts4PID(currPID)) <> 0) and (Pos(LowerCase(basedir), ppath) <> 0)) or
+          (Pos(LowerCase(basedir), ppath) <> 0) then
+        begin
+          isRunning := True;
+          PIDList.Add(Pointer(currPID));
+        end;
+      end
+      else
+      begin
+        ppath := LowerCase(Processes.GetProcessPath(currPID));
+        if ((Pos(IntToStr(Config.ServicePorts.Apache), NetStatTable.GetPorts4PID(currPID)) <> 0) and (Pos(LowerCase(basedir), ppath) <> 0)) or
+          ((Pos(IntToStr(Config.ServicePorts.ApacheSSL), NetStatTable.GetPorts4PID(currPID)) <> 0) and (Pos(LowerCase(basedir), ppath) <> 0)) or
+          (Pos(LowerCase(basedir), ppath) <> 0) then
+        begin
+          isRunning := True;
+          PIDList.Add(Pointer(currPID));
+        end;
       end;
     end;
   end;
@@ -417,12 +393,7 @@ begin
   begin
     Ports := NetStatTable.GetPorts4PID(integer(PIDList[p]));
     if Ports <> '' then
-    //begin
-    //  if s = '' then
-        s := RemoveDuplicatePorts(Ports);
-    //  else
-    //    s := s + ', ' + Ports;
-    //end;
+      s := RemoveDuplicatePorts(Ports);
   end;
   if s <> OldPorts then
   begin
@@ -440,17 +411,19 @@ begin
       begin
         s := _('stopped');
         if GlobalStatus = 'starting' then
-         ErrorStatus := 1;
+          ErrorStatus := 1;
       end;
       AddLog(_('Status change detected:') + ' ' + s);
       if ErrorStatus = 1 then
       begin
         pStatus.Color := cErrorColor;
-        AddLog(_('Error: Apache shutdown unexpectedly.'), ltError);
+        AddLog(Format(_('Error: %s shutdown unexpectedly.'), [cModuleName]), ltError);
         AddLog(_('This may be due to a blocked port, missing dependencies, '), ltError);
         AddLog(_('improper privileges, a crash, or a shutdown by another method.'), ltError);
-        AddLog(_('Check the "/xampp/apache/logs/error.log" file'), ltError);
-        AddLog(_('and the Windows Event Viewer for more clues'), ltError);
+        AddLog(_('Press the Logs button to view error logs and check'), ltError);
+        AddLog(_('the Windows Event Viewer for more clues'), ltError);
+        AddLog(_('If you need more help, copy and post this'), ltError);
+        AddLog(_('entire log window on the forums'), ltError);
       end;
     end;
 
@@ -461,24 +434,24 @@ begin
       begin
         pStatus.Color := cRunningColor;
         bStartStop.Caption := _('Stop');
-        bAdmin.Enabled := true;
-        fMain.ApacheTray.ImageIndex := 15;
-        fMain.ApacheTrayControl.Caption := _('Stop');
+        bAdmin.Enabled := True;
+        fmain.ApacheTray.ImageIndex := 15;
+        fmain.ApacheTrayControl.Caption := _('Stop');
       end
       else
       begin
         pStatus.Color := cPartialColor;
         bStartStop.Caption := _('Stop');
-        bAdmin.Enabled := true;
+        bAdmin.Enabled := True;
       end;
     end
     else
     begin
       pStatus.Color := cStoppedColor;
       bStartStop.Caption := _('Start');
-      bAdmin.Enabled := false;
-      fMain.ApacheTray.ImageIndex := 16;
-      fMain.ApacheTrayControl.Caption := _('Start');
+      bAdmin.Enabled := False;
+      fmain.ApacheTray.ImageIndex := 16;
+      fmain.ApacheTrayControl.Caption := _('Start');
     end;
   end;
 
@@ -486,10 +459,10 @@ begin
 
   if AutoStart then
   begin
-    AutoStart := false;
+    AutoStart := False;
     if isRunning then
     begin
-      AddLog(_('Autostart aborted: Apache is already running'), ltInfo);
+      AddLog(Format(_('Autostart aborted: %s is already running'), [cModuleName]), ltInfo);
     end
     else
     begin

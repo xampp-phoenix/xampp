@@ -1,23 +1,22 @@
-###### ApacheFriends XAMPP Version 1.8.1 ######
+###### ApacheFriends XAMPP Version 7.1.11 ######
 
 Wichtig! PHP in diesem Paket benötigt die Microsoft Visual C++ 2008 Redistributable Erweiterung von
 http://www.microsoft.com/en-us/download/details.aspx?id=5582. Bitte stellen Sie sicher das die VC++ 2008 
 Runtime Bibliothek auf Ihrem System installiert ist.
 
-  + Apache 2.4.3
-  + MySQL 5.5.27 (Community Server)
-  + PHP 5.4.7 (VC9 X86 32bit thread safe) + PEAR 
-  + phpMyAdmin 3.5.2.2
-  + OpenSSL 1.0.1c
-  + ADOdb 5.17
+  + Apache 2.4.29
+  + MariaDB 10.1.28
+  + PHP 7.1.11 (VC14 X86 32bit thread safe) + PEAR
+  + phpMyAdmin 4.7.4
+  + OpenSSL 1.0.2f
+  + ADOdb 518a
   + Mercury Mail Transport System v4.62 (nicht in der Portable Version)
   + FileZilla FTP Server 0.9.41 (nicht in der Portable Version)
   + Webalizer 2.23-04 (nicht in der Portable Version) 
   + Strawberry Perl 5.16.1.1 Portable
-  + Tomcat 7.0.30
-  + XAMPP Control Panel Version 3.1.0 von hackattack142 (Ein großes Danke Schön!)
+  + Tomcat 7.0.56
+  + XAMPP Control Panel Version 3.2.2 von hackattack142 (Ein großes Danke Schön!)
     Vgl.: http://www.apachefriends.org/f/viewtopic.php?f=16&t=46743 
-  + XAMPP Security
   + XAMPP mailToDisk 1.0 (schreibt verdendete Mails über PHP auf die Festplatte unter <xampp>\mailoutput. In der php.ini als Mail Default aktiviert.)
 
 --------------------------------------------------------------- 
@@ -26,7 +25,7 @@ Runtime Bibliothek auf Ihrem System installiert ist.
   
   + 64 MB RAM (EMPFOHLEN)
   + 750 MB freier Speicherplatz
-  + Windows 2003, XP (EMPFOHLEN), VISTA, Windows 7
+  + Windows XP, VISTA, Windows 7, Windows 8, Windows 10
   
 * ACHTUNG!!!!
 
@@ -48,7 +47,7 @@ Stoppen Sie MySQL mit dem Control Panel (xampp-control.exe) oder wahlweise mit =
 
 Schritt 4: Öffne deinen Browser und gebe http://127.0.0.1 oder http://localhost ein. Danach gelangst du zu den zahlreichen ApacheFriends-Beispielen auf Ihrem lokalen Server.
 
-Schritt 5: Das Root-Verzeichnis (Hauptdokumente) für HTTP (oft HTML) ist => C:\xampp\htdocs. PHP kann die Endungen  *.php, *.php3, *.php4, *.php5, *.phtml haben, *.shtml für SSI, *.cgi für CGI (z. B.: Perl).
+Schritt 5: Das Root-Verzeichnis (Hauptdokumente) für HTTP (oft HTML) ist => C:\xampp\htdocs. PHP kann die Endungen  *.php, *.phtml haben, *.shtml für SSI, *.cgi für CGI (z. B.: Perl).
 
 Schritt 6: XAMPP DEINSTALLIEREN?
 Einfach das "XAMPP"-Verzeichnis löschen. Vorher aber alle Server stoppen 
@@ -124,13 +123,6 @@ Hier eine Liste, der Dinge, die an XAMPP absichtlich (!) unsicher sind:
 - phpMyAdmin ist über das Netzwerk erreichbar.
 - In dem XAMPP-Demo-Seiten (die man unter http://localhost/ findet) gibt es den Punkt "Sicherheitscheck".
   Dort kann man sich den aktuellen Sicherheitszustand seiner XAMPP-Installation anzeigen lassen.
-
-Will man XAMPP in einem Netzwerk betreiben, so dass der XAMPP-Server auch von anderen erreichbar ist, dann sollte man unbedingt die folgende URL aufrufen, mit dem man diese Unsicherheiten einschränken kann:
-
-	http://localhost/security/
-
-Hier kann das Root-Passwort für MySQL und phpMyAdmin und auch ein Verzeichnisschutz für die 
-XAMPP-Seiten eingerichtet werden.
 
 ---------------------------------------------------------------
 

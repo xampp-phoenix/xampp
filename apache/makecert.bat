@@ -1,5 +1,5 @@
 @echo off
-set OPENSSL_CONF=./bin/openssl.cnf
+set OPENSSL_CONF=./conf/openssl.cnf
 
 if not exist .\conf\ssl.crt mkdir .\conf\ssl.crt
 if not exist .\conf\ssl.key mkdir .\conf\ssl.key

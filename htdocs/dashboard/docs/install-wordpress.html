@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Get Started Quickly with WordPress</title>
+
+    
+    
+
+    <link href="/dashboard/stylesheets/normalize.css" rel="stylesheet" type="text/css" /><link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="/dashboard/javascripts/modernizr.js" type="text/javascript"></script>
+
+
+    <link href="/dashboard/images/favicon.png" rel="icon" type="image/png" />
+
+
+  </head>
+
+  <body class="docs docs_install-wordpress">
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=277385395761685";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    <div class="contain-to-grid">
+      <nav class="top-bar" data-topbar>
+        <ul class="title-area">
+          <li class="name">
+            <h1><a href="/dashboard/index.html">Apache Friends</a></h1>
+          </li>
+          <li class="toggle-topbar menu-icon">
+            <a href="#">
+              <span>Menu</span>
+            </a>
+          </li>
+        </ul>
+
+        <section class="top-bar-section">
+          <!-- Right Nav Section -->
+          <ul class="right">
+              <li class=""><a href="/applications.html">Applications</a></li>
+              <li class=""><a href="/dashboard/faq.html">FAQs</a></li>
+              <li class="active"><a href="/dashboard/howto.html">HOW-TO Guides</a></li>
+              <li class=""><a target="_blank" href="/dashboard/phpinfo.php">PHPInfo</a></li>
+              <li class=""><a href="/phpmyadmin/">phpMyAdmin</a></li>
+          </ul>
+        </section>
+      </nav>
+    </div>
+
+    <div id="wrapper">
+      <div class="hero">
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>Documentation</h1>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="large-12 columns">
+    <ul class="sub-nav">
+      <li>
+<a class="pdf" target="_blank" href="/dashboard/docs/install-wordpress.pdf">          Download PDF
+          <span>install-wordpress.pdf</span>
+</a>      </li>
+    </ul>
+    <article class="asciidoctor">
+        <aside>
+          <h3>Contents</h3>
+          <ol class="sections">
+              <li><a href="/dashboard/docs/install-wordpress.html#introduction">Introduction</a></li>
+              <li><a href="/dashboard/docs/install-wordpress.html#step_1_install_bitnami_wordpress_module_for_xampp">Step 1: Install Bitnami WordPress module for XAMPP</a></li>
+              <li><a href="/dashboard/docs/install-wordpress.html#step_2_test_wordpress">Step 2: Test WordPress</a></li>
+              <li><a href="/dashboard/docs/install-wordpress.html#step_3_create_an_editor_account_and_start_blogging">Step 3: Create an Editor Account and Start Blogging</a></li>
+          </ol>
+        </aside>
+      <h1>Get Started Quickly with WordPress</h1>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Although you might not have realized this, XAMPP comes with a number of <a href="https://www.apachefriends.org/add-ons.html">add-on applications</a>. These add-ons include <a href="https://www.drupal.org/">Drupal</a>, <a href="http://www.joomla.org/">Joomla!</a>, <a href="https://wordpress.com/">WordPress</a> and many other popular open source applications. The add-ons can be easily installed on top of XAMPP using a simple installation tool and are pre-configured to work out of the box, freeing you from the time and effort of downloading and configuring the applications separately.</p>
+</div>
+<div class="paragraph">
+<p>XAMPP add-ons are provided by <a href="https://bitnami.com/">Bitnami</a>, which specializes in pre-configured infrastructure and application stacks for native, virtual machine and cloud use. Bitnami stacks work the same way across platforms - this means that by using the WordPress Bitnami add-on instead of "rolling your own" WordPress configuration, you&#8217;re guaranteed that your WordPress blog will look and work the same way even if you later migrate it from your local XAMPP environment to a cloud server.</p>
+</div>
+<div class="paragraph">
+<p>In this article, I&#8217;ll walk you through the process of installing the Bitnami WordPress add-on for XAMPP, showing you how to quickly get started with one of the world&#8217;s most popular blogging platforms. Keep reading!
+== Assumptions and Prerequisites
+This tutorial doesn&#8217;t make a lot of assumptions, but the few that it does are important.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First, it assumes that you have a working XAMPP installation on Windows, and that your XAMPP installation (including MySQL/MariaDB) is currently running. In case you don&#8217;t have this, <a href="https://www.apachefriends.org/download.html">download and install XAMPP</a> and then, once it&#8217;s installed, check that it&#8217;s all working by browsing to <a href="http://localhost" class="bare">http://localhost</a>. You should see something like this:</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image01.png" alt="image01">
+</div>
+</div>
+<div class="paragraph">
+<p>You can also check that both MySQL/MariaDB and Apache are running using the XAMPP control panel icon in the Windows taskbar:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image02.png" alt="image02">
+</div>
+</div>
+</li>
+<li>
+<p>Second, it assumes that you&#8217;ve already downloaded the Windows WordPress add-on for XAMPP. In case you don&#8217;t have this, you can <a href="https://bitnami.com/stack/xampp#wordpress">download it from the XAMPP Add-ons page</a>. On Windows, the add-on is an executable that lets you click your way through key tasks such as configuring the WordPress administrator account and setting up WordPress email notifications.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Did you check both the boxes above? You’re good to begin!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_1_install_bitnami_wordpress_module_for_xampp">Step 1: Install Bitnami WordPress module for XAMPP</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can now begin installing WordPress on top of XAMPP by following these steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Launch the installer by double-clicking it. You might see a security warning about running the file, since it’s been downloaded from the Internet. Click "Run" to proceed.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image11.png" alt="image11">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Next, you should see a splash screen, followed by a prompt for installation language. The installer is available in nine languages, including English, Spanish, Simplified Chinese, Korean, German and Russian. Select your language and you&#8217;ll be transferred to the main setup wizard.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image12.png" alt="image12">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The WordPress add-on requires a pre-existing XAMPP installation. Select your XAMPP installation directory (usually, <em>C:\xampp</em>).</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image13.png" alt="image13">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Next, you&#8217;ll be prompted to set up the WordPress administrator account. Enter a user name, real name and email address for the WordPress administrator account.</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image14.png" alt="image14">
+</div>
+</div>
+<div class="paragraph">
+<p>You&#8217;ll also see three password fields. In the first field, enter the existing MySQL/MariaDB password for XAMPP; this  is needed by the setup wizard so that it can create the necessary WordPress tables in your MySQL/MariaDB database. In the remaining two fields, enter a password (minimum 6 characters) for the WordPress administrator account.</p>
+</div>
+</li>
+<li>
+<p>Next, enter a title for your WordPress blog. Don&#8217;t worry, you can change this later!</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image15.png" alt="image15">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>WordPress can optionally send you notifications on events, such as when someone comments on a post. The setup wizard lets you configure how these email notifications are sent out. You can either use a Gmail account or a custom mail server.</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image16.png" alt="image16">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you&#8217;re using a Gmail account, simply enter your complete Gmail address and account password. For security reasons, it is recommended that you set up a separate Gmail account for notifications, rather than using your regular Gmail address.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image17.png" alt="image17">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you don&#8217;t have a Gmail account or if you&#8217;d prefer to use a custom mail server, enter details for the mail server, such as the account username and password, SMTP server name and port, and security configuration.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image18.png" alt="image18">
+</div>
+</div>
+<div class="paragraph">
+<p>You&#8217;re almost done! Click Next a few times, decide whether you want to read more about Bitnami in a new browser window while the installation progresses, and the wizard will take care of the rest.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image19.png" alt="image19">
+</div>
+</div>
+<div class="paragraph">
+<p>Once installation is complete, you&#8217;ll see a success screen. Click "Finish" to exit the installation and launch WordPress.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image110.png" alt="image110">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_2_test_wordpress">Step 2: Test WordPress</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, WordPress is installed in your XAMPP installation directory, in the <em>apps/wordpress</em> subdirectory. The installation process will, by default, launch your browser and take you to the new WordPress blog anyway, but you can also access it directly at <a href="http://127.0.0.1/wordpress" class="bare">http://127.0.0.1/wordpress</a> or <a href="http://localhost/wordpress" class="bare">http://localhost/wordpress</a>. The screenshot below shows what you will typically see.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image21.png" alt="image21">
+</div>
+</div>
+<div class="paragraph">
+<p>To delete this sample post or to create a new post, you need to first log in to the WordPress dashboard. You can do this either by clicking the "Log in" link in the left navigation bar or by browsing to <a href="http://localhost/wordpress/wp-login.php" class="bare">http://localhost/wordpress/wp-login.php</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image22.png" alt="image22">
+</div>
+</div>
+<div class="paragraph">
+<p>Log in using the administrator account you created in the previous step.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image23.png" alt="image23">
+</div>
+</div>
+<div class="paragraph">
+<p>You should now arrive at the WordPress dashboard, which allows you to manage posts, pages and comments; customize your blog with themes and plugins; import and export content; manage navigation menus; add or delete new user accounts; and much more.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image24.png" alt="image24">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_3_create_an_editor_account_and_start_blogging">Step 3: Create an Editor Account and Start Blogging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a general rule, you shouldn&#8217;t use the administrator account for routine tasks, such as creating posts or replying to comments. So, one of the first things you should do is create a new user account with minimal privileges, which you can use for these routine tasks. To do this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select the "Users &#8594; Add New" menu option to create a new user account.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image31.png" alt="image31">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter a username, real name, password and other details for the account.</p>
+</li>
+<li>
+<p>Assign the new account the role of "Editor".</p>
+</li>
+<li>
+<p>Click the "Add New User" button to create the new user account.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image32.png" alt="image32">
+</div>
+</div>
+<div class="paragraph">
+<p>Once the account is created, use the "Log out" button (in the pop-up menu at the top left corner of the page) to log out. Then, log in using the new account you just created. You should return to the WordPress dashboard, but with a restricted set of tools.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image33.png" alt="image33">
+</div>
+</div>
+<div class="paragraph">
+<p>You can now add a new post using the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select the "Posts &#8594; Add New" menu option to create a new post.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image34.png" alt="image34">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enter a title and content for the post. You can use the formatting tools at the top of the content area to format your post and add hyperlinks or images.</p>
+</li>
+<li>
+<p>Optionally, choose the format and category for your post.</p>
+</li>
+<li>
+<p>Publish it immediately using the "Publish" button.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image35.png" alt="image35">
+</div>
+</div>
+<div class="paragraph">
+<p>And now, when you visit your blog&#8217;s front page, you should see your new post.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image36.png" alt="image36">
+</div>
+</div>
+<div class="paragraph">
+<p>Congratulations! You now have a working, fully-functional WordPress blog.</p>
+</div>
+<div class="paragraph">
+<p>You can keep your WordPress installation up-to-date with the WordPress automatic update feature. To access this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Log in to WordPress using the administrator account.</p>
+</li>
+<li>
+<p>Select the "Dashboard &#8594; Updates" menu item.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/install-wordpress/image37.png" alt="image37">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Review the resulting page to see if WordPress needs an update. If an update it available, you can install it by clicking the "Update Now" button. You can also re-install WordPress if needed with the "Re-install Now" button.
+== Learn More
+To learn more about WordPress, XAMPP and Bitnami, use the links below:</p>
+</li>
+<li>
+<p><a href="https://bitnami.com/">Bitnami</a></p>
+</li>
+<li>
+<p><a href="https://bitnami.com/cloud">Bitnami Cloud Hosting</a></p>
+</li>
+<li>
+<p><a href="https://www.apachefriends.org/">XAMPP</a></p>
+</li>
+<li>
+<p><a href="https://bitnami.com/stack/xampp">Bitnami WordPress Add-On for XAMPP</a></p>
+</li>
+<li>
+<p><a href="https://make.wordpress.org/support/user-manual/">WordPress User Manual</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+    </article>
+  </div>
+</div>
+
+    </div>
+
+    <footer>
+      <div class="row">
+        <div class="large-12 columns">
+          <div class="row">
+            <div class="large-8 columns">
+              <ul class="social">
+  <li class="twitter"><a href="https://twitter.com/apachefriends">Follow us on Twitter</a></li>
+  <li class="facebook"><a href="https://www.facebook.com/we.are.xampp">Like us on Facebook</a></li>
+  <li class="google"><a href="https://plus.google.com/+xampp/posts">Add us to your G+ Circles</a></li>
+</ul>
+
+              <ul class="inline-list">
+                <li><a href="https://www.apachefriends.org/blog.html">Blog</a></li>
+                <li><a href="https://www.apachefriends.org/privacy_policy.html">Privacy Policy</a></li>
+                <li>
+<a target="_blank" href="http://www.fastly.com/">                    CDN provided by
+                    <img width="48" data-2x="/dashboard/images/fastly-logo@2x.png" src="/dashboard/images/fastly-logo.png" />
+</a>                </li>
+              </ul>
+            </div>
+            <div class="large-4 columns">
+              <p class="text-right">Copyright (c) 2017, Apache Friends</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JS Libraries -->
+    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/dashboard/javascripts/all.js" type="text/javascript"></script>
+  </body>
+</html>

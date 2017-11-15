@@ -1,3 +1,4 @@
+// JCL_DEBUG_EXPERT_INSERTJDBG OFF
 program xampp_control3;
 
 {$R *.dres}
@@ -26,7 +27,9 @@ uses
   uConfigUserDefined in 'uConfigUserDefined.pas' {fConfigUserDefined},
   uTomcat in 'uTomcat.pas',
   uLogOptions in 'uLogOptions.pas' {Form1},
-  uServiceSettings in 'uServiceSettings.pas' {fServiceSettings};
+  uServiceSettings in 'uServiceSettings.pas' {fServiceSettings},
+  uProcesses_new in 'uProcesses_new.pas';//,
+  //uExceptionDialog in 'uExceptionDialog.pas' {ExceptionDialog};
 
 {$R *.res}
 
@@ -49,7 +52,7 @@ begin
   begin
     Config.Language := GetSystemLangShort;
     Application.CreateForm(TfLanguage, fLanguage);
-    fLanguage.ShowModal;
+  fLanguage.ShowModal;
     fLanguage.Free;
     SaveSettings;
   end;

@@ -9,7 +9,7 @@ uses
 
 type
   TfLogOptions = class(TForm)
-    FontDialog1: TFontDialog;
+    FontDialog: TFontDialog;
     lblLogFont: TLabel;
     tLogFont: TEdit;
     lblLogFontSize: TLabel;
@@ -18,8 +18,8 @@ type
     bSave: TBitBtn;
     bCancel: TBitBtn;
     procedure bSelectClick(Sender: TObject);
-    procedure FontDialog1Apply(Sender: TObject; Wnd: HWND);
-    procedure FontDialog1Close(Sender: TObject);
+    procedure FontDialogApply(Sender: TObject; Wnd: HWND);
+    procedure FontDialogClose(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure bCancelClick(Sender: TObject);
@@ -44,28 +44,28 @@ end;
 
 procedure TfLogOptions.bSaveClick(Sender: TObject);
 begin
-  Config.LogSettings.Font := FontDialog1.Font.Name;
-  Config.LogSettings.FontSize := FontDialog1.Font.Size;
-  fMain.AdjustLogFont(FontDialog1.Font.Name, FontDialog1.Font.Size);
+  Config.LogSettings.Font := FontDialog.Font.Name;
+  Config.LogSettings.FontSize := FontDialog.Font.Size;
+  fMain.AdjustLogFont(FontDialog.Font.Name, FontDialog.Font.Size);
   SaveSettings;
   Close;
 end;
 
 procedure TfLogOptions.bSelectClick(Sender: TObject);
 begin
-  FontDialog1.Execute();
+  FontDialog.Execute();
 end;
 
-procedure TfLogOptions.FontDialog1Apply(Sender: TObject; Wnd: HWND);
+procedure TfLogOptions.FontDialogApply(Sender: TObject; Wnd: HWND);
 begin
-  tLogFont.Text := FontDialog1.Font.Name;
-  tLogFontSize.Text := IntToStr(FontDialog1.Font.Size);
+  tLogFont.Text := FontDialog.Font.Name;
+  tLogFontSize.Text := IntToStr(FontDialog.Font.Size);
 end;
 
-procedure TfLogOptions.FontDialog1Close(Sender: TObject);
+procedure TfLogOptions.FontDialogClose(Sender: TObject);
 begin
-  tLogFont.Text := FontDialog1.Font.Name;
-  tLogFontSize.Text := IntToStr(FontDialog1.Font.Size);
+  tLogFont.Text := FontDialog.Font.Name;
+  tLogFontSize.Text := IntToStr(FontDialog.Font.Size);
 end;
 
 procedure TfLogOptions.FormCreate(Sender: TObject);
@@ -77,8 +77,8 @@ procedure TfLogOptions.FormShow(Sender: TObject);
 begin
   tLogFont.Text := Config.LogSettings.Font;
   tLogFontSize.Text := IntToStr(Config.LogSettings.FontSize);
-  FontDialog1.Font.Name := Config.LogSettings.Font;
-  FontDialog1.Font.Size := Config.LogSettings.FontSize;
+  FontDialog.Font.Name := Config.LogSettings.Font;
+  FontDialog.Font.Size := Config.LogSettings.FontSize;
 end;
 
 end.

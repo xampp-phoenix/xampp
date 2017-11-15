@@ -31,8 +31,10 @@
   } else {
   	$dirpartwampp=$partwampp;
   }
-	$awkpart = str_replace("&", "\\\\&", eregi_replace ("\\\\", "\\\\", $dirpartwampp)); //Fix by Wiedmann
-	$awkpartslash = str_replace("&", "\\\\&", ereg_replace ("\\\\", "/", $dirpartwampp)); //Fix by Wiedmann
+
+	$awkpart = str_replace("&", "\\\\&", preg_replace ("/\\\\/i", "\\\\\\\\", $dirpartwampp)); //Fix by Wiedmann
+	$awkpartdoublebackslash = str_replace("&", "\\\\&", preg_replace ("/\\\\/i", "\\\\\\\\\\\\\\\\", $dirpartwampp)); //Fix by Wiedmann
+	$awkpartslash = str_replace("&", "\\\\&", preg_replace ("/\\\\/", "/", $dirpartwampp)); //Fix by Wiedmann
 
   	
 	// Only debug
@@ -44,7 +46,7 @@
 				          // exit;			
 				
   $phpdir = $partwampp;
-	$dir = ereg_replace("\\\\", "/", $partwampp);
+	$dir = preg_replace("/\\\\/", "/", $partwampp);
 	$ppartition = "$partition:";
 
 	/// I need the install.sys + update.sys for more xampp informations
@@ -61,6 +63,7 @@
 
 	/// XAMPP main directrory is ...
 	$substit = "\\\\\\\\xampp";
+	$doublesubstit = "\\\\\\\\\\\\\\\\xampp";
 	$substitslash = "/xampp";
 
 	/// Globale variables
@@ -71,6 +74,7 @@
 	$awkexe = ".\install\awk.exe";
 	$awk = ".\install\config.awk";
 	$awknewdir = "\"".$awkpart."\"";
+	$awkdoublebackslashdir = "\"".$awkpartdoublebackslash."\"";
 	$awkslashdir = "\"".$awkpartslash."\"";
 	if (file_exists("$partwampp\htdocs\\xampp\.version")) {
 	$handle = fopen("$partwampp\htdocs\\xampp\.version","r");
@@ -114,13 +118,14 @@
 		file_put_contents($installsysroot, implode('', $sysroot));
 
 		list($left, $right) = preg_split ("/ = /", $sysroot[0]);
-		$right = eregi_replace ("\r\n", "", $right);
+		$right = preg_replace ("/\r\n/i", "", $right);
 		if (strtolower($partwampp) == strtolower($right)) {
 			$xamppinstaller = "nothingtodo";
 		} else {
 			$xamppinstaller = "newpath";
-			$substit = eregi_replace ("\\\\", "\\\\\\\\", $right);
-			$substitslash = eregi_replace("\\\\", "/", $right);
+			$substit = preg_replace ("/\\\\/i", "\\\\\\\\\\\\\\\\", $right);
+			$doublesubstit = preg_replace ("/\\\\/i", "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", $right);
+			$substitslash = preg_replace("/\\\\/i", "/", $right);
 		}
 	} else {
 		$installsys = fopen($installsysroot, 'w');
@@ -154,9 +159,9 @@
 					$zeile = fgets($datei, 255);
 					$updatezeile[] = $zeile;
 					@list($left, $right) = preg_split("/=/", $updatezeile[0]);
-					$left = eregi_replace(" ", "", $left);
-					$left = eregi_replace("\r\n", "", $left);
-					$right = eregi_replace("\r\n", "", $right);
+					$left = preg_replace("/\s/i", "", $left);
+					$left = preg_replace("/\r\n/i", "", $left);
+					$right = preg_replace("/\r\n/i", "", $right);
 					$update = $left;
 					$update = strtolower($update);
 					$updateversion = trim($right);
@@ -196,10 +201,10 @@
 					{
 						list ($left, $right) = preg_split ("/=/", $newzeile[$z]);
 						
-						$left = eregi_replace (" ","",$left);
-						$left = eregi_replace ("\r\n","",$left);
-						$right = trim(eregi_replace ("\r\n","",$right));
-						$currentversionzahl = eregi_replace ("\.","",sprintf('%0-6s',$right)); // Fix by Wiedmann
+						$left = preg_replace ("/\s/i","",$left);
+						$left = preg_replace ("/\r\n/i","",$left);
+						$right = trim(preg_replace ("/\r\n/i","",$right));
+						$currentversionzahl = preg_replace ("/\./i","",sprintf('%0-6s',$right)); // Fix by Wiedmann
 						if ($currentversionzahl == 0 )
 						{
 							$updatemake="makenew"; // New installation
@@ -305,6 +310,7 @@
 
 	$scount = count($slashrootreal);
 	$bcount = count($backslashrootreal);
+	$dbcount = count($doublebackslashrootreal);
 
 	/////////////////// xampp path is changing ///////////////////
 	if ($xamppinstaller == "newpath") {
@@ -345,10 +351,10 @@
 		while (!feof($datei)) {
 			$zeile = fgets($datei, 255);
 			@list($left, $right) = preg_split ("/=/", $zeile);
-			$left = eregi_replace(" ", "", $left);
-			$left = eregi_replace("\r\n", "", $left);
-			$right = eregi_replace("\r\n", "", $right);
-			$right = eregi_replace("\.", "", $right);
+			$left = preg_replace("/\s/i", "", $left);
+			$left = preg_replace("/\r\n/i", "", $left);
+			$right = preg_replace("/\r\n/i", "", $right);
+			$right = preg_replace("/\./i", "", $right);
 			if (strtolower($right) > 0) {
 				if (strtolower($left) == "perl") {
 					$perlactive = "yes";
@@ -394,7 +400,7 @@
 				$datei = fopen($confhttpdroot, 'w');
 				if ($datei) {
 					for ($z = 0; $z < $i + 1; $z++) {
-						if (eregi("Win32DisableAcceptEx", $newzeile[$z])) {
+						if (preg_match("/Win32DisableAcceptEx/i", $newzeile[$z])) {
 							fputs($datei, $includewin);
 						} else {
 							fputs($datei, $newzeile[$z]);
@@ -418,7 +424,7 @@
 				$datei = fopen($confhttpdroot, 'w');
 				if ($datei) {
 					for ($z = 0; $z < $i + 1; $z++) {
-						if (eregi("Win32DisableAcceptEx", $newzeile[$z])) {
+						if (preg_match("/Win32DisableAcceptEx/i", $newzeile[$z])) {
 							fputs($datei, $includewin);
 						} else {
 							fputs($datei, $newzeile[$z]);
@@ -450,7 +456,7 @@
 				$upbackslashrootreal = $backslashrootreal[$configname].$configname;
 
 			}
-			$backslashawk = eregi_replace("\\\\", "\\\\", $upbackslashrootreal);
+			$backslashawk = preg_replace("/\\\\/i", "\\\\\\\\", $upbackslashrootreal);
 			$backslashawk = "\"".$backslashawk;
 
 			$awkconfig = $backslashawk."\"";
@@ -469,11 +475,69 @@
 				unlink($configrealnew);
 			}
 
-			if ($updatemake == "doppelt") {
+			if ($updatemake == "doppelt") {;
 				break;
 			}
       // echo "DEBUG: Working with $awkconfig now ... \r\n";
 			$awkrealm = $awkexe." -v DIR=".$awknewdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$substit." -f ".$awk;
+			if (file_exists($awk) && file_exists($awkexe) && file_exists($configreal)) {
+				$handle = popen($awkrealm, 'w'); // Fix by Wiedmann
+				pclose($handle);
+			}
+
+			if (file_exists($configtemp) && file_exists($configreal)) {
+				if (!@copy($configtemp, $configreal)) {
+				} else {
+					unlink($configtemp);
+				}
+			}
+		}
+
+		$doublesubstit = "\"".$doublesubstit."\"";
+		$trans = array(
+			"^" => "\\\\^",
+			"." => "\\\\.",
+			"[" => "\\\\[",
+			"$" => "\\\\$",
+			"(" => "\\\\(",
+			")" => "\\\\)",
+			"+" => "\\\\+",
+			"{" => "\\\\{"
+		);
+		$doublesubstit = strtr($doublesubstit, $trans);
+		for ($i = 0; $i <= $dbcount; $i++) {
+			///// 08.08.05 Vogelgesang: For all files with identical file names /////
+			if ($doublebackslash[$i] == "") {
+				$updoublebackslashrootreal = $doublebackslashrootreal[$i];
+			} else {
+				$configname = $doublebackslash[$i];
+				$updoublebackslashrootreal = $doublebackslashrootreal[$configname].$configname;
+
+			}
+			$doublebackslashawk = preg_replace("/\\\\/i", "\\\\\\\\", $updoublebackslashrootreal);
+			$doublebackslashawk = "\"".$doublebackslashawk;
+
+			$awkconfig = $doublebackslashawk."\"";
+			$awkconfigtemp = $doublebackslashawk."temp\"";
+			$configreal = $updoublebackslashrootreal;
+			$configtemp = $updoublebackslashrootreal."temp";
+
+			///////////// Section SET  NEW configfiles for addons/update OR DELETE /////////////
+			$configrealnew = $updoublebackslashrootreal.".new";
+			if (!file_exists($configreal) && file_exists($configrealnew)) {
+				if (!@copy($configrealnew, $configreal)) {
+				} else {
+					unlink($configrealnew);
+				}
+			} elseif (file_exists($configrealnew)) {
+				unlink($configrealnew);
+			}
+
+			if ($updatemake == "doppelt") {
+				break;
+			}
+      // echo "DEBUG: Working with $awkconfig now ... \r\n";
+			$awkrealm = $awkexe." -v DIR=".$awkdoublebackslashdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$doublesubstit." -f ".$awk;
 
 			if (file_exists($awk) && file_exists($awkexe) && file_exists($configreal)) {
 				$handle = popen($awkrealm, 'w'); // Fix by Wiedmann
@@ -508,7 +572,7 @@
 				$configname = $slash[$i];
 				$upslashrootreal = $slashrootreal[$configname].$configname;
 			}
-			$slashawk = eregi_replace("\\\\", "\\\\", $upslashrootreal);
+			$slashawk = preg_replace("/\\\\/i", "\\\\\\\\", $upslashrootreal);
 			$slashawk = "\"".$slashawk;
 			$awkconfig = $slashawk."\"";
 			$awkconfigtemp = $slashawk."temp\"";
@@ -561,7 +625,7 @@
 			$datei = fopen($installsysroot, 'w');
 			if ($datei) {
 				for ($z = 0; $z < $i + 1; $z++) {
-					if (eregi("DIR", $newzeile[$z])) {
+					if (preg_match("/DIR/i", $newzeile[$z])) {
 						$includenewdir = "DIR = $partwampp\r\n";
 						fputs($datei, $includenewdir);
 					} else {
@@ -725,7 +789,7 @@
 			$datei = fopen($confhttpdroot, 'w');
 			if ($datei) {
 				for ($z = 0; $z < $i + 1; $z++) {
-					if (eregi($searchstring, $newzeile[$z])) {
+					if (preg_match('/'.$searchstring.'/i', $newzeile[$z])) {
 						fputs($datei, $include);
 					} else {
 						fputs($datei, $newzeile[$z]);

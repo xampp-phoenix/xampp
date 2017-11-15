@@ -168,15 +168,15 @@ object fLogOptions: TfLogOptions
     TabOrder = 4
     OnClick = bCancelClick
   end
-  object FontDialog1: TFontDialog
-    OnClose = FontDialog1Close
+  object FontDialog: TFontDialog
+    OnClose = FontDialogClose
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -17
     Font.Name = 'Arial'
     Font.Style = []
-    OnApply = FontDialog1Apply
+    OnApply = FontDialogApply
     Left = 224
-    Top = 16
+    Top = 8
   end
 end

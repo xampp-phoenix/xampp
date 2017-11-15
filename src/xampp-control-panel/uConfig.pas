@@ -11,7 +11,7 @@ type
   TfConfig = class(TForm)
     bSelectEditor: TBitBtn;
     eEditor: TEdit;
-    OpenDialog1: TOpenDialog;
+    OpenDialog: TOpenDialog;
     lblEditor: TLabel;
     bSave: TBitBtn;
     bAbort: TBitBtn;
@@ -33,6 +33,7 @@ type
     bLogSettings: TButton;
     bServiceSettings: TButton;
     cbASTomcat: TCheckBox;
+    cbMinimized: TCheckBox;
     procedure bAbortClick(Sender: TObject);
     procedure bSaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -66,11 +67,11 @@ begin
   dp := ExtractFilePath(eBrowser.Text);
   if dp <> '' then
   begin
-    OpenDialog1.InitialDir := dp;
-    OpenDialog1.FileName := ExtractFileName(eBrowser.Text);
+    OpenDialog.InitialDir := dp;
+    OpenDialog.FileName := ExtractFileName(eBrowser.Text);
   end;
-  if OpenDialog1.Execute then
-    eBrowser.Text := OpenDialog1.FileName;
+  if OpenDialog.Execute then
+    eBrowser.Text := OpenDialog.FileName;
 end;
 
 procedure TfConfig.bSelectEditorClick(Sender: TObject);
@@ -80,11 +81,11 @@ begin
   dp := ExtractFilePath(eEditor.Text);
   if dp <> '' then
   begin
-    OpenDialog1.InitialDir := dp;
-    OpenDialog1.FileName := ExtractFileName(eEditor.Text);
+    OpenDialog.InitialDir := dp;
+    OpenDialog.FileName := ExtractFileName(eEditor.Text);
   end;
-  if OpenDialog1.Execute then
-    eEditor.Text := OpenDialog1.FileName;
+  if OpenDialog.Execute then
+    eEditor.Text := OpenDialog.FileName;
 end;
 
 procedure TfConfig.bServiceSettingsClick(Sender: TObject);
@@ -120,6 +121,7 @@ begin
   Config.DebugLevel := cbDebugDetails.ItemIndex;
   Config.EnableChecks.CheckDefaultPorts := cbCheckDefaultPorts.Checked;
   Config.TomcatVisible := cbTomcatVisible.Checked;
+  Config.Minimized := cbMinimized.Checked;
 
   Config.ASApache := cbASApache.Checked;
   Config.ASMySQL := cbASMySQL.Checked;
@@ -159,6 +161,7 @@ begin
   cbDebugDetails.ItemIndex := Config.DebugLevel;
   cbCheckDefaultPorts.Checked := Config.EnableChecks.CheckDefaultPorts;
   cbTomcatVisible.Checked := Config.TomcatVisible;
+  cbMinimized.Checked := Config.Minimized;
 
   cbASApache.Checked := Config.ASApache;
   cbASMySQL.Checked := Config.ASMySQL;

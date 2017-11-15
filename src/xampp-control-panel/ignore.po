@@ -1,8 +1,8 @@
 #  Doesn't have any letters
 #. fMain..puSystray..N2..Caption
-#: uMain.dfm:3000
+#: uMain.dfm:3009
 #. fMain..puSystray..N1..Caption
-#: uMain.dfm:3043
+#: uMain.dfm:3052
 msgid "-"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgstr ""
 #: uLogOptions.dfm:96
 #. fLogOptions..bCancel..Font.Name
 #: uLogOptions.dfm:138
-#. fLogOptions..FontDialog1..Font.Name
+#. fLogOptions..FontDialog..Font.Name
 #: uLogOptions.dfm:176
 #. fMain..Font.Name
 #: uMain.dfm:12
@@ -83,22 +83,22 @@ msgstr ""
 #: uMain.dfm:1163
 #. fMain..gbModules..lPorts..Font.Name
 #: uMain.dfm:1181
-#. fMain..gbModules..Label1..Font.Name
+#. fMain..gbModules..lServices..Font.Name
 #: uMain.dfm:1307
-#. fMain..gbModules..Label2..Font.Name
+#. fMain..gbModules..lModules..Font.Name
 #: uMain.dfm:1325
-#. fMain..gbModules..Label3..Font.Name
+#. fMain..gbModules..lActions..Font.Name
 #: uMain.dfm:1342
 #. fMain..bQuit..Font.Name
-#: uMain.dfm:1792
+#: uMain.dfm:1801
 #. fMain..bHelp..Font.Name
-#: uMain.dfm:1838
+#: uMain.dfm:1847
 #. fMain..bExplorer..Font.Name
-#: uMain.dfm:1884
+#: uMain.dfm:1893
 #. fMain..bNetstat..Font.Name
-#: uMain.dfm:1930
+#: uMain.dfm:1939
 #. fMain..bXamppShell..Font.Name
-#: uMain.dfm:1976
+#: uMain.dfm:1985
 #. fNetstat..Font.Name
 #: uNetstat.dfm:12
 #. fNetstat..lvSockets..Font.Name
@@ -155,6 +155,30 @@ msgid "Arial"
 msgstr ""
 
 #  Doesn't look like text
+#. Programmer's name: JpgImage_1 RCDATA
+#: xampp_control3Resource.rc:1
+msgid "gfx\\150px-Flag_of_Germany.svg.jpg"
+msgstr ""
+
+#  Doesn't look like text
+#. Programmer's name: JpgImage_2 RCDATA
+#: xampp_control3Resource.rc:2
+msgid "gfx\\150px-Flag_of_the_United_States.svg.jpg"
+msgstr ""
+
+#  Doesn't look like text
+#. Programmer's name: Bitmap_3 BITMAP
+#: xampp_control3Resource.rc:4
+msgid "gfx\\Checked2.bmp"
+msgstr ""
+
+#  Doesn't look like text
+#. Programmer's name: Bitmap_4 BITMAP
+#: xampp_control3Resource.rc:5
+msgid "gfx\\Open16x16.bmp"
+msgstr ""
+
+#  Doesn't look like text
 #. fHelp..lblHelpEngLink..Caption
 #: uHelp.dfm:94
 msgid "http://www.apachefriends.org/f/viewforum.php?f=16"
@@ -167,10 +191,7 @@ msgid "http://www.apachefriends.org/f/viewforum.php?f=4"
 msgstr ""
 
 #  Doesn't look like text
-#: uApache.pas:266
-#: uApache.pas:290
-#: uApache.pas:325
-#: uMain.pas:1078
+#: uMain.pas:1081
 msgid "http://www.microsoft.com/download/en/details.aspx?id=5582"
 msgstr ""
 
@@ -178,7 +199,7 @@ msgstr ""
 #. fConfig..Font.Name
 #: uConfig.dfm:11
 #. fConfig..grpAutostart..lblAutostart..Font.Name
-#: uConfig.dfm:297
+#: uConfig.dfm:304
 msgid "Tahoma"
 msgstr ""
 

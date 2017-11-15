@@ -1,4 +1,5 @@
 @echo off
+cd /D %~dp0
 echo Mysql shutdowm ...
 apache\bin\pv -f -k mysqld.exe -q
 

@@ -3,7 +3,7 @@ unit uTools;
 interface
 
 uses GnuGettext, Classes, Graphics, Windows, SysUtils, TlHelp32, ShellAPI,
-  Forms, Dialogs, IniFiles, VersInfo, Character, JCLSecurity, StrUtils;
+  Forms, Dialogs, IniFiles, Character, JCLSecurity, StrUtils, JCLFileUtils;
 
 const
   cRunningColor = 200 * $10000 + 255 * $100 + 200;
@@ -11,7 +11,7 @@ const
   cStoppedColor = clBtnFace;
   cErrorColor = Graphics.clRed;
 
-  cCompileDate = 'September 20th 2012';
+  cCompileDate = 'Nov 12th 2015';
   cr = #13#10;
 
 type
@@ -32,6 +32,7 @@ type
     DebugLevel: integer;
     Language: string;
     TomcatVisible: boolean;
+    Minimized: boolean;
 
     ASApache: boolean;
     ASMySQL: boolean;
@@ -42,6 +43,14 @@ type
     EnableChecks: record
       Runtimes: boolean;
       CheckDefaultPorts: boolean;
+    end;
+
+    ModuleNames: record
+      Apache: string;
+      MySQL: string;
+      FileZilla: string;
+      Mercury: string;
+      Tomcat: string;
     end;
 
     EnableModules: record
@@ -127,15 +136,12 @@ type
 
 var
   WinVersion: TWinVersion;
-  CurrentUser: string;
   BaseDir: string;
-  CachedComputerName: string;
   Config: tConfig;
   IniFileName: string;
-  dfsVersionInfoResource1: TdfsVersionInfoResource;
   GlobalProgramversion: string;
   Closing: Boolean;
-  pflags: TFixedFileInfoFlags;
+  appInfo: TJclFileVersionInfo;
 
 procedure LoadSettings;
 procedure SaveSettings;
@@ -143,17 +149,13 @@ procedure GetSubDirectories(const directory : string; list : TStrings);
 function FindMatchText(Strings: TStrings; const SubStr: string): Integer;
 function GetWinDir: string;
 function IsWindowsAdmin: boolean;
-function IntToServiceApp(b: boolean): string;
-function GetCurrentUserName: string;
-function GetWinVersion: TWinVersion;
 function RunProcess(FileName: string; ShowCmd: DWORD; wait: boolean; ProcID: PCardinal = nil): Longword;
 function ExecuteFile(FileName, Params, DefaultDir: string; ShowCmd: integer): THandle;
 function ShellExecute_AndWait(Operation, FileName, Parameter, Directory: string; Show: Word; bWait: Boolean): Longint;
 function RunAsAdmin(FileName, parameters: string; ShowCmd: integer): Cardinal;
 function Cardinal2IP(C: Cardinal): string;
-function GetComputerName: string;
-function SystemErrorMessage(WinErrorCode: Cardinal): string;
 function GetSystemLangShort: string;
+function SystemErrorMessage(WinErrorCode: Cardinal): string;
 function TerminateProcessByID(ProcessID: Cardinal): Boolean;
 function RemoveWhiteSpace(const s: string): string;
 function RemoveDuplicatePorts(s: string): string;
@@ -161,16 +163,16 @@ function CompareStrings(List: TStringList; Index1, Index2: Integer): Integer;
 
 implementation
 
+uses uMain;
+
 procedure LoadSettings;
 var
   mi: TMemIniFile;
 begin
-  // fMain.AddLog('Loading settings from configuration file: "'+IniFileName+'"',ltDebug);
-
   mi := nil;
   try
     mi := TMemIniFile.Create(IniFileName);
-    Config.Edition := mi.ReadString('Common', 'Edition', 'Beta 6');
+    Config.Edition := mi.ReadString('Common', 'Edition', '');
     Config.EditorApp := mi.ReadString('Common', 'Editor', 'notepad.exe');
     Config.BrowserApp := mi.ReadString('Common', 'Browser', '');
     Config.ShowDebug := mi.ReadBool('Common', 'Debug', false);
@@ -179,6 +181,7 @@ begin
     Config.TomcatVisible := mi.ReadBool('Common', 'TomcatVisible', true);
     Config.LogSettings.Font := mi.ReadString('LogSettings', 'Font', 'Arial');
     Config.LogSettings.FontSize := mi.ReadInteger('LogSettings', 'FontSize', 10);
+    Config.Minimized := mi.ReadBool('Common', 'Minimized', false);
 
     Config.WindowSettings.Left := mi.ReadInteger('WindowSettings', 'Left', -1);
     Config.WindowSettings.Top := mi.ReadInteger('WindowSettings', 'Top', -1);
@@ -193,6 +196,12 @@ begin
 
     Config.EnableChecks.Runtimes := mi.ReadBool('Checks', 'CheckRuntimes', true);
     Config.EnableChecks.CheckDefaultPorts := mi.ReadBool('Checks', 'CheckDefaultPorts', true);
+
+    Config.ModuleNames.Apache := mi.ReadString('ModuleNames', 'Apache', 'Apache');
+    Config.ModuleNames.MySQL := mi.ReadString('ModuleNames', 'MySQL', 'MySQL');
+    Config.ModuleNames.FileZilla := mi.ReadString('ModuleNames', 'FileZilla', 'FileZilla');
+    Config.ModuleNames.Mercury := mi.ReadString('ModuleNames', 'Mercury', 'Mercury');
+    Config.ModuleNames.Tomcat := mi.ReadString('ModuleNames', 'Tomcat', 'Tomcat');
 
     Config.EnableModules.Apache := mi.ReadBool('EnableModules', 'Apache', true);
     Config.EnableModules.MySQL := mi.ReadBool('EnableModules', 'MySQL', true);
@@ -267,6 +276,7 @@ begin
     mi.WriteInteger('Common', 'Debuglevel', Config.DebugLevel);
     mi.WriteString('Common', 'Language', Config.Language);
     mi.WriteBool('Common', 'TomcatVisible', Config.TomcatVisible);
+    mi.WriteBool('Common', 'Minimized', Config.Minimized);
 
     mi.WriteString('LogSettings', 'Font', Config.LogSettings.Font);
     mi.WriteInteger('LogSettings', 'FontSize', Config.LogSettings.FontSize);
@@ -284,6 +294,12 @@ begin
 
     mi.WriteBool('Checks', 'CheckRuntimes', Config.EnableChecks.Runtimes);
     mi.WriteBool('Checks', 'CheckDefaultPorts', Config.EnableChecks.CheckDefaultPorts);
+
+    mi.WriteString('ModuleNames', 'Apache', Config.ModuleNames.Apache);
+    mi.WriteString('ModuleNames', 'MySQL', Config.ModuleNames.MySQL);
+    mi.WriteString('ModuleNames', 'FileZilla', Config.ModuleNames.FileZilla);
+    mi.WriteString('ModuleNames', 'Mercury', Config.ModuleNames.Mercury);
+    mi.WriteString('ModuleNames', 'Tomcat', Config.ModuleNames.Tomcat);
 
     mi.WriteBool('EnableModules', 'Apache', Config.EnableModules.Apache);
     mi.WriteBool('EnableModules', 'MySQL', Config.EnableModules.MySQL);
@@ -351,12 +367,18 @@ var
   hProcess : THandle;
 begin
   Result := False;
-  hProcess := OpenProcess(PROCESS_TERMINATE,False,ProcessID);
-  if hProcess > 0 then
+  hProcess := 0;
   try
-    Result := Windows.TerminateProcess(hProcess,0);
-  finally
-    CloseHandle(hProcess);
+    try
+      hProcess := OpenProcess(PROCESS_TERMINATE,False,ProcessID);
+      if hProcess > 0 then
+        Result := Windows.TerminateProcess(hProcess,0);
+    finally
+      if hProcess <> 0 then
+        CloseHandle(hProcess);
+    end;
+  except
+    fMain.AddLog('Tools', Format('EXCEPTION: Problem terminating PID %d',[ProcessID]), ltError);
   end;
 end;
 
@@ -372,9 +394,14 @@ function GetWinDir: string;
 var
   Buffer: array[0..MAX_PATH] of Char;
 begin
-   GetWindowsDirectory(Buffer, MAX_PATH - 1);
-   SetLength(Result, StrLen(Buffer));
-   Result := Buffer;
+  try
+    GetWindowsDirectory(Buffer, MAX_PATH - 1);
+    SetLength(Result, StrLen(Buffer));
+    Result := Buffer;
+  except
+    fMain.AddLog('Tools', 'EXCEPTION: Problem getting Windows directory', ltError);
+    Result := '';
+  end;
 end;
 
 procedure GetSubDirectories(const directory : string; list : TStrings);
@@ -452,36 +479,8 @@ begin
 end;
 
 function IsWindowsAdmin: boolean;
-//type
-//  TIsUserAnAdminFunc = function(): BOOL; stdcall;
-//var
-//  Shell32DLL: THandle;
-//  IsUserAnAdminFunc: TIsUserAnAdminFunc;
 begin
   Result := IsAdministrator()
-//  Result := true;
-//  if WinVersion.Major < 6 then
-//    exit; // older than vista? just return TRUE
-//
-//  Shell32DLL := LoadLibrary('shell32.dll');
-//  try
-//    if Shell32DLL <> 0 then
-//    begin
-//      @IsUserAnAdminFunc := GetProcAddress(Shell32DLL, 'IsUserAnAdmin');
-//      if Assigned(@IsUserAnAdminFunc) then
-//        Result := IsUserAnAdminFunc();
-//    end;
-//  except
-//  end;
-//  FreeLibrary(Shell32DLL);
-end;
-
-function IntToServiceApp(b: boolean): string;
-begin
-  if b then
-    Result := _('Service')
-  else
-    Result := _('Application')
 end;
 
 function SystemErrorMessage(WinErrorCode: Cardinal): string;
@@ -499,79 +498,45 @@ begin
   end;
 end;
 
-function GetCurrentUserName: string;
-const
-  cnMaxUserNameLen = 254;
-var
-  sUserName: string;
-  dwUserNameLen: DWORD;
-begin
-  dwUserNameLen := cnMaxUserNameLen - 1;
-  SetLength(sUserName, cnMaxUserNameLen);
-  GetUserName(PChar(sUserName), dwUserNameLen);
-  SetLength(sUserName, dwUserNameLen);
-  Result := sUserName;
-end;
-
-function GetWinVersion: TWinVersion;
-var
-  osVerInfo: TOSVersionInfo;
-  s: string;
-begin
-  osVerInfo.dwOSVersionInfoSize := SizeOf(TOSVersionInfo);
-  if GetVersionEx(osVerInfo) then
-  begin
-    Result.WinPlatForm := osVerInfo.dwPlatformId;
-    Result.Major := osVerInfo.dwMajorVersion;
-    Result.Minor := osVerInfo.dwMinorVersion;
-    s := osVerInfo.szCSDVersion;
-    if s <> '' then
-      s := ' - ' + s;
-
-    Result.WinVersion := Format('%d.%d (build %d)%s', [osVerInfo.dwMajorVersion, osVerInfo.dwMinorVersion, osVerInfo.dwBuildNumber, s]);
-  end;
-end;
-
 function RunProcess(FileName: string; ShowCmd: DWORD; wait: boolean; ProcID: PCardinal = nil): Longword;
 var
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
-  //dwI: DWORD;
 begin
   Result := 0;
   FillChar(StartupInfo, SizeOf(StartupInfo), #0);
   StartupInfo.cb := SizeOf(StartupInfo);
   StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_FORCEONFEEDBACK;
   StartupInfo.wShowWindow := ShowCmd;
-  if not CreateProcess(nil, @FileName[1], nil, nil, false, CREATE_NEW_CONSOLE or NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo) then
-    //Result := WAIT_FAILED
-    GetExitCodeProcess(ProcessInfo.hProcess, Result)
-    //Result := GetLastError
-  else
-  begin
-    if wait = false then
+  try
+    try
+    if not CreateProcess(nil, @FileName[1], nil, nil, false, CREATE_NEW_CONSOLE or NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo) then
+      GetExitCodeProcess(ProcessInfo.hProcess, Result)
+    else
     begin
-      if ProcID <> nil then
-        ProcID^ := ProcessInfo.dwProcessId;
+      if wait = false then
+      begin
+        if ProcID <> nil then
+          ProcID^ := ProcessInfo.dwProcessId;
+        GetExitCodeProcess(ProcessInfo.hProcess, Result);
+        if Result = 259 then // No Information Return Code
+          Result := 0;
+        exit;
+      end;
+      WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
       GetExitCodeProcess(ProcessInfo.hProcess, Result);
-      if Result = 259 then // No Information Return Code
-        Result := 0;
-      exit;
     end;
-    //dwI :=
-    WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
-    GetExitCodeProcess(ProcessInfo.hProcess, Result);
-
-  //  if (dwI = WAIT_OBJECT_0) then
-  //    if (GetExitCodeProcess(ProcessInfo.hProcess, dwI)) then Result := dwI;
-
+    except
+      fMain.AddLog('Tools', Format('EXCEPTION: Problem launching process %s',[FileName]), ltError);
+    end;
+  finally
+    if ProcessInfo.hProcess <> 0 then
+      CloseHandle(ProcessInfo.hProcess);
+    if ProcessInfo.hThread <> 0 then
+      CloseHandle(ProcessInfo.hThread);
+    if Result = 259 then // No Information Return Code
+      Result := 0;
   end;
-  if ProcessInfo.hProcess <> 0 then
-    CloseHandle(ProcessInfo.hProcess);
-  if ProcessInfo.hThread <> 0 then
-    CloseHandle(ProcessInfo.hThread);
-  if Result = 259 then // No Information Return Code
-    Result := 0;
 end;
 
 function ExecuteFile(FileName, Params, DefaultDir: string; ShowCmd: integer): THandle;
@@ -580,8 +545,13 @@ var
 begin
   if DefaultDir = '' then
     DefaultDir := BaseDir;
-  Result := ShellExecute(Application.MainForm.Handle, 'open', StrPCopy(zFileName, FileName), StrPCopy(zParams, Params),
-    StrPCopy(zDir, DefaultDir), ShowCmd);
+  try
+    Result := ShellExecute(Application.MainForm.Handle, 'open', StrPCopy(zFileName, FileName), StrPCopy(zParams, Params),
+      StrPCopy(zDir, DefaultDir), ShowCmd);
+  except
+    fMain.AddLog('Tools', Format('EXCEPTION: Problem executing file %s',[FileName]), ltError);
+    Result := 0;
+  end;
 end;
 
 function ShellExecute_AndWait(Operation, FileName, Parameter, Directory: string; Show: Word; bWait: Boolean): Longint;
@@ -593,11 +563,11 @@ var
   ****** Parameters ******
   Operation:
 
-  edit  Launches an editor and opens the document for editing.
-  explore Explores the folder specified by lpFile.
-  find Initiates a search starting from the specified directory.
-  open Opens the file, folder specified by the lpFile parameter.
-  print Prints the document file specified by lpFile.
+  edit       Launches an editor and opens the document for editing.
+  explore    Explores the folder specified by lpFile.
+  find       Initiates a search starting from the specified directory.
+  open       Opens the file, folder specified by the lpFile parameter.
+  print      Prints the document file specified by lpFile.
   properties Displays the file or folder's properties.
 
   FileName:
@@ -633,25 +603,29 @@ begin
   Info.lpParameters := PChar(Parameter);
   Info.lpDirectory := PChar(Directory);
   Info.nShow := Show;
-  bOK := Boolean(ShellExecuteEx(@Info));
-  if bOK then
-  begin
-    if bWait then
+  try
+    bOK := Boolean(ShellExecuteEx(@Info));
+    if bOK then
     begin
-//      while
-//        WaitForSingleObject(Info.hProcess, 100) = WAIT_TIMEOUT
-//        do Application.ProcessMessages;
-      repeat
-        Ret := WaitForSingleObject(Info.hProcess, 500);
-        Application.ProcessMessages;
-      until ((Ret <> WAIT_TIMEOUT) or (Closing = True));
-      bOK := GetExitCodeProcess(Info.hProcess, DWORD(Result));
-    end
-    else
-      //Result := 0;
-      GetExitCodeProcess(Info.hProcess, DWORD(Result));
+      if bWait then
+      begin
+        repeat
+          Ret := WaitForSingleObject(Info.hProcess, 500);
+          Application.ProcessMessages;
+        until ((Ret <> WAIT_TIMEOUT) or (Closing = True));
+        bOK := GetExitCodeProcess(Info.hProcess, DWORD(Result));
+      end
+      else
+        GetExitCodeProcess(Info.hProcess, DWORD(Result));
+    end;
+    if not bOK then Result := -1;
+    CloseHandle(Info.hProcess);
+  except
+    fMain.AddLog('Tools', Format('EXCEPTION: Problem shell executing %s',[FileName]), ltError);
+    if Info.hProcess > 0 then
+      CloseHandle(Info.hProcess);
+    Result := -1;
   end;
-  if not bOK then Result := -1;
   if (Closing = True) then
     Result := 0;
 end;
@@ -681,20 +655,26 @@ begin
     nShow := ShowCmd;
     hInstApp := 0;
   end;
-  if not ShellExecuteEx(pInfo) then
-  begin
-    Result := GetLastError;
-    exit;
+  try
+    if not ShellExecuteEx(pInfo) then
+    begin
+      Result := GetLastError;
+      exit;
+    end;
+    { Wait to finish }
+    repeat
+      Result := WaitForSingleObject(Info.hProcess, 500);
+      Application.ProcessMessages;
+    until ((Result <> WAIT_TIMEOUT) or (Closing = True));
+    CloseHandle(Info.hProcess);
+  except
+    fMain.AddLog('Tools', Format('EXCEPTION: Problem running as admin %s',[FileName]), ltError);
+    if Info.hProcess > 0 then
+      CloseHandle(Info.hProcess);
+    Result := 1;
   end;
-  { Wait to finish }
-  repeat
-    Result := WaitForSingleObject(Info.hProcess, 500);
-    Application.ProcessMessages;
-  until ((Result <> WAIT_TIMEOUT) or (Closing = True));
-  //GetExitCodeProcess(Info.hProcess, Result);
   if (Closing = True) then
     Result := 0;
-  CloseHandle(Info.hProcess);
 end;
 
 function Cardinal2IP(C: Cardinal): string;
@@ -703,45 +683,10 @@ begin
     inttostr((C and $FF000000) shr 24);
 end;
 
-function GetComputerName: string;
-const
-  MAX_COMPUTERNAME_LENGTH = 100;
-var
-  ComputerName: array [0 .. MAX_COMPUTERNAME_LENGTH + 1] of Char;
-  // var ComputerName: array[0..50 + 1] of Char;
-  size: Cardinal;
-  LE: Cardinal;
-begin
-  try
-    if CachedComputerName = '' then
-    begin
-      size := MAX_COMPUTERNAME_LENGTH;
-      if Windows.GetComputerName(ComputerName, size) then
-      begin
-        Result := ComputerName;
-        CachedComputerName := ComputerName;
-      end
-      else
-      begin
-        LE := GetLastError;
-        MessageDlg(Format('GetComputerName failed, Code: %d - %s', [LE, SystemErrorMessage(LE)]), mtError, [mbOK], 0);
-        Result := '';
-      end;
-    end
-    else
-    begin
-      Result := CachedComputerName;
-    end;
-  except
-    Result := '';
-  end;
-end;
-
 function GetSystemLangShort: string;
 var
   bla: array [0 .. 1023] of Char;
   s: string;
-
 begin
   GetLocaleInfo(GetSystemDefaultLCID, LOCALE_SENGLANGUAGE, @bla, SizeOf(bla));
   s := uppercase(bla);
@@ -805,16 +750,10 @@ end;
 initialization
 
 Config := tConfig.Create;
-CachedComputerName := '';
 Closing := False;
-dfsVersionInfoResource1 := TdfsVersionInfoResource.Create();
-dfsVersionInfoResource1.FileName := Application.ExeName;
-with dfsVersionInfoResource1.FileVersion do
-  GlobalProgramversion := inttostr(Major) + '.' + inttostr(Minor) + '.' + inttostr(Release);
-pflags := dfsVersionInfoResource1.FixedInfo.Flags;
-if TFixedFileInfoFlag.ffPreRelease in pflags then
-  GlobalProgramversion := GlobalProgramversion; // + ' ' + cEdition;
-dfsVersionInfoResource1.Free;
+appInfo := TJclFileVersionInfo.Create(Application.ExeName);
+GlobalProgramversion := appInfo.FileVersionMajor + '.' + appInfo.FileVersionMinor + '.' + appInfo.FileVersionRelease;
+appInfo.Free;
 
 finalization
 

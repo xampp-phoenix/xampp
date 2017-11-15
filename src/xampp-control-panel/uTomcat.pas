@@ -2,7 +2,7 @@ unit uTomcat;
 
 interface
 
-uses GnuGettext, uBaseModule, SysUtils, Classes, Windows, ExtCtrls, StdCtrls, Buttons, uNetstatTable, uTools, uProcesses, uServices;
+uses GnuGettext, uBaseModule, SysUtils, Classes, Windows, ExtCtrls, StdCtrls, Buttons, uNetstatTable, uTools, uProcesses_new, uServices;
 
 type
   tTomcat = class(tBaseModule)
@@ -13,6 +13,7 @@ type
     procedure Start; override;
     procedure Stop; override;
     procedure Admin; override;
+    procedure CheckPorts;
     procedure UpdateStatus; override;
     procedure CheckIsService; reintroduce;
     procedure AddLog(Log: string; LogType: tLogType = ltDefault); reintroduce;
@@ -20,11 +21,8 @@ type
     destructor Destroy; override;
   end;
 
-
-
 implementation
 
-//var PID: integer;
 uses uMain;
 
 const cModuleName = 'Tomcat';
@@ -75,8 +73,8 @@ begin
     else
     begin
       pStatus.Color := cErrorColor;
-      AddLog(_('Tomcat Service detected with wrong path'), ltError);
-      AddLog(_('Change XAMPP Tomcat settings or'), ltError);
+      AddLog(Format(_('%s Service detected with wrong path'),[cModuleName]), ltError);
+      AddLog(Format(_('Change XAMPP %s and Control Panel settings or'),[cModuleName]), ltError);
       AddLog(_('Uninstall/disable the other service manually first'), ltError);
       AddLog(Format(_('Found Path: %s'), [Path]), ltError);
       AddLog(Format(_('Expected Path: %stomcat\bin\%s //RS//%s'), [basedir, Config.BinaryNames.Tomcat, Config.ServiceNames.Tomcat]), ltError);
@@ -87,22 +85,13 @@ begin
 end;
 
 constructor tTomcat.Create(pbbService: TBitBtn; pStatusPanel: tPanel; pPIDLabel, pPortLabel: tLabel; pStartStopButton, pAdminButton: TBitBtn);
-// const Ports:array[0..2] of integer=(1,2,3);
 var
-  PortBlocker: string;
   ServerApp: string;
-  p: integer;
   ReqTools: array [0 .. 2] of string;
-  Ports: array [0 .. 2] of integer;
-  path: string;
 begin
   inherited;
   ModuleName := cModuleName;
-//  PID:=-1;
   GlobalStatus := 'running';
-  Ports[0] := Config.ServicePorts.Tomcat;
-  Ports[1] := Config.ServicePorts.TomcatHTTP;
-  Ports[2] := Config.ServicePorts.TomcatAJP;
   AddLog(_('Initializing module...'), ltDebug);
   ServerApp := basedir + 'tomcat\bin\' + Config.BinaryNames.Tomcat;
   ReqTools[0] := basedir + 'catalina_start.bat';
@@ -112,8 +101,8 @@ begin
   if (not FileExists(ServerApp)) then
   begin
     pStatus.Color := cErrorColor;
-    AddLog(_('Problem detected: Tomcat Not Found!'), ltError);
-    AddLog(_('Disabling Tomcat buttons'), ltError);
+    AddLog(Format(_('Problem detected: %s Not Found!'),[cModuleName]), ltError);
+    AddLog(Format(_('Disabling %s buttons'),[cModuleName]), ltError);
     AddLog(_('Run this program from your XAMPP root directory!'), ltError);
     bAdmin.Enabled := False;
     bbService.Enabled := False;
@@ -122,7 +111,7 @@ begin
 
   if not Config.EnableServices.Tomcat then
   begin
-    AddLog(_('Apache Service is disabled.'), ltDebug);
+    AddLog(Format(_('%s Service is disabled.'),[cModuleName]), ltDebug);
     fmain.bTomcatService.Enabled := false;
   end;
 
@@ -144,53 +133,81 @@ begin
   end;
 
   CheckIsService;
-  path:=GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Tomcat));
-
-  if Config.EnableChecks.CheckDefaultPorts then
-  begin
-    AddLog(_('Checking default ports...'), ltDebug);
-
-    for p := Low(Ports) to High(Ports) do
-    begin
-      PortBlocker := NetStatTable.isPortInUse(Ports[p]);
-      if (PortBlocker <> '') then
-      begin
-        //else if (LowerCase(PortBlocker) = LowerCase(ServerApp2)) then
-        //if (LowerCase(PortBlocker) = LowerCase('java.exe')) or (LowerCase(PortBlocker) = LowerCase('javaw.exe')) then
-        AddLog(Format(_('Portblocker Detected: %s'), [PortBlocker]), ltDebug);
-        AddLog(Format(_('Checking for App: %s'), [ServerApp]), ltDebug);
-        if isservice then
-          AddLog(Format(_('Checking for Service: %s'), [path]), ltDebug);
-        if (pos(LowerCase('java.exe'), LowerCase(PortBlocker))<>0) or (pos(LowerCase('javaw.exe'), LowerCase(PortBlocker))<>0) then
-        begin
-          AddLog(Format(_('Java is already running on port %d!'), [Ports[p]]), ltInfo);
-          AddLog(_('Is Tomcat already running?'), ltInfo);
-        end
-        else if (pos(LowerCase(ServerApp), LowerCase(PortBlocker))<>0) then
-        begin
-          AddLog(Format(_('XAMPP Tomcat is already running on port %d'), [Ports[p]]), ltInfo);
-        end
-        else if (pos(LowerCase(PortBlocker), LowerCase(path))<>0) and (isService = True) then
-        begin
-          AddLog(Format(_('XAMPP Tomcat Service is already running on port %d'), [Ports[p]]), ltInfo);
-        end
-        else
-        begin
-          pStatus.Color := cErrorColor;
-          AddLog(_('Problem detected!'), ltError);
-          AddLog(Format(_('Port %d in use by "%s"!'), [Ports[p], PortBlocker]), ltError);
-          AddLog(_('Tomcat WILL NOT start without the configured ports free!'), ltError);
-          AddLog(_('You need to uninstall/disable/reconfigure the blocking application'), ltError);
-          AddLog(_('or reconfigure Tomcat to listen on a different port'), ltError);
-        end;
-      end;
-    end;
-  end;
+  CheckPorts;
 end;
 
 destructor tTomcat.Destroy;
 begin
   inherited;
+end;
+
+procedure tTomcat.CheckPorts;
+var
+  PortBlocker: string;
+  PortBlockerPID: integer;
+  path: string;
+  p: integer;
+  ServerApp: string;
+  pbpath: string;
+  pbspath: string;
+  Ports: array [0 .. 2] of integer;
+begin
+  ServerApp := basedir + 'tomcat\bin\' + Config.BinaryNames.Tomcat;
+  Ports[0] := Config.ServicePorts.Tomcat;
+  Ports[1] := Config.ServicePorts.TomcatHTTP;
+  Ports[2] := Config.ServicePorts.TomcatAJP;
+
+  path:=GetServicePath(RemoveWhiteSpace(Config.ServiceNames.Tomcat));
+
+  if Config.EnableChecks.CheckDefaultPorts then
+  begin
+    AddLog(_('Checking default ports...'), ltDebug);
+    for p := Low(Ports) to High(Ports) do
+    begin
+      PortBlockerPID := NetStatTable.isPortInUsePID(Ports[p]);
+      if (PortBlockerPID > 0) then
+      begin
+        PortBlocker := Processes.GetProcessName(PortBlockerPID);
+        AddLog(Format(_('Portblocker Detected: %s'), [PortBlocker]), ltDebug);
+        AddLog(Format(_('Checking for App: %s'), [ServerApp]), ltDebug);
+        if isService then
+          AddLog(Format(_('Checking for Service: %s'), [path]), ltDebug);
+        //if (Pos(LowerCase(ServerApp), LowerCase(PortBlocker)) <> 0) then
+        pbpath := Processes.GetProcessPath(PortBlockerPID);
+        pbspath := GetServiceWithPid(PortBlockerPID);
+        AddLog(Format(_('Portblocker Path: %s'), [pbpath]), ltDebug);
+        AddLog(Format(_('Portblocker Service Path: %s'), [pbspath]), ltDebug);
+        if (pos(LowerCase('java.exe'), LowerCase(PortBlocker))<>0) or (pos(LowerCase('javaw.exe'), LowerCase(PortBlocker))<>0) then
+        begin
+          AddLog(Format(_('Java is already running on port %d!'), [Ports[p]]), ltInfo);
+          AddLog(Format(_('Is %s already running?'),[cModuleName]), ltInfo);
+        end
+        else if (Pos(LowerCase(ServerApp), LowerCase(pbpath)) <> 0) then
+        begin
+          AddLog(Format(_('XAMPP %s is already running on port %d'), [cModuleName, Ports[p]]), ltInfo);
+        end
+        //else if (Pos(LowerCase(PortBlocker), LowerCase(path)) <> 0) and (isService = True) then
+        else if (Pos(LowerCase(pbspath), LowerCase(path)) <> 0) and (isService = True) and (Pos(LowerCase(ServerApp), LowerCase(pbspath)) <> 0) then
+        begin
+          AddLog(Format(_('XAMPP %s Service is already running on port %d'), [cModuleName, Ports[p]]), ltInfo);
+          //AddLog(Format(_('Service Path: %s'), [GetServiceWithPid(PortBlockerPID)]), ltDebug);
+        end
+        else
+        begin
+          pStatus.Color := cErrorColor;
+          if (pbspath <> '') then
+            PortBlocker := pbspath
+          else
+            PortBlocker := pbpath;
+          AddLog(_('Problem detected!'), ltError);
+          AddLog(Format(_('Port %d in use by "%s"!'), [Ports[p], PortBlocker]), ltError);
+          AddLog(Format(_('%s WILL NOT start without the configured ports free!'),[cModuleName]), ltError);
+          AddLog(_('You need to uninstall/disable/reconfigure the blocking application'), ltError);
+          AddLog(Format(_('or reconfigure %s and the Control Panel to listen on a different port'),[cModuleName]), ltError);
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure tTomcat.ServiceInstall;
@@ -210,7 +227,7 @@ begin
   AddLog(Format(_('Return code: %d'), [RC]), ltDebug);
   if(RC<>0) then
   begin
-    AddLog(Format(_('Tomcat Service Install stopped with errors, return code: %d'), [RC]), ltError);
+    AddLog(Format(_('%s Service Install stopped with errors, return code: %d'), [cModuleName, RC]), ltError);
     AddLog(_('Make sure you have Java JDK or JRE installed and the required ports are free'), ltError);
     AddLog(_('Check the "/xampp/tomcat/logs" folder for more information'), ltError);
   end;
@@ -233,7 +250,7 @@ begin
   AddLog(Format(_('Return code: %d'), [RC]), ltDebug);
   if(RC<>0) then
   begin
-    AddLog(Format(_('Tomcat Service Uninstall stopped with errors, return code: %d'), [RC]), ltError);
+    AddLog(Format(_('%s Service Uninstall stopped with errors, return code: %d'), [cModuleName, RC]), ltError);
     AddLog(_('Make sure you have Java JDK or JRE installed and the required ports are free'), ltError);
     AddLog(_('Check the "/xampp/tomcat/logs" folder for more information'), ltError);
   end;
@@ -245,7 +262,8 @@ var
   RC: integer;
 begin
   GlobalStatus := 'starting';
-  if isService then
+  CheckPorts;
+  if isService and Config.EnableServices.Tomcat then
   begin
     AddLog(Format(_('Attempting to start %s service...'), [cModuleName]));
     App := Format('start "%s"', [RemoveWhiteSpace(Config.ServiceNames.Tomcat)]);
@@ -255,7 +273,6 @@ begin
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
     else
     begin
-      //ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
       AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
     end;
   end
@@ -275,7 +292,7 @@ begin
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug);
       if(RC<>0) then
       begin
-        AddLog(Format(_('Tomcat Started/Stopped with errors, return code: %d'), [RC]), ltError);
+        AddLog(Format(_('%s Started/Stopped with errors, return code: %d'), [cModuleName, RC]), ltError);
         AddLog(_('Make sure you have Java JDK or JRE installed and the required ports are free'), ltError);
         AddLog(_('Check the "/xampp/tomcat/logs" folder for more information'), ltError);
       end;
@@ -288,7 +305,7 @@ var
   RC: Cardinal;
 begin
   GlobalStatus := 'stopping';
-  if isService then
+  if isService and Config.EnableServices.Tomcat then
   begin
     AddLog(Format(_('Attempting to stop %s service...'), [cModuleName]));
     App := Format('stop "%s"', [RemoveWhiteSpace(Config.ServiceNames.Tomcat)]);
@@ -298,7 +315,6 @@ begin
       AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
     else
     begin
-      //ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
       AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
     end;
   end
@@ -307,7 +323,7 @@ begin
     AddLog(Format(_('Attempting to stop %s'), [cModuleName]));
     Param := '/c "' + basedir + 'catalina_stop.bat"';
     if FileExists('c:\Windows\sysnative\cmd.exe') then
-      App := 'c:\Windows\sysnative\cmd.exe' // 64 bit? dann DIESE shell starten!
+      App := 'c:\Windows\sysnative\cmd.exe'
     else
       App := 'cmd';
     AddLog(Format(_('Executing "%s" "%s"'), [App, Param]), ltDebug);
@@ -318,56 +334,43 @@ end;
 procedure tTomcat.UpdateStatus;
 var
   p: integer;
-  ProcInfo: TProcInfo;
+  //ProcInfo: TProcInfo;
   s: string;
   Ports: string;
+  pname: string;
+  currPID: integer;
   ErrorStatus: integer;
-//  PIDFile: TextFile;
-//  PIDtmp: string;
-//  PIDtmp2: integer;
 begin
   isRunning := false;
   PIDList.Clear;
   ErrorStatus := 0;
-//  PIDtmp2:=-1;
 
-  // Check PID File
-//  if PID = -1 then
+  // Scan Process List
+//  for p := 0 to Processes.ProcessList.Count - 1 do
 //  begin
-//    if FileExists(basedir + 'tomcat\logs\catalina.pid') then
+//    ProcInfo := Processes.ProcessList[p];
+//    if (pos('java.exe', ProcInfo.Module) = 1) or (pos(Config.BinaryNames.Tomcat, ProcInfo.Module) = 1) then
 //    begin
-//      AssignFile(PIDFile, basedir + 'tomcat\logs\catalina.pid');
-//      Reset(PIDFile);
-//      ReadLn(PIDFile, PIDtmp);
-//      CloseFile(PIDFile);
-//    end;
-//    if PIDtmp <> '' then
-//    begin
-//      PIDtmp2:=StrToInt(Trim(PIDtmp));
+//      if (pos(IntToStr(Config.ServicePorts.TomcatHTTP), NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) then
+//      begin
+//        isRunning := true;
+//        PIDList.Add(Pointer(ProcInfo.PID));
+//      end;
 //    end;
 //  end;
 
-  // Scan Process List
-  for p := 0 to Processes.ProcessList.Count - 1 do
+  for p := 0 to Processes.ProcessList2.Count - 1 do
   begin
-    ProcInfo := Processes.ProcessList[p];
-    if (pos('java.exe', ProcInfo.Module) = 1) or (pos(Config.BinaryNames.Tomcat, ProcInfo.Module) = 1) then
+    pname := Processes.ProcessList2[p];
+    if (pos('java.exe', LowerCase(pname)) = 1) or (pos(LowerCase(Config.BinaryNames.Tomcat), LowerCase(pname)) = 1) then
     begin
-      //if NetStatTable.GetPortCount4PID(ProcInfo.PID) = 3 then
-//      AddLog(Format(_('Tomcat Port: %s'), [IntToStr(Config.ServicePorts.Tomcat)]), ltDebug);
-//      AddLog(Format(_('PID Ports: %s'), [NetStatTable.GetPorts4PID(ProcInfo.PID)]), ltDebug);
-      if (pos(IntToStr(Config.ServicePorts.TomcatHTTP), NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) then
+      currPID := Integer(Processes.ProcessList2.Objects[p]);
+      if (pos(IntToStr(Config.ServicePorts.TomcatHTTP), NetStatTable.GetPorts4PID(currPID)) <> 0) then
       begin
         isRunning := true;
-        PIDList.Add(Pointer(ProcInfo.PID));
+        PIDList.Add(Pointer(currPID));
       end;
     end;
-//    if (ProcInfo.PID = PIDtmp2) or (ProcInfo.PID = PID) then
-//    begin
-//      isRunning := true;
-//      PID:=ProcInfo.PID;
-//      PIDList.Add(Pointer(ProcInfo.PID));
-//    end;
   end;
 
   // Update GUI PID List
@@ -391,12 +394,7 @@ begin
   begin
     Ports := NetStatTable.GetPorts4PID(integer(PIDList[p]));
     if Ports <> '' then
-   // begin
-   //  if s = '' then
         s := RemoveDuplicatePorts(Ports);
-   //   else
-   //     s := s + ', ' + Ports;
-   // end;
   end;
   if s <> OldPorts then
   begin
@@ -421,9 +419,13 @@ begin
       if ErrorStatus = 1 then
       begin
         pStatus.Color := cErrorColor;
-        AddLog(_('Error: Tomcat shutdown unexpectedly.'), ltError);
+        AddLog(Format(_('Error: %s shutdown unexpectedly.'),[cModuleName]), ltError);
         AddLog(_('This may be due to a blocked port, missing dependencies, '), ltError);
-        AddLog(_('improper privileges, a crash, or a shutdown by another method.'), ltError)
+        AddLog(_('improper privileges, a crash, or a shutdown by another method.'), ltError);
+        AddLog(_('Press the Logs button to view error logs and check'), ltError);
+        AddLog(_('the Windows Event Viewer for more clues'), ltError);
+        AddLog(_('If you need more help, copy and post this'), ltError);
+        AddLog(_('entire log window on the forums'), ltError);
       end;
     end;
 
@@ -443,7 +445,6 @@ begin
       bAdmin.Enabled := false;
       fMain.TomcatTray.ImageIndex := 16;
       fMain.TomcatTrayControl.Caption := _('Start');
-//      PID := -1;
     end;
   end;
 
@@ -452,7 +453,7 @@ begin
     AutoStart := false;
     if isRunning then
     begin
-      AddLog(_('Autostart aborted: Tomcat is already running'), ltInfo);
+      AddLog(Format(_('Autostart aborted: %s is already running'),[cModuleName]), ltInfo);
     end
     else
     begin

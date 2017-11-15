@@ -1290,7 +1290,7 @@ object fMain: TfMain
       AutoSize = False
       Layout = tlCenter
     end
-    object Label1: TLabel
+    object lServices: TLabel
       Left = 8
       Top = 18
       Width = 55
@@ -1308,7 +1308,7 @@ object fMain: TfMain
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label2: TLabel
+    object lModules: TLabel
       Left = 86
       Top = 18
       Width = 53
@@ -1326,7 +1326,7 @@ object fMain: TfMain
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label3: TLabel
+    object lActions: TLabel
       Left = 384
       Top = 18
       Width = 52
@@ -1626,10 +1626,13 @@ object fMain: TfMain
       Top = 80
       Width = 27
       Height = 27
+      Hint = 'Is installed as a Windows Service?'
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 19
       OnClick = bMySQLServiceClick
     end
@@ -1638,10 +1641,13 @@ object fMain: TfMain
       Top = 114
       Width = 27
       Height = 28
+      Hint = 'Is installed as a Windows Service?'
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 20
       OnClick = bFileZillaServiceClick
     end
@@ -1650,13 +1656,13 @@ object fMain: TfMain
       Top = 44
       Width = 27
       Height = 28
-      Hint = 'Install Apache as a Windows Service'
+      Hint = 'Is installed as a Windows Service?'
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
       ParentShowHint = False
-      ShowHint = False
+      ShowHint = True
       TabOrder = 21
       OnClick = bApacheServiceClick
     end
@@ -1744,10 +1750,13 @@ object fMain: TfMain
       Top = 186
       Width = 27
       Height = 27
+      Hint = 'Is installed as a Windows Service?'
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 28
       OnClick = bTomcatServiceClick
     end
@@ -2013,7 +2022,7 @@ object fMain: TfMain
     Left = 100
     Top = 352
   end
-  object TrayIcon1: TTrayIcon
+  object TrayIcon: TTrayIcon
     Icon.Data = {
       000001000300404000000100200028420000360000003030000001002000A825
       00005E4200002020000001002000A81000000668000028000000400000008000
@@ -2983,7 +2992,7 @@ object fMain: TfMain
       0000000000000000000080000000}
     PopupMenu = puSystray
     Visible = True
-    OnDblClick = TrayIcon1DblClick
+    OnDblClick = TrayIconDblClick
     Left = 36
     Top = 312
   end
@@ -3047,8 +3056,8 @@ object fMain: TfMain
       OnClick = miTerminateClick
     end
   end
-  object ApplicationEvents1: TApplicationEvents
-    OnException = ApplicationEvents1Exception
+  object ApplicationEvents: TApplicationEvents
+    OnException = ApplicationEventsException
     Left = 60
     Top = 408
   end
@@ -3057,7 +3066,7 @@ object fMain: TfMain
     Left = 188
     Top = 309
     Bitmap = {
-      494C010111003000740110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010111003000980110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3731,13 +3740,20 @@ object fMain: TfMain
   object puLog: TPopupMenu
     Left = 264
     Top = 392
-    object Copy1: TMenuItem
+    object LogCopy: TMenuItem
       Caption = 'Copy'
-      OnClick = Copy1Click
+      OnClick = LogCopyClick
     end
-    object SelectAll1: TMenuItem
+    object LogSelectAll: TMenuItem
       Caption = 'Select All'
-      OnClick = SelectAll1Click
+      OnClick = LogSelectAllClick
     end
+  end
+  object TimerUpdateNetworking: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = TimerUpdateNetworkingTimer
+    Left = 268
+    Top = 328
   end
 end

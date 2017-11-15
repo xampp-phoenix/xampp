@@ -4,7 +4,7 @@ interface
 
 uses GnuGettext, uBaseModule, SysUtils, Classes, Windows, ExtCtrls, StdCtrls,
   Buttons,
-  uNetstatTable, uTools, uProcesses;
+  uNetstatTable, uTools, uProcesses_new, uServices;
 
 type
   tMercury = class(tBaseModule)
@@ -15,6 +15,7 @@ type
     procedure Start; override;
     procedure Stop; override;
     procedure Admin; override;
+    procedure CheckPorts;
     procedure UpdateStatus; override;
     procedure AddLog(Log: string; LogType: tLogType = ltDefault); reintroduce;
     constructor Create(pbbService: TBitBtn; pStatusPanel: tPanel; pPIDLabel, pPortLabel: tLabel; pStartStopButton, pAdminButton: TBitBtn);
@@ -26,7 +27,6 @@ implementation
 uses uMain;
 
 const
-  // cServiceName = 'Mercury';
   cModuleName = 'Mercury';
 
 var
@@ -55,12 +55,6 @@ begin
     SetLength(ClassName, GetClassName(hHwnd, PChar(ClassName), Length(ClassName)));
     SetLength(title, 255);
     SetLength(title, GetWindowText(hHwnd, PChar(title), Length(title)));
-    // fMain.Addlog(
-    // 'Class Name = ' + className +
-    // '; Title = ' + title +
-    // '; HWND = ' + IntToStr(hHwnd) +
-    // '; Pid = ' + IntToStr(pPid)
-    // );
     if title = 'Mercury/32' then
     begin
       hWindow := hHwnd;
@@ -79,36 +73,21 @@ begin
 end;
 
 constructor tMercury.Create;
-// const Ports:array[0..6] of integer=(25,79,105,106,110,143,2224);
 var
-  PortBlocker: string;
-  ServerApp, ReqTool: string;
-  p: integer;
-  Ports: array [0 .. 6] of integer;
-  // DidShowRunningWarn: Boolean;
-  BlockedPorts: string;
+  ServerApp: string;
 begin
   inherited;
   ModuleName := cModuleName;
-  Ports[0] := Config.ServicePorts.Mercury1;
-  Ports[1] := Config.ServicePorts.Mercury2;
-  Ports[2] := Config.ServicePorts.Mercury3;
-  Ports[3] := Config.ServicePorts.Mercury4;
-  Ports[4] := Config.ServicePorts.Mercury5;
-  Ports[5] := Config.ServicePorts.Mercury6;
-  Ports[6] := Config.ServicePorts.Mercury7;
   isService := false;
   GlobalStatus := 'starting';
-  // DidShowRunningWarn:=false;
   AddLog(_('Initializing module...'), ltDebug);
   ServerApp := basedir + 'MercuryMail\' + Config.BinaryNames.Mercury;
-  ReqTool := basedir + 'apache\bin\pv.exe';
   AddLog(_('Checking for module existence...'), ltDebug);
   if not FileExists(ServerApp) then
   begin
     pStatus.Color := cErrorColor;
-    AddLog(_('Problem detected: Mercury Not Found!'), ltError);
-    AddLog(_('Disabling Mercury buttons'), ltError);
+    AddLog(Format(_('Problem detected: %s Not Found!'),[cModuleName]), ltError);
+    AddLog(Format(_('Disabling %s buttons'),[cModuleName]), ltError);
     AddLog(_('Run this program from your XAMPP root directory!'), ltError);
     bAdmin.Enabled := False;
     bbService.Enabled := False;
@@ -116,56 +95,70 @@ begin
   end;
 
   AddLog(_('Checking for required tools...'), ltDebug);
-//  if not FileExists(ReqTool) then
-//  begin
-//    AddLog(_('Possible problem detected: Required Tool pv.exe Not Found!'), ltError);
-//  end;
+
+  CheckPorts;
+end;
+
+destructor tMercury.Destroy;
+begin
+  inherited;
+end;
+
+procedure tMercury.CheckPorts;
+var
+  PortBlocker: string;
+  PortBlockerPID: integer;
+  p: integer;
+  ServerApp: string;
+  pbpath: string;
+  pbspath: string;
+  Ports: array [0 .. 6] of integer;
+begin
+  ServerApp := basedir + 'MercuryMail\' + Config.BinaryNames.Mercury;
+  Ports[0] := Config.ServicePorts.Mercury1;
+  Ports[1] := Config.ServicePorts.Mercury2;
+  Ports[2] := Config.ServicePorts.Mercury3;
+  Ports[3] := Config.ServicePorts.Mercury4;
+  Ports[4] := Config.ServicePorts.Mercury5;
+  Ports[5] := Config.ServicePorts.Mercury6;
+  Ports[6] := Config.ServicePorts.Mercury7;
 
   if Config.EnableChecks.CheckDefaultPorts then
   begin
     AddLog(_('Checking default ports...'), ltDebug);
     for p := Low(Ports) to High(Ports) do
     begin
-
-      PortBlocker := NetStatTable.isPortInUse(Ports[p]);
-      if (PortBlocker <> '') then
+      PortBlockerPID := NetStatTable.isPortInUsePID(Ports[p]);
+      if (PortBlockerPID > 0) then
       begin
-        //if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
+        PortBlocker := Processes.GetProcessName(PortBlockerPID);
         AddLog(Format(_('Portblocker Detected: %s'), [PortBlocker]), ltDebug);
         AddLog(Format(_('Checking for App: %s'), [ServerApp]), ltDebug);
-        if (pos(LowerCase(ServerApp), LowerCase(PortBlocker))<>0) then
+        //if (Pos(LowerCase(ServerApp), LowerCase(PortBlocker)) <> 0) then
+        pbpath := Processes.GetProcessPath(PortBlockerPID);
+        pbspath := GetServiceWithPid(PortBlockerPID);
+        AddLog(Format(_('Portblocker Path: %s'), [pbpath]), ltDebug);
+        AddLog(Format(_('Portblocker Service Path: %s'), [pbspath]), ltDebug);
+        if (Pos(LowerCase(ServerApp), LowerCase(pbpath)) <> 0) then
         begin
-          // if NOT DidShowRunningWarn then
-          // AddLog(Format(_('"%s" seems to be running on port %d?'),[ServerApp,Ports[p]]),ltError);
-          // DidShowRunningWarn:=true;
-          if BlockedPorts = '' then
-            BlockedPorts := InttoStr(Ports[p])
-          else
-            BlockedPorts := BlockedPorts + ', ' + InttoStr(Ports[p]);
+          AddLog(Format(_('XAMPP %s is already running on port %d'), [cModuleName, Ports[p]]), ltInfo);
         end
         else
         begin
-          //AddLog('Possible problem detected: Port ' + InttoStr(Ports[p]) + ' in use by "' + PortBlocker + '"!', ltError);
           pStatus.Color := cErrorColor;
+          if (pbspath <> '') then
+            PortBlocker := pbspath
+          else
+            PortBlocker := pbpath;
           AddLog(_('Problem detected!'), ltError);
-          AddLog(Format(_('Port %d in use by "%s"!'), [Ports[p], PortBlocker]), ltError);
-          AddLog(_('Mercury WILL NOT start without the configured ports free!'), ltError);
+          AddLog(Format(_('Port %d in use by "%s" with PID %d!'), [Ports[p], PortBlocker, PortBlockerPID]), ltError);
+          AddLog(Format(_('%s WILL NOT start without the configured ports free!'), [cModuleName]), ltError);
           AddLog(_('You need to uninstall/disable/reconfigure the blocking application'), ltError);
-          AddLog(_('or reconfigure Mercury to listen on a different port'), ltError);
+          AddLog(Format(_('or reconfigure %s and the Control Panel to listen on a different port'), [cModuleName]), ltError);
         end;
       end;
     end;
-    if BlockedPorts <> '' then
-    begin
-      AddLog(_('XAMPP Mercury is already running'), ltInfo);
-      AddLog(Format(_('Ports in use: %s'), [BlockedPorts]), ltInfo);
-    end;
   end;
-end;
-
-destructor tMercury.Destroy;
-begin
-  inherited;
 end;
 
 procedure tMercury.ServiceInstall;
@@ -184,6 +177,7 @@ var
   RC : Cardinal;
 begin
   GlobalStatus := 'starting';
+  CheckPorts;
   App := basedir + 'MercuryMail\' + Config.BinaryNames.Mercury;
   AddLog(Format(_('Attempting to start %s app...'), [cModuleName]));
   AddLog(Format(_('Executing "%s"'), [App]), ltDebug);
@@ -192,25 +186,13 @@ begin
     AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
   else
     AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
-  //AddLog('Starting Mercury...');
 end;
 
 procedure tMercury.Stop;
 var
   i, pPID: Integer;
-//  App: string;
-//  RC: Cardinal;
 begin
   GlobalStatus := 'stopping';
-//  Admin;
-//  AddLog(_('Stopping') + ' ' + cModuleName);
-//  App := basedir + 'apache\bin\pv.exe -f -c mercury.exe -q -e';
-//  AddLog(Format(_('Executing "%s"'), [App]), ltDebug);
-//  RC := RunProcess(App, SW_HIDE, false);
-//  if RC = 0 then
-//    AddLog(Format(_('Return code: %d'), [RC]), ltDebug)
-//  else
-//    AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
   if PIDList.Count > 0 then
     begin
       for i := 0 to PIDList.Count - 1 do
@@ -233,40 +215,56 @@ end;
 procedure tMercury.UpdateStatus;
 var
   p: integer;
-  ProcInfo: TProcInfo;
+  //ProcInfo: TProcInfo;
   s: string;
   Ports: string;
+  pname: string;
+  ppath: string;
+  currPID: integer;
   ErrorStatus: integer;
 begin
   isRunning := false;
   PIDList.Clear;
   ErrorStatus := 0;
-  //for p := 0 to Processes.ProcessList.Count - 1 do
-  //begin
-  //  ProcInfo := Processes.ProcessList[p];
-  //  if (pos(basedir, ProcInfo.ExePath) = 1) and (pos(Config.BinaryNames.Mercury, ProcInfo.Module) = 1) then
-  //  begin
-  //    isRunning := true;
-  //    PIDList.Add(Pointer(ProcInfo.PID));
-  //  end;
-  //end;
 
-  for p := 0 to Processes.ProcessList.Count - 1 do
+//  for p := 0 to Processes.ProcessList.Count - 1 do
+//  begin
+//    ProcInfo := Processes.ProcessList[p];
+//    if (pos(Config.BinaryNames.Mercury, ProcInfo.Module) = 1) then
+//    begin
+//      if (pos(IntToStr(Config.ServicePorts.Mercury1),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury2),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury3),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury4),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury5),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury6),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(IntToStr(Config.ServicePorts.Mercury7),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
+//      (pos(BaseDir, ProcInfo.ExePath) <> 0) then
+//      begin
+//        isRunning := true;
+//        PIDList.Add(Pointer(ProcInfo.PID));
+//      end;
+//    end;
+//  end;
+
+  for p := 0 to Processes.ProcessList2.Count - 1 do
   begin
-    ProcInfo := Processes.ProcessList[p];
-    if (pos(Config.BinaryNames.Mercury, ProcInfo.Module) = 1) then
+    pname := Processes.ProcessList2[p];
+    if (pos(LowerCase(Config.BinaryNames.Mercury), LowerCase(pname)) = 1) then
     begin
-      if (pos(IntToStr(Config.ServicePorts.Mercury1),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury2),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury3),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury4),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury5),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury6),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(IntToStr(Config.ServicePorts.Mercury7),NetStatTable.GetPorts4PID(ProcInfo.PID)) <> 0) or
-      (pos(BaseDir, ProcInfo.ExePath) <> 0) then
+      currPID := Integer(Processes.ProcessList2.Objects[p]);
+      ppath := LowerCase(Processes.GetProcessPath(currPID));
+      if ((pos(IntToStr(Config.ServicePorts.Mercury1),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury2),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury3),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury4),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury5),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury6),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      ((pos(IntToStr(Config.ServicePorts.Mercury7),NetStatTable.GetPorts4PID(currPID)) <> 0) and (pos(LowerCase(BaseDir), ppath) <> 0)) or
+      (pos(LowerCase(BaseDir), ppath) <> 0) then
       begin
         isRunning := true;
-        PIDList.Add(Pointer(ProcInfo.PID));
+        PIDList.Add(Pointer(currPID));
       end;
     end;
   end;
@@ -291,12 +289,7 @@ begin
   begin
     Ports := NetStatTable.GetPorts4PID(integer(PIDList[p]));
     if Ports <> '' then
-    //begin
-    //  if s = '' then
         s := RemoveDuplicatePorts(Ports);
-    //  else
-    //    s := s + ', ' + Ports;
-    //end;
   end;
   if s <> OldPorts then
   begin
@@ -321,9 +314,13 @@ begin
       if ErrorStatus = 1 then
       begin
         pStatus.Color := cErrorColor;
-        AddLog(_('Error: Mercury shutdown unexpectedly.'), ltError);
+        AddLog(Format(_('Error: %s shutdown unexpectedly.'),[cModuleName]), ltError);
         AddLog(_('This may be due to a blocked port, missing dependencies, '), ltError);
-        AddLog(_('improper privileges, a crash, or a shutdown by another method.'), ltError)
+        AddLog(_('improper privileges, a crash, or a shutdown by another method.'), ltError);
+        AddLog(_('Press the Logs button to view error logs and check'), ltError);
+        AddLog(_('the Windows Event Viewer for more clues'), ltError);
+        AddLog(_('If you need more help, copy and post this'), ltError);
+        AddLog(_('entire log window on the forums'), ltError);
       end;
     end;
 
@@ -351,7 +348,7 @@ begin
     AutoStart := false;
     if isRunning then
     begin
-      AddLog(_('Autostart aborted: Mercury is already running'), ltInfo);
+      AddLog(Format(_('Autostart aborted: %s is already running'),[cModuleName]), ltInfo);
     end
     else
     begin

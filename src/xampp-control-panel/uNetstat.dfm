@@ -49,7 +49,7 @@ object fNetstat: TfNetstat
       end
       item
         Caption = 'Name'
-        Width = 523
+        Width = 200
       end>
     DoubleBuffered = True
     Font.Charset = DEFAULT_CHARSET
@@ -158,7 +158,7 @@ object fNetstat: TfNetstat
   object TimerUpdate: TTimer
     Interval = 500
     OnTimer = TimerUpdateTimer
-    Left = 20
+    Left = 44
     Top = 84
   end
 end

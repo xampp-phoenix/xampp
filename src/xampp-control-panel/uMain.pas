@@ -7,7 +7,7 @@
 
   Updates:
   3.0.2: May 10th 2011, Steffen Strueber
-  3.0.3-3.1.0: May 12th 2012, hackattack142
+  3.0.3-3.2.1: hackattack142
 *)
 
 unit uMain;
@@ -19,7 +19,7 @@ uses
   Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, Buttons, uTools, uTomcat,
   uApache, uMySQL, uFileZilla, uMercury, uNetstat, uNetstatTable, Menus,
-  IniFiles, uProcesses, AppEvnts, ImgList, JCLDebug, JCLSysInfo;
+  IniFiles, AppEvnts, ImgList, JCLDebug, JCLSysInfo, uProcesses_new;
 
 type
   TfMain = class(TForm)
@@ -42,7 +42,7 @@ type
     bExplorer: TBitBtn;
     pApacheStatus: TPanel;
     TimerUpdateStatus: TTimer;
-    TrayIcon1: TTrayIcon;
+    TrayIcon: TTrayIcon;
     bNetstat: TBitBtn;
     puSystray: TPopupMenu;
     miShowHide: TMenuItem;
@@ -69,13 +69,13 @@ type
     pMySQLStatus: TPanel;
     pFileZillaStatus: TPanel;
     pMercuryStatus: TPanel;
-    ApplicationEvents1: TApplicationEvents;
+    ApplicationEvents: TApplicationEvents;
     ImageList: TImageList;
     bMySQLService: TBitBtn;
     bFileZillaService: TBitBtn;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
+    lServices: TLabel;
+    lModules: TLabel;
+    lActions: TLabel;
     bApacheService: TBitBtn;
     bMercurylogs: TBitBtn;
     puGeneral: TPopupMenu;
@@ -90,8 +90,8 @@ type
     bMercuryService: TBitBtn;
     bXamppShell: TBitBtn;
     puLog: TPopupMenu;
-    Copy1: TMenuItem;
-    SelectAll1: TMenuItem;
+    LogCopy: TMenuItem;
+    LogSelectAll: TMenuItem;
     N2: TMenuItem;
     ApacheTray: TMenuItem;
     MySQLTray: TMenuItem;
@@ -103,9 +103,11 @@ type
     FileZillaTrayControl: TMenuItem;
     MySQLTrayControl: TMenuItem;
     ApacheTrayControl: TMenuItem;
+    TimerUpdateNetworking: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure bApacheActionClick(Sender: TObject);
     procedure TimerUpdateStatusTimer(Sender: TObject);
+    procedure TimerUpdateNetworkingTimer(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure bNetstatClick(Sender: TObject);
     procedure miTerminateClick(Sender: TObject);
@@ -113,7 +115,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure miShowHideClick(Sender: TObject);
-    procedure TrayIcon1DblClick(Sender: TObject);
+    procedure TrayIconDblClick(Sender: TObject);
     procedure bExplorerClick(Sender: TObject);
     procedure bSCMClick(Sender: TObject);
     procedure bApacheAdminClick(Sender: TObject);
@@ -121,8 +123,6 @@ type
     procedure miGeneralClick(Sender: TObject);
     procedure bConfigClick(Sender: TObject);
     procedure bApacheLogsClick(Sender: TObject);
-    procedure miApacheLogsAccessClick(Sender: TObject);
-    procedure miApacheLogsErrorClick(Sender: TObject);
     procedure bMySQLActionClick(Sender: TObject);
     procedure bMySQLAdminClick(Sender: TObject);
     procedure bMySQLConfigClick(Sender: TObject);
@@ -146,12 +146,9 @@ type
     procedure bTomcatActionClick(Sender: TObject);
     procedure bTomcatAdminClick(Sender: TObject);
     procedure bTomcatServiceClick(Sender: TObject);
-    procedure miActionTomcatAutoClick(Sender: TObject);
-    procedure miActionTomcatStopClick(Sender: TObject);
-    procedure miActionTomcatStartClick(Sender: TObject);
-    procedure ApplicationEvents1Exception(Sender: TObject; E: Exception);
-    procedure Copy1Click(Sender: TObject);
-    procedure SelectAll1Click(Sender: TObject);
+    procedure ApplicationEventsException(Sender: TObject; E: Exception);
+    procedure LogCopyClick(Sender: TObject);
+    procedure LogSelectAllClick(Sender: TObject);
     procedure ApacheTrayControlClick(Sender: TObject);
     procedure MySQLTrayControlClick(Sender: TObject);
     procedure FileZillaTrayControlClick(Sender: TObject);
@@ -172,9 +169,10 @@ type
     procedure GeneralPUAddUser(text: string; hint: string = '');
     procedure GeneralPUAddUserFromSL(sl: tStringList);
     procedure WMQueryEndSession(var Msg: TWMQueryEndSession); message WM_QueryEndSession; // detect Windows shutdown message
-    procedure SaveLogFile;
+    procedure WriteLogToFile;
     procedure updateTimerStatus(enabled: Boolean);
   public
+    procedure updateTimerNetworking(enabled: Boolean);
     procedure AddLog(module, log: string; LogType: tLogType = ltDefault); overload;
     procedure AddLog(log: string; LogType: tLogType = ltDefault); overload;
     procedure AdjustLogFont(Name: string; Size: integer);
@@ -189,303 +187,9 @@ uses uConfig, uHelp;
 
 {$R *.dfm}
 
-procedure TfMain.updateTimerStatus(enabled: Boolean);
-begin
-  TimerUpdateStatus.Enabled := enabled;
-end;
-
-procedure TfMain.miShowHideClick(Sender: TObject);
-begin
-  if Visible then
-  begin
-    Hide;
-    if fMain.WindowState = wsMinimized then
-      fMain.WindowState := wsNormal;
-  end
-  else
-  begin
-    Show;
-    if fMain.WindowState = wsMinimized then
-      fMain.WindowState := wsNormal;
-    Application.BringToFront;
-  end;
-end;
-
-procedure TfMain.miGeneralClick(Sender: TObject);
-var
-  mi: TMenuItem;
-  App: string;
-begin
-  if not(Sender is TMenuItem) then
-    exit;
-  mi := Sender as TMenuItem;
-  if mi.tag = 0 then
-    EditConfigLogs(mi.hint);
-  if mi.tag = 1 then
-  begin
-    App := BaseDir + mi.hint;
-    ExecuteFile(App, '', '', SW_SHOW);
-    AddLog(Format(_('Executing "%s"'), [App]));
-  end;
-end;
-
-procedure TfMain.AddLog(module, log: string; LogType: tLogType = ltDefault);
-begin
-  if (not Config.ShowDebug) and (LogType = ltDebug) or (LogType = ltDebugDetails) then
-    exit;
-  if (LogType = ltDebugDetails) and (Config.DebugLevel = 0) then
-    exit;
-
-  with reLog do
-  begin
-    SelStart := GetTextLen;
-
-    SelAttributes.Color := clGray;
-    SelText := TimeToStr(Now) + '  ';
-
-    SelAttributes.Color := clBlack;
-    SelText := '[';
-
-    SelAttributes.Color := clBlue;
-    SelText := module;
-
-    SelAttributes.Color := clBlack;
-    SelText := '] ' + #9;
-
-    case LogType of
-      ltDefault:
-        SelAttributes.Color := clBlack;
-      ltInfo:
-        SelAttributes.Color := clBlue;
-      ltError:
-        SelAttributes.Color := clRed;
-      ltDebug:
-        SelAttributes.Color := clGray;
-      ltDebugDetails:
-        SelAttributes.Color := clSilver;
-    end;
-
-    SelText := log + #13;
-
-    // SelStart := GetTextLen;
-    SendMessage(Handle, EM_SCROLLCARET, 0, 0);
-  end;
-
-end;
-
-procedure TfMain.AddLog(log: string; LogType: tLogType = ltDefault);
-begin
-  AddLog('main', log, LogType);
-end;
-
-procedure TfMain.ApplicationEvents1Exception(Sender: TObject; E: Exception);
-var
-  ts: tStringList;
-  i: integer;
-begin
-  // GlobalAddLog(Format('Exception in thread: %d / %s', [Thread.ThreadID, JclDebugThreadList.ThreadClassNames[Thread.ThreadID]]),0,'LogException');
-  // Note: JclLastExceptStackList always returns list for *current* thread ID. To simplify getting the
-  // stack of thread where an exception occured JclLastExceptStackList returns stack of the thread instead
-  // of current thread when called *within* the JclDebugThreadList.OnSyncException handler. This is the
-  // *only* exception to the behavior of JclLastExceptStackList described above.
-  ts := tStringList.Create;
-
-  AddLog('EXCEPTION', E.Message, ltError);
-
-  JclLastExceptStackList.AddToStrings(ts, True, True, True);
-  for i := 0 to ts.count - 1 do
-    AddLog('EXCEPTION', ts[i], ltError);
-  ts.Free;
-end;
-
-procedure TfMain.miActionTomcatAutoClick(Sender: TObject);
-begin
-  if Tomcat.isRunning then
-    Tomcat.Stop
-  else
-    Tomcat.Start;
-end;
-
-procedure TfMain.miActionTomcatStartClick(Sender: TObject);
-begin
-  Tomcat.Start;
-end;
-
-procedure TfMain.miActionTomcatStopClick(Sender: TObject);
-begin
-  Tomcat.Stop
-end;
-
-procedure TfMain.bApacheActionClick(Sender: TObject);
-begin
-  if Apache.isRunning then
-    Apache.Stop
-  else
-    Apache.Start;
-end;
-
-procedure TfMain.ApacheTrayControlClick(Sender: TObject);
-begin
-  if Apache.isRunning then
-    Apache.Stop
-  else
-    Apache.Start;
-end;
-
-procedure TfMain.miTerminateClick(Sender: TObject);
-begin
-  //FormDestroy(Sender);
-  //TimerUpdateStatus.Enabled := False;
-  Closing := True;
-  Application.ProcessMessages;
-  //Exit;
-  Application.Terminate;
-  //Close;
-end;
-
-procedure TfMain.SaveLogFile;
-var
-  en: string;
-  LogFileName: string;
-  f: TextFile;
-  i: integer;
-begin
-  en := ExtractFileName(Application.ExeName);
-  while (length(en) > 0) and (en[length(en)] <> '.') do
-    en := copy(en, 1, length(en) - 1);
-  LogFileName := BaseDir + en + 'log';
-  AssignFile(f, LogFileName);
-  if FileExists(LogFileName) then
-    Append(f)
-  else
-    Rewrite(f);
-  for i := 0 to reLog.Lines.count - 1 do
-    Writeln(f, reLog.Lines[i]);
-  Writeln(f, '');
-  CloseFile(f);
-end;
-
-procedure TfMain.SelectAll1Click(Sender: TObject);
-begin
-  reLog.SelectAll;
-end;
-
-procedure TfMain.miApacheLogsAccessClick(Sender: TObject);
-begin
-  Apache.ShowLogs(altAccess);
-end;
-
-procedure TfMain.miApacheLogsErrorClick(Sender: TObject);
-begin
-  Apache.ShowLogs(altError);
-end;
-
-procedure TfMain.bQuitClick(Sender: TObject);
-begin
-  miTerminateClick(Sender);
-end;
-
-procedure TfMain.bExplorerClick(Sender: TObject);
-var
-  App: string;
-begin
-  App := BaseDir;
-  ExecuteFile(App, '', '', SW_SHOW);
-  AddLog(Format(_('Executing "%s"'), [App]));
-end;
-
-procedure TfMain.bFileZillaActionClick(Sender: TObject);
-begin
-  if FileZilla.isRunning then
-    FileZilla.Stop
-  else
-    FileZilla.Start;
-end;
-
-procedure TfMain.FileZillaTrayControlClick(Sender: TObject);
-begin
-  if FileZilla.isRunning then
-    FileZilla.Stop
-  else
-    FileZilla.Start;
-end;
-
-procedure TfMain.bFileZillaAdminClick(Sender: TObject);
-begin
-  FileZilla.Admin;
-end;
-
-procedure TfMain.bFileZillaConfigClick(Sender: TObject);
-begin
-  GeneralPUClear;
-  GeneralPUAdd('FileZilla Server.xml', 'FileZillaFTP\FileZilla Server.xml');
-  GeneralPUAddUserFromSL(Config.UserConfig.FileZilla);
-  GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'FileZillaFTP', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
-end;
-
-procedure TfMain.bFileZillaLogsClick(Sender: TObject);
-begin
-  GeneralPUClear;
-  GeneralPUAddUserFromSL(Config.UserLogs.FileZilla);
-  if DirectoryExists(BaseDir + 'FileZillaFTP\Logs') then
-    GeneralPUAdd(_('<Browse>'), 'FileZillaFTP\Logs', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
-end;
-
-procedure TfMain.bFileZillaServiceClick(Sender: TObject);
-var
-  oldIsService: Boolean;
-begin
-  oldIsService := FileZilla.isService;
-
-  if FileZilla.isRunning then
-  begin
-    MessageDlg(_('Services cannot be installed or uninstalled while the service is running!'), mtError, [mbOk], 0);
-    exit;
-  end;
-  if FileZilla.isService then
-  begin
-    if MessageDlg(Format(_('Click Yes to uninstall the %s service'), [FileZilla.ModuleName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-    begin
-      updateTimerStatus(False);
-      FileZilla.ServiceUnInstall;
-      updateTimerStatus(True);
-    end
-    else
-      exit;
-  end
-  else
-  begin
-    if MessageDlg(Format(_('Click Yes to install the %s service'), [FileZilla.ModuleName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-    begin
-      updateTimerStatus(False);
-      FileZilla.ServiceInstall;
-      updateTimerStatus(True);
-    end
-    else
-      exit;
-  end;
-  FileZilla.CheckIsService;
-  if (oldIsService = FileZilla.isService) then
-  begin
-    FileZilla.AddLog(_('Service was NOT (un)installed!'), ltError);
-    if (WinVersion.Major = 5) then // WinXP
-      FileZilla.AddLog
-        (_('One possible reason for failure: On windows security box you !!!MUST UNCHECK!!! the "Protect my computer and data from unauthorized program activity" checkbox!!!'),
-        ltError);
-  end
-  else
-  begin
-    FileZilla.AddLog(_('Successful!'));
-  end;
-end;
-
-procedure TfMain.bHelpClick(Sender: TObject);
-begin
-  fHelp.Show;
-end;
+///////////////////////////////////////////
+// APACHE FUNCTIONS
+///////////////////////////////////////////
 
 procedure TfMain.bApacheServiceClick(Sender: TObject);
 var
@@ -536,90 +240,59 @@ begin
   end;
 end;
 
-procedure TfMain.bMercuryActionClick(Sender: TObject);
+procedure TfMain.bApacheActionClick(Sender: TObject);
 begin
-  if Mercury.isRunning then
-    Mercury.Stop
+  if Apache.isRunning then
+    Apache.Stop
   else
-    Mercury.Start;
+    Apache.Start;
 end;
 
-procedure TfMain.MercuryTrayControlClick(Sender: TObject);
+procedure TfMain.bApacheAdminClick(Sender: TObject);
 begin
-  if Mercury.isRunning then
-    Mercury.Stop
-  else
-    Mercury.Start;
+  Apache.Admin;
 end;
 
-procedure TfMain.bMercuryAdminClick(Sender: TObject);
-begin
-  Mercury.Admin;
-end;
-
-procedure TfMain.bMercuryConfigClick(Sender: TObject);
+procedure TfMain.bApacheConfigClick(Sender: TObject);
 begin
   GeneralPUClear;
-  GeneralPUAdd('mercury.ini', 'MercuryMail\mercury.ini');
-  GeneralPUAddUserFromSL(Config.UserConfig.Mercury);
+  GeneralPUAdd('Apache (httpd.conf)', 'apache/conf/httpd.conf');
+  GeneralPUAdd('Apache (httpd-ssl.conf)', 'apache/conf/extra/httpd-ssl.conf');
+  GeneralPUAdd('Apache (httpd-xampp.conf)', 'apache/conf/extra/httpd-xampp.conf');
+  GeneralPUAdd('PHP (php.ini)', 'php/php.ini');
+  GeneralPUAdd('phpMyAdmin (config.inc.php)', 'phpMyAdmin/config.inc.php');
+  GeneralPUAddUserFromSL(Config.UserConfig.Apache);
   GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'MercuryMail', 1);
+  GeneralPUAdd(_('<Browse>') + ' [Apache]', 'apache', 1);
+  GeneralPUAdd(_('<Browse>') + ' [PHP]', 'php', 1);
+  GeneralPUAdd(_('<Browse>') + ' [phpMyAdmin]', 'phpMyAdmin', 1);
   puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
-procedure TfMain.bMercurylogsClick(Sender: TObject);
+procedure TfMain.bApacheLogsClick(Sender: TObject);
 begin
   GeneralPUClear;
-  GeneralPUAddUserFromSL(Config.UserLogs.Mercury);
-  GeneralPUAdd(_('<Browse>'), 'MercuryMail\LOGS', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
-end;
-
-procedure TfMain.bMercuryServiceClick(Sender: TObject);
-begin
-  MessageDlg(_('Mercury cannot be run as service!'), mtError, [mbOk], 0);
-end;
-
-procedure TfMain.bMySQLActionClick(Sender: TObject);
-begin
-  if MySQL.isRunning then
-    MySQL.Stop
-  else
-    MySQL.Start;
-end;
-
-procedure TfMain.MySQLTrayControlClick(Sender: TObject);
-begin
-  if MySQL.isRunning then
-    MySQL.Stop
-  else
-    MySQL.Start;
-end;
-
-procedure TfMain.bMySQLAdminClick(Sender: TObject);
-begin
-  MySQL.Admin;
-end;
-
-procedure TfMain.bMySQLConfigClick(Sender: TObject);
-begin
-  GeneralPUClear;
-  GeneralPUAdd('my.ini', 'mysql\bin\my.ini');
-  GeneralPUAddUserFromSL(Config.UserConfig.MySQL);
+  GeneralPUAdd('Apache (access.log)', 'apache\logs\access.log');
+  GeneralPUAdd('Apache (error.log)', 'apache\logs\error.log');
+  GeneralPUAdd('PHP (php_error_log)', 'php\logs\php_error_log');
+  GeneralPUAddUserFromSL(Config.UserLogs.Apache);
   GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'mysql', 1);
+  GeneralPUAdd(_('<Browse>') + ' [Apache]', 'apache\logs', 1);
+  GeneralPUAdd(_('<Browse>') + ' [PHP]', 'php\logs', 1);
   puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
-procedure TfMain.bMySQLLogsClick(Sender: TObject);
+procedure TfMain.ApacheTrayControlClick(Sender: TObject);
 begin
-  GeneralPUClear;
-  GeneralPUAdd('mysql_error.log', 'mysql\data\mysql_error.log');
-  GeneralPUAddUserFromSL(Config.UserLogs.MySQL);
-  GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'mysql\data', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+  if Apache.isRunning then
+    Apache.Stop
+  else
+    Apache.Start;
 end;
+
+///////////////////////////////////////////
+// MYSQL FUNCTIONS
+///////////////////////////////////////////
 
 procedure TfMain.bMySQLServiceClick(Sender: TObject);
 var
@@ -669,62 +342,190 @@ begin
   end;
 end;
 
-procedure TfMain.bConfigClick(Sender: TObject);
+procedure TfMain.bMySQLActionClick(Sender: TObject);
 begin
-  fConfig.Show;
+  if MySQL.isRunning then
+    MySQL.Stop
+  else
+    MySQL.Start;
 end;
 
-procedure TfMain.bSCMClick(Sender: TObject);
+procedure TfMain.bMySQLAdminClick(Sender: TObject);
+begin
+  MySQL.Admin;
+end;
+
+procedure TfMain.bMySQLConfigClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAdd('my.ini', 'mysql\bin\my.ini');
+  GeneralPUAddUserFromSL(Config.UserConfig.MySQL);
+  GeneralPUAdd();
+  GeneralPUAdd(_('<Browse>'), 'mysql', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.bMySQLLogsClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAdd('mysql_error.log', 'mysql\data\mysql_error.log');
+  GeneralPUAddUserFromSL(Config.UserLogs.MySQL);
+  GeneralPUAdd();
+  GeneralPUAdd(_('<Browse>'), 'mysql\data', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.MySQLTrayControlClick(Sender: TObject);
+begin
+  if MySQL.isRunning then
+    MySQL.Stop
+  else
+    MySQL.Start;
+end;
+
+///////////////////////////////////////////
+// FILEZILLA FUNCTIONS
+///////////////////////////////////////////
+
+procedure TfMain.bFileZillaServiceClick(Sender: TObject);
 var
-  App: string;
+  oldIsService: Boolean;
 begin
-  App := 'services.msc';
-  ExecuteFile(App, '', '', SW_SHOW);
-  AddLog(Format(_('Executing "%s"'), [App]));
-end;
+  oldIsService := FileZilla.isService;
 
-procedure TfMain.bTomcatActionClick(Sender: TObject);
-begin
-  if Tomcat.isRunning then
-    Tomcat.Stop
+  if FileZilla.isRunning then
+  begin
+    MessageDlg(_('Services cannot be installed or uninstalled while the service is running!'), mtError, [mbOk], 0);
+    exit;
+  end;
+  if FileZilla.isService then
+  begin
+    if MessageDlg(Format(_('Click Yes to uninstall the %s service'), [FileZilla.ModuleName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      updateTimerStatus(False);
+      FileZilla.ServiceUnInstall;
+      updateTimerStatus(True);
+    end
+    else
+      exit;
+  end
   else
-    Tomcat.Start;
-end;
-
-procedure TfMain.TomcatTrayControlClick(Sender: TObject);
-begin
-  if Tomcat.isRunning then
-    Tomcat.Stop
+  begin
+    if MessageDlg(Format(_('Click Yes to install the %s service'), [FileZilla.ModuleName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      updateTimerStatus(False);
+      FileZilla.ServiceInstall;
+      updateTimerStatus(True);
+    end
+    else
+      exit;
+  end;
+  FileZilla.CheckIsService;
+  if (oldIsService = FileZilla.isService) then
+  begin
+    FileZilla.AddLog(_('Service was NOT (un)installed!'), ltError);
+    if (WinVersion.Major = 5) then // WinXP
+      FileZilla.AddLog
+        (_('One possible reason for failure: On windows security box you !!!MUST UNCHECK!!! the "Protect my computer and data from unauthorized program activity" checkbox!!!'),
+        ltError);
+  end
   else
-    Tomcat.Start;
+  begin
+    FileZilla.AddLog(_('Successful!'));
+  end;
 end;
 
-procedure TfMain.bTomcatAdminClick(Sender: TObject);
+procedure TfMain.bFileZillaActionClick(Sender: TObject);
 begin
-  Tomcat.Admin;
+  if FileZilla.isRunning then
+    FileZilla.Stop
+  else
+    FileZilla.Start;
 end;
 
-procedure TfMain.bTomcatConfigClick(Sender: TObject);
+procedure TfMain.bFileZillaAdminClick(Sender: TObject);
+begin
+  FileZilla.Admin;
+end;
+
+procedure TfMain.bFileZillaConfigClick(Sender: TObject);
 begin
   GeneralPUClear;
-  GeneralPUAdd('server.xml', 'Tomcat\conf\server.xml');
-  GeneralPUAdd('tomcat-users.xml', 'Tomcat\conf\tomcat-users.xml');
-  GeneralPUAdd('web.xml', 'Tomcat\conf\web.xml');
-  GeneralPUAdd('context.xml', 'Tomcat\conf\context.xml');
-  GeneralPUAddUserFromSL(Config.UserConfig.Tomcat);
+  GeneralPUAdd('FileZilla Server.xml', 'FileZillaFTP\FileZilla Server.xml');
+  GeneralPUAddUserFromSL(Config.UserConfig.FileZilla);
   GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'Tomcat\conf', 1);
+  GeneralPUAdd(_('<Browse>'), 'FileZillaFTP', 1);
   puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
-procedure TfMain.bTomcatLogsClick(Sender: TObject);
+procedure TfMain.bFileZillaLogsClick(Sender: TObject);
 begin
   GeneralPUClear;
-  GeneralPUAddUserFromSL(Config.UserLogs.Tomcat);
-  GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>'), 'tomcat\logs', 1);
+  GeneralPUAddUserFromSL(Config.UserLogs.FileZilla);
+  if DirectoryExists(BaseDir + 'FileZillaFTP\Logs') then
+    GeneralPUAdd(_('<Browse>'), 'FileZillaFTP\Logs', 1);
   puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
+
+procedure TfMain.FileZillaTrayControlClick(Sender: TObject);
+begin
+  if FileZilla.isRunning then
+    FileZilla.Stop
+  else
+    FileZilla.Start;
+end;
+
+///////////////////////////////////////////
+// MERCURY FUNCTIONS
+///////////////////////////////////////////
+
+procedure TfMain.bMercuryServiceClick(Sender: TObject);
+begin
+  MessageDlg(_('Mercury cannot be run as service!'), mtError, [mbOk], 0);
+end;
+
+procedure TfMain.bMercuryActionClick(Sender: TObject);
+begin
+  if Mercury.isRunning then
+    Mercury.Stop
+  else
+    Mercury.Start;
+end;
+
+procedure TfMain.bMercuryAdminClick(Sender: TObject);
+begin
+  Mercury.Admin;
+end;
+
+procedure TfMain.bMercuryConfigClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAdd('mercury.ini', 'MercuryMail\mercury.ini');
+  GeneralPUAddUserFromSL(Config.UserConfig.Mercury);
+  GeneralPUAdd();
+  GeneralPUAdd(_('<Browse>'), 'MercuryMail', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.bMercurylogsClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAddUserFromSL(Config.UserLogs.Mercury);
+  GeneralPUAdd(_('<Browse>'), 'MercuryMail\LOGS', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.MercuryTrayControlClick(Sender: TObject);
+begin
+  if Mercury.isRunning then
+    Mercury.Stop
+  else
+    Mercury.Start;
+end;
+
+///////////////////////////////////////////
+// TOMCAT FUNCTIONS
+///////////////////////////////////////////
 
 procedure TfMain.bTomcatServiceClick(Sender: TObject);
 var
@@ -775,6 +576,64 @@ begin
 
 end;
 
+procedure TfMain.bTomcatActionClick(Sender: TObject);
+begin
+  if Tomcat.isRunning then
+    Tomcat.Stop
+  else
+    Tomcat.Start;
+end;
+
+procedure TfMain.bTomcatAdminClick(Sender: TObject);
+begin
+  Tomcat.Admin;
+end;
+
+procedure TfMain.bTomcatConfigClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAdd('server.xml', 'Tomcat\conf\server.xml');
+  GeneralPUAdd('tomcat-users.xml', 'Tomcat\conf\tomcat-users.xml');
+  GeneralPUAdd('web.xml', 'Tomcat\conf\web.xml');
+  GeneralPUAdd('context.xml', 'Tomcat\conf\context.xml');
+  GeneralPUAddUserFromSL(Config.UserConfig.Tomcat);
+  GeneralPUAdd();
+  GeneralPUAdd(_('<Browse>'), 'Tomcat\conf', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.bTomcatLogsClick(Sender: TObject);
+begin
+  GeneralPUClear;
+  GeneralPUAddUserFromSL(Config.UserLogs.Tomcat);
+  GeneralPUAdd();
+  GeneralPUAdd(_('<Browse>'), 'tomcat\logs', 1);
+  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfMain.TomcatTrayControlClick(Sender: TObject);
+begin
+  if Tomcat.isRunning then
+    Tomcat.Stop
+  else
+    Tomcat.Start;
+end;
+
+///////////////////////////////////////////
+// CONTROL PANEL FUNCTIONS
+///////////////////////////////////////////
+
+procedure TfMain.bConfigClick(Sender: TObject);
+begin
+  fConfig.Show;
+end;
+
+procedure TfMain.bNetstatClick(Sender: TObject);
+begin
+  fNetStat.Show;
+  fNetStat.RefreshTable(True);
+end;
+
 procedure TfMain.bXamppShellClick(Sender: TObject);
 const
   cBatchFileContents = '@ECHO OFF' + cr + '' + cr + 'GOTO weiter' + cr + ':setenv' + cr + 'SET "MIBDIRS=%~dp0php\extras\mibs"' + cr +
@@ -813,10 +672,127 @@ begin
   ExecuteFile(batchfile, '', '', SW_SHOW);
 end;
 
-procedure TfMain.Copy1Click(Sender: TObject);
+procedure TfMain.bExplorerClick(Sender: TObject);
+var
+  App: string;
+begin
+  App := BaseDir;
+  ExecuteFile(App, '', '', SW_SHOW);
+  AddLog(Format(_('Executing "%s"'), [App]));
+end;
+
+procedure TfMain.bSCMClick(Sender: TObject);
+var
+  App: string;
+begin
+  App := 'services.msc';
+  ExecuteFile(App, '', '', SW_SHOW);
+  AddLog(Format(_('Executing "%s"'), [App]));
+end;
+
+procedure TfMain.bHelpClick(Sender: TObject);
+begin
+  fHelp.Show;
+end;
+
+procedure TfMain.bQuitClick(Sender: TObject);
+begin
+  miTerminateClick(Sender);
+end;
+
+///////////////////////////////////////////
+// LOG FUNCTIONS
+///////////////////////////////////////////
+
+procedure TfMain.AddLog(module, log: string; LogType: tLogType = ltDefault);
+begin
+  if (not Config.ShowDebug) and (LogType = ltDebug) or (LogType = ltDebugDetails) then
+    exit;
+  if (LogType = ltDebugDetails) and (Config.DebugLevel = 0) then
+    exit;
+
+  with reLog do
+  begin
+    SelStart := GetTextLen;
+
+    SelAttributes.Color := clGray;
+    SelText := TimeToStr(Now) + '  ';
+
+    SelAttributes.Color := clBlack;
+    SelText := '[';
+
+    SelAttributes.Color := clBlue;
+    SelText := module;
+
+    SelAttributes.Color := clBlack;
+    SelText := '] ' + #9;
+
+    case LogType of
+      ltDefault:
+        SelAttributes.Color := clBlack;
+      ltInfo:
+        SelAttributes.Color := clBlue;
+      ltError:
+        SelAttributes.Color := clRed;
+      ltDebug:
+        SelAttributes.Color := clGray;
+      ltDebugDetails:
+        SelAttributes.Color := clSilver;
+    end;
+
+    SelText := log + #13;
+
+    SendMessage(Handle, EM_SCROLLCARET, 0, 0);
+  end;
+
+end;
+
+procedure TfMain.AddLog(log: string; LogType: tLogType = ltDefault);
+begin
+  AddLog('main', log, LogType);
+end;
+
+procedure TfMain.WriteLogToFile;
+var
+  exec_name: string;
+  LogFileName: string;
+  f: TextFile;
+  i: integer;
+begin
+  exec_name := ExtractFileName(Application.ExeName);
+  while (length(exec_name) > 0) and (exec_name[length(exec_name)] <> '.') do
+    exec_name := copy(exec_name, 1, length(exec_name) - 1);
+  LogFileName := BaseDir + exec_name + 'log';
+  AssignFile(f, LogFileName);
+  if FileExists(LogFileName) then
+    Append(f)
+  else
+    Rewrite(f);
+  for i := 0 to reLog.Lines.count - 1 do
+    Writeln(f, reLog.Lines[i]);
+  Writeln(f, '');
+  CloseFile(f);
+end;
+
+procedure TfMain.LogSelectAllClick(Sender: TObject);
+begin
+  reLog.SelectAll;
+end;
+
+procedure TfMain.LogCopyClick(Sender: TObject);
 begin
   reLog.CopyToClipboard;
 end;
+
+procedure TfMain.AdjustLogFont(Name: string; Size: integer);
+begin
+  reLog.Font.Name := Name;
+  reLog.Font.Size := Size;
+end;
+
+///////////////////////////////////////////
+// POPUP MENU FUNCTIONS
+///////////////////////////////////////////
 
 procedure TfMain.GeneralPUAdd(text: string = ''; hint: string = ''; tag: integer = 0);
 var
@@ -875,6 +851,24 @@ begin
   puGeneral.Items.Clear;
 end;
 
+procedure TfMain.miGeneralClick(Sender: TObject);
+var
+  mi: TMenuItem;
+  App: string;
+begin
+  if not(Sender is TMenuItem) then
+    exit;
+  mi := Sender as TMenuItem;
+  if mi.tag = 0 then
+    EditConfigLogs(mi.hint);
+  if mi.tag = 1 then
+  begin
+    App := BaseDir + mi.hint;
+    ExecuteFile(App, '', '', SW_SHOW);
+    AddLog(Format(_('Executing "%s"'), [App]));
+  end;
+end;
+
 procedure TfMain.EditConfigLogs(ConfigFile: string);
 var
   App, Param: string;
@@ -885,44 +879,62 @@ begin
   ExecuteFile(App, Param, '', SW_SHOW);
 end;
 
-procedure TfMain.bNetstatClick(Sender: TObject);
+///////////////////////////////////////////
+// FORM GENERAL FUNCTIONS
+///////////////////////////////////////////
+
+procedure TfMain.updateTimerStatus(enabled: Boolean);
 begin
-  fNetStat.Show;
-  fNetStat.RefreshTable(True);
+  TimerUpdateStatus.Enabled := enabled;
 end;
 
-procedure TfMain.bApacheAdminClick(Sender: TObject);
+procedure TfMain.updateTimerNetworking(enabled: Boolean);
 begin
-  Apache.Admin;
+  TimerUpdateNetworking.Enabled := enabled;
 end;
 
-procedure TfMain.bApacheConfigClick(Sender: TObject);
+procedure TfMain.miShowHideClick(Sender: TObject);
 begin
-  GeneralPUClear;
-  GeneralPUAdd('Apache (httpd.conf)', 'apache/conf/httpd.conf');
-  GeneralPUAdd('Apache (httpd-ssl.conf)', 'apache/conf/extra/httpd-ssl.conf');
-  GeneralPUAdd('Apache (httpd-xampp.conf)', 'apache/conf/extra/httpd-xampp.conf');
-  GeneralPUAdd('PHP (php.ini)', 'php/php.ini');
-  GeneralPUAdd('phpMyAdmin (config.inc.php)', 'phpMyAdmin/config.inc.php');
-  GeneralPUAddUserFromSL(Config.UserConfig.Apache);
-  GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>') + ' [Apache]', 'apache', 1);
-  GeneralPUAdd(_('<Browse>') + ' [PHP]', 'php', 1);
-  GeneralPUAdd(_('<Browse>') + ' [phpMyAdmin]', 'phpMyAdmin', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+  if Visible then
+  begin
+    Hide;
+    if fMain.WindowState = wsMinimized then
+      fMain.WindowState := wsNormal;
+  end
+  else
+  begin
+    Show;
+    if fMain.WindowState = wsMinimized then
+      fMain.WindowState := wsNormal;
+    Application.BringToFront;
+  end;
 end;
 
-procedure TfMain.bApacheLogsClick(Sender: TObject);
+procedure TfMain.ApplicationEventsException(Sender: TObject; E: Exception);
+var
+  ts: tStringList;
+  i: integer;
 begin
-  GeneralPUClear;
-  GeneralPUAdd('Apache (access.log)', 'apache\logs\access.log');
-  GeneralPUAdd('Apache (error.log)', 'apache\logs\error.log');
-  GeneralPUAdd('PHP (php_error_log)', 'php\logs\php_error_log');
-  GeneralPUAddUserFromSL(Config.UserLogs.Apache);
-  GeneralPUAdd();
-  GeneralPUAdd(_('<Browse>') + ' [Apache]', 'apache\logs', 1);
-  GeneralPUAdd(_('<Browse>') + ' [PHP]', 'php\logs', 1);
-  puGeneral.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+  // GlobalAddLog(Format('Exception in thread: %d / %s', [Thread.ThreadID, JclDebugThreadList.ThreadClassNames[Thread.ThreadID]]),0,'LogException');
+  // Note: JclLastExceptStackList always returns list for *current* thread ID. To simplify getting the
+  // stack of thread where an exception occured JclLastExceptStackList returns stack of the thread instead
+  // of current thread when called *within* the JclDebugThreadList.OnSyncException handler. This is the
+  // *only* exception to the behavior of JclLastExceptStackList described above.
+  ts := tStringList.Create;
+
+  AddLog('EXCEPTION', E.Message, ltError);
+
+  JclLastExceptStackList.AddToStrings(ts, True, True, True);
+  for i := 0 to ts.count - 1 do
+    AddLog('EXCEPTION', ts[i], ltError);
+  ts.Free;
+end;
+
+procedure TfMain.miTerminateClick(Sender: TObject);
+begin
+  Closing := True;
+  Application.ProcessMessages;
+  Application.Terminate;
 end;
 
 procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -943,12 +955,6 @@ begin
   end;
 end;
 
-procedure TfMain.AdjustLogFont(Name: string; Size: integer);
-begin
-  reLog.Font.Name := Name;
-  reLog.Font.Size := Size;
-end;
-
 procedure TfMain.FormCreate(Sender: TObject);
 var
   isAdmin: Boolean;
@@ -960,6 +966,14 @@ var
   index: Integer;
 begin
   TranslateComponent(Self);
+
+  if (Config.Minimized) then
+  begin
+    Hide;
+    fMain.WindowState := wsMinimized;
+  end;
+
+  //ReportMemoryLeaksOnShutdown := true;
 
   BaseDir := LowerCase(ExtractFilePath(Application.ExeName));
 
@@ -979,7 +993,6 @@ begin
   if (Config.WindowSettings.Height <> -1) then
     self.Height := Config.WindowSettings.Height;
 
-  // WinVersion:=GetWinVersion;
   WindowsShutdownInProgress := false;
 
   if IsWindows64 then
@@ -988,7 +1001,6 @@ begin
     Bitness := '32-bit';
 
   AddLog(Format(_('Windows Version: %s %s %s'), [GetWindowsProductString, GetWindowsServicePackVersionString, Bitness]));
-  // AddLog(Format(_('Windows version: %s'),[WinVersion.WinVersion]));
 
   OSVersionInfoEx.dwOSVersionInfoSize := SizeOf(TOSVersionInfo);
   GetVersionEx(OSVersionInfoEx);
@@ -1008,16 +1020,9 @@ begin
   Caption := 'XAMPP Control Panel v' + GlobalProgramversion + Format('  [ Compiled: %s ]', [cCompileDate]);
   lHeader.Caption := 'XAMPP Control Panel v' + GlobalProgramversion;
 
-  CurrentUser := GetCurrentUserName;
   isAdmin := IsWindowsAdmin;
   if isAdmin then
   begin
-//    if (OSVersionInfoEx.dwMajorVersion < 6) then
-//    begin
-//      AddLog(_('Unable to check for Admin privileges on Windows before Vista'), ltInfo);
-//      AddLog(_('You will be asked to run as Administrator when performing actions'), ltInfo);
-//    end
-//    else
       AddLog(_('Running with Administrator rights - good!'));
   end
   else
@@ -1026,6 +1031,10 @@ begin
     AddLog(_('most application stuff but whenever you do something with services'), ltInfo);
     AddLog(_('there will be a security dialogue or things will break! So think '), ltInfo);
     AddLog(_('about running this application with administrator rights!'), ltInfo);
+    fmain.bApacheService.Enabled := false;
+    fmain.bMySQLService.Enabled := false;
+    fmain.bFileZillaService.Enabled := false;
+    fmain.bTomcatService.Enabled := false;
   end;
 
   AddLog(Format(_('XAMPP Installation Directory: "%s"'), [BaseDir]));
@@ -1062,7 +1071,8 @@ begin
     BaseDir := BaseDir + '\';
 
   NetStatTable.UpdateTable;
-  Processes.Update;
+  //Processes.Update;
+  Processes.UpdateList;
 
   AddLog(_('Checking for prerequisites'));
   if Config.EnableChecks.Runtimes then
@@ -1096,7 +1106,7 @@ begin
   end
   else
   begin
-    AddLog(_('The Apache module is disabled'), ltInfo);
+    AddLog(Format(_('The %s module is disabled'),[Config.ModuleNames.Apache]), ltInfo);
     fmain.ApacheTray.Enabled := false;
     fmain.bApacheService.Enabled := false;
     fmain.bApacheAction.Enabled := false;
@@ -1110,7 +1120,7 @@ begin
   end
   else
   begin
-    AddLog(_('The MySQL module is disabled'), ltInfo);
+    AddLog(Format(_('The %s module is disabled'),[Config.ModuleNames.MySQL]), ltInfo);
     fmain.MySQLTray.Enabled := false;
     fmain.bMySQLService.Enabled := false;
     fmain.bMySQLAction.Enabled := false;
@@ -1124,7 +1134,7 @@ begin
   end
   else
   begin
-    AddLog(_('The FileZilla module is disabled'), ltInfo);
+    AddLog(Format(_('The %s module is disabled'),[Config.ModuleNames.FileZilla]), ltInfo);
     fmain.FileZillaTray.Enabled := false;
     fmain.bFileZillaService.Enabled := false;
     fmain.bFileZillaAction.Enabled := false;
@@ -1138,7 +1148,7 @@ begin
   end
   else
   begin
-    AddLog(_('The Mercury module is disabled'), ltInfo);
+    AddLog(Format(_('The %s module is disabled'),[Config.ModuleNames.Mercury]), ltInfo);
     fmain.MercuryTray.Enabled := false;
     fmain.bMercuryAction.Enabled := false;
     fmain.bMercuryAdmin.Enabled := false;
@@ -1151,7 +1161,7 @@ begin
   end
   else
   begin
-    AddLog(_('The Tomcat module is disabled'), ltInfo);
+    AddLog(Format(_('The %s module is disabled'),[Config.ModuleNames.Tomcat]), ltInfo);
     fmain.TomcatTray.Enabled := false;
     fmain.bTomcatService.Enabled := false;
     fmain.bTomcatAction.Enabled := false;
@@ -1165,7 +1175,7 @@ begin
     if Config.ASApache then
     begin
       Apache.AutoStart := True;
-      AddLog(Format(_('Enabling autostart for module "%s"'), [Apache.ModuleName]));
+      AddLog(Format(_('Enabling autostart for module "%s"'), [Config.ModuleNames.Apache]));
     end;
   end;
   if Config.EnableModules.MySQL then
@@ -1173,7 +1183,7 @@ begin
     if Config.ASMySQL then
     begin
       MySQL.AutoStart := True;
-      AddLog(Format(_('Enabling autostart for module "%s"'), [MySQL.ModuleName]));
+      AddLog(Format(_('Enabling autostart for module "%s"'), [Config.ModuleNames.MySQL]));
     end;
   end;
   if Config.EnableModules.FileZilla then
@@ -1181,7 +1191,7 @@ begin
     if Config.ASFileZilla then
     begin
       FileZilla.AutoStart := True;
-      AddLog(Format(_('Enabling autostart for module "%s"'), [FileZilla.ModuleName]));
+      AddLog(Format(_('Enabling autostart for module "%s"'), [Config.ModuleNames.FileZilla]));
     end;
   end;
   if Config.EnableModules.Mercury then
@@ -1189,7 +1199,7 @@ begin
     if Config.ASMercury then
     begin
       Mercury.AutoStart := True;
-      AddLog(Format(_('Enabling autostart for module "%s"'), [Mercury.ModuleName]));
+      AddLog(Format(_('Enabling autostart for module "%s"'), [Config.ModuleNames.Mercury]));
     end;
   end;
   if Config.EnableModules.Tomcat then
@@ -1197,15 +1207,14 @@ begin
     if Config.ASTomcat then
     begin
       Tomcat.AutoStart := True;
-      AddLog(Format(_('Enabling autostart for module "%s"'), [Tomcat.ModuleName]));
+      AddLog(Format(_('Enabling autostart for module "%s"'), [Config.ModuleNames.Tomcat]));
     end;
   end;
 
   AddLog(_('Starting') + ' Check-Timer');
-  //TimerUpdateStatus.Enabled := True;
   updateTimerStatus(True);
+  updateTimerNetworking(True);
   AddLog(_('Control Panel Ready'));
-  // UpdateStatusAll;
 end;
 
 procedure TfMain.FormDestroy(Sender: TObject);
@@ -1237,7 +1246,7 @@ begin
   Config.WindowSettings.Width := self.Width;
   Config.WindowSettings.Height := self.Height;
   SaveSettings;
-  SaveLogFile;
+  WriteLogToFile;
 end;
 
 procedure TfMain.TimerUpdateStatusTimer(Sender: TObject);
@@ -1245,7 +1254,13 @@ begin
   UpdateStatusAll;
 end;
 
-procedure TfMain.TrayIcon1DblClick(Sender: TObject);
+procedure TfMain.TimerUpdateNetworkingTimer(Sender: TObject);
+begin
+  AddLog(_('Updating Networking Table...'), ltDebugDetails);
+  NetStatTable.UpdateTable;
+end;
+
+procedure TfMain.TrayIconDblClick(Sender: TObject);
 begin
   miShowHideClick(nil);
 end;
@@ -1265,37 +1280,33 @@ begin
     s := LowerCase(ts[0]);
     p := pos('version', s);
     if p = 0 then
-      exit;
+    begin
+      p := pos('portable', s);
+      if p = 0 then
+        exit;
+      delete(s, 1, p + 8);
+      p := pos(' ', s);
+      if p = 0 then
+        exit;
+      result := copy(s, 1, p - 1) + ' Portable';
+    end
+    else
+    begin
     delete(s, 1, p + 7);
     p := pos(' ', s);
     if p = 0 then
       exit;
     result := copy(s, 1, p - 1);
+    end;
   except
   end;
   ts.Free;
 end;
 
-procedure DumpProcesses;
-var
-  ProcInfo: TProcInfo;
-  p: integer;
-  s: string;
-begin
-  for p := 0 to Processes.ProcessList.count - 1 do
-  begin
-    ProcInfo := Processes.ProcessList[p];
-    s := Format('%d %s', [ProcInfo.PID, ProcInfo.ExePath]);
-    fMain.reLog.Lines.Add(s)
-  end;
-end;
-
 procedure TfMain.UpdateStatusAll;
 begin
-  Processes.Update;
-  //Processes.UpdateProcesses;
-  NetStatTable.UpdateTable;
-  // DumpProcesses;
+  //Processes.Update;
+  Processes.UpdateList;
 
   // 1. Check Apache
   if Config.EnableModules.Apache then
@@ -1321,7 +1332,7 @@ begin
     Mercury.UpdateStatus;
   end;
 
-  // 5. Check Mercury
+  // 5. Check Tomcat
   if Config.EnableModules.Tomcat then
   begin
     Tomcat.UpdateStatus;
