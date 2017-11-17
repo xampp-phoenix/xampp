@@ -4,4 +4,6 @@
 *.dres
 *.stat
 *.identcache
+*.ini
+*.log
 __history
