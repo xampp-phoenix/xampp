@@ -3,6 +3,11 @@ program xampp_control3;
 
 {$R *.dres}
 
+{$IF CompilerVersion >= 21.0}
+{$WEAKLINKRTTI ON}
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$ENDIF}
+
 uses
   Forms,
   ExtCtrls,
