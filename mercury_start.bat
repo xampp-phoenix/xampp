@@ -1,6 +1,0 @@
-@echo off
-cd /D %~dp0
-echo Mercury Mail Server is starting ... 
-echo Starte Mercury Mail Server ... 
-MercuryMail\mercury.exe
-exit
