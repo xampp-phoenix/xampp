@@ -11,7 +11,7 @@ const
   cStoppedColor = clBtnFace;
   cErrorColor = Graphics.clRed;
 
-  cCompileDate = 'Nov 12th 2015';
+  cCompileDate = 'Nov 17th 2017';
   cr = #13#10;
 
 type

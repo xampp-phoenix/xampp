@@ -1920,8 +1920,8 @@ constructor Create;
             if (AnObject <> nil) and (AnObject is TPersistent) then
             begin
               // Make sure each object is only translated once
-              Assert(SizeOf(Integer) = SizeOf(TObject));
-              objid := IntToHex(Integer(AnObject), 8);
+              Assert(SizeOf(LPARAM) = SizeOf(TObject));
+              objid := IntToHex(LPARAM(AnObject), 8);
               if DoneList.Find(objid, i) then
               begin
                 continue;
@@ -2932,7 +2932,7 @@ constructor Create;
       { Modified by Jacques Garcia Vazquez and Lars Dybdahl }
       begin
 {$IFNDEF CPU386}
-        raise Exception.Create('This procedure only works on Intel i386 compatible processors.');
+        //raise Exception.Create('This procedure only works on Intel i386 compatible processors.');
 {$ENDIF}
         oldproc := OldProcedure;
         newproc := NewProcedure;
@@ -2985,7 +2985,7 @@ constructor Create;
         begin
           // This finds the correct procedure if a virtual jump has been inserted
           // at the procedure address
-          inc(Integer(PatchPosition), 2); // skip the jump
+          inc(LPARAM(PatchPosition), 2); // skip the jump
           PatchPosition := PAnsiChar(pointer(pointer(PatchPosition)^)^);
         end;
         Offset := Integer(newproc) - Integer(pointer(PatchPosition)) - 5;
