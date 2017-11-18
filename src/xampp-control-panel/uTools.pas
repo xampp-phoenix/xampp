@@ -3,7 +3,7 @@ unit uTools;
 interface
 
 uses GnuGettext, Classes, Graphics, Windows, SysUtils, TlHelp32, ShellAPI,
-  Forms, Dialogs, IniFiles, Character, JCLSecurity, StrUtils, JCLFileUtils;
+  Forms, Dialogs, IniFiles, Character, JCLSecurity, StrUtils, JCLFileUtils, UITypes;
 
 const
   cRunningColor = 200 * $10000 + 255 * $100 + 200;

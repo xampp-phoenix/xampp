@@ -19,7 +19,7 @@ uses
   Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, Buttons, uTools, uTomcat,
   uApache, uMySQL, uFileZilla, uMercury, uNetstat, uNetstatTable, Menus,
-  IniFiles, AppEvnts, ImgList, JCLDebug, JCLSysInfo, uProcesses_new;
+  IniFiles, AppEvnts, ImgList, JCLDebug, JCLSysInfo, uProcesses_new, UITypes;
 
 type
   TfMain = class(TForm)

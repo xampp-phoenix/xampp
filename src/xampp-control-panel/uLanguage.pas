@@ -5,7 +5,7 @@ interface
 uses
   GnuGettext, Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms,
-  Dialogs, StdCtrls, Buttons, jpeg, ExtCtrls, Registry;
+  Dialogs, StdCtrls, Buttons, jpeg, ExtCtrls, Registry, UITypes;
 
 type
   TfLanguage = class(TForm)
