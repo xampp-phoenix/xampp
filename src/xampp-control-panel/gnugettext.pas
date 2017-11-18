@@ -2932,7 +2932,9 @@ constructor Create;
       { Modified by Jacques Garcia Vazquez and Lars Dybdahl }
       begin
 {$IFNDEF CPU386}
-        //raise Exception.Create('This procedure only works on Intel i386 compatible processors.');
+{$IFNDEF CPUx64}
+        raise Exception.Create('This procedure only works on Intel i386 compatible processors.');
+{$ENDIF}
 {$ENDIF}
         oldproc := OldProcedure;
         newproc := NewProcedure;
