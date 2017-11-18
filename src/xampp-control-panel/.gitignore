@@ -7,3 +7,6 @@
 *.ini
 *.log
 __history
+__recovery
+dcc32.cfg
+dcc64.cfg
