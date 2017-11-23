@@ -45,12 +45,14 @@ getcurl()
 
 curl()
 {
-    echo $1 >&2
+    echo get $1 >&2
+    [ -f "$2" ] && return
     local u='Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)' 
     local c='_ga=GA1.3.529311640.1508686048; _gid=GA1.3.1125738004.1511274547'
     [ -n "$cookie" ] && c="$c; $cookie"
     [ -n "$useragent" ] && u=$useragent
-    $curl --retry 3 --user-agent "$u" --cookie "$c" --referer ${1%\/*} --location $1 --output $2 -#
+    $curl --retry 3 --user-agent "$u" --cookie "$c" --referer ${1%\/*} --location $1 --output $2.tmp -#
+    [ $? == 0 ] && mv $2.tmp $2
 }
 
 
@@ -70,6 +72,7 @@ urljoin()
 getlist()
 {
     [ -z $1 ] && return
+    rm -f $tmpdir/index.tmp
     curl $1 $tmpdir/index.tmp
     local list=`cat $tmpdir/index.tmp | grep -i 'href=\|filepath' | sed -e 's@.*\(href=\|filepath":\)"\([^"]*\)".*@\2@g' -e 's@\.zip/from/.*$@.zip@'`
     list=`echo "$list" | grep -i -v '[-]src\|-debug\|-nts\|-latest'`
@@ -210,7 +213,6 @@ get_install()
         esac
 
     done
-    return
     curl $file_apache     $tmpdir/${file_apache/*\/}
     useragent=curl
     curl $file_mariadb    $tmpdir/${file_mariadb/*\/}
@@ -247,39 +249,51 @@ do_install()
     mv $unpack/Apache24/ $distdir/apache 
     rm -rf $distdir/apache/cgi-bin $distdir/apache/htdocs
     cp -af $rootdir/apache/* $distdir/apache/ 
+    rm -rf $unpack
 
     unpack ${file_mariadb/*\/}
     mv $unpack/mariadb-*/ $distdir/mysql
     rm -rf $distdir/mysql/mysql-test $distdir/mysql/sql-bench
     find $distdir/mysql -name '*.pdb' -delete
     cp -af $rootdir/mysql/* $distdir/mysql/ 
+    rm -rf $unpack
     
     unpack ${file_php/*\/}
     mv $unpack/ $distdir/php
     cp -af $rootdir/php/* $distdir/php/ 
-    cp -f  $distdir/php/libssh2.dll $rootdir/php/icu*.dll $distdir/apache/bin/ 
+    cp -f  $distdir/php/libssh2.dll $distdir/php/icu*.dll $distdir/apache/bin/ 
+    rm -rf $unpack
     
     unpack ${file_perl/*\/}
     mv $unpack/perl/ $distdir/perl
     #cp -af $rootdir/perl/* $distdir/perl/ 
+    rm -rf $unpack
     
     unpack ${file_tomcat/*\/}
     mv $unpack/apache-tomcat-*/ $distdir/tomcat
     cp -af $rootdir/tomcat/* $distdir/tomcat/ 
+    rm -rf $unpack
     
     unpack ${file_phpmyadmin/*\/}
     mv $unpack/phpMyAdmin-*/ $distdir/phpMyAdmin
     cp -af $rootdir/phpMyAdmin/* $distdir/phpMyAdmin/ 
+    rm -rf $unpack
     
     unpack ${file_python/*\/}
     mv $unpack/ $distdir/python
     rm -f $distdir/python/*.msi
+    rm -rf $unpack
     
     unpack ${file_java/*\/}
     mv $unpack/jre*/ $distdir/jre
+    rm -rf $unpack
+
     cp -a $rootdir/cgi-bin $rootdir/htdocs $rootdir/install $rootdir/licenses $rootdir/locale $distdir/
     cp -a $rootdir/*.bat $rootdir/*.txt $distdir/
-    mkdir -p $distdir/tmp $distdir/FileZillaFTP $distdir/MercuryMail $distdir/webalizer $distdir/webdav $distdir/sendmail
+    cp -f $rootdir/src/xampp-usb-lite/setup_xampp.bat $distdir/
+    cp -f $rootdir/src/xampp-usb-lite/xampp-control.ini $distdir/
+    mv $distdir/htdocs/xampp/.modell-usb $distdir/htdocs/xampp/.modell
+    mkdir -p $distdir/tmp $distdir/webdav
 }
 
 
