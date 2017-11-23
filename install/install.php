@@ -71,7 +71,8 @@
 	$CS = 0;
 	$slashi = 1;
 	$bslashi = 1;
-	$awkexe = ".\install\awk.exe";
+	$awkexe = ".\install\busybox.exe";
+	$awkopt = " awk ";
 	$awk = ".\install\config.awk";
 	$awknewdir = "\"".$awkpart."\"";
 	$awkdoublebackslashdir = "\"".$awkpartdoublebackslash."\"";
@@ -479,7 +480,7 @@
 				break;
 			}
       // echo "DEBUG: Working with $awkconfig now ... \r\n";
-			$awkrealm = $awkexe." -v DIR=".$awknewdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$substit." -f ".$awk;
+			$awkrealm = $awkexe.$awkopt." -v DIR=".$awknewdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$substit." -f ".$awk;
 			if (file_exists($awk) && file_exists($awkexe) && file_exists($configreal)) {
 				$handle = popen($awkrealm, 'w'); // Fix by Wiedmann
 				pclose($handle);
@@ -537,7 +538,7 @@
 				break;
 			}
       // echo "DEBUG: Working with $awkconfig now ... \r\n";
-			$awkrealm = $awkexe." -v DIR=".$awkdoublebackslashdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$doublesubstit." -f ".$awk;
+			$awkrealm = $awkexe.$awkopt." -v DIR=".$awkdoublebackslashdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$doublesubstit." -f ".$awk;
 
 			if (file_exists($awk) && file_exists($awkexe) && file_exists($configreal)) {
 				$handle = popen($awkrealm, 'w'); // Fix by Wiedmann
@@ -594,7 +595,7 @@
 				break;
 			}
       // echo "DEBUG: Working with $awkconfig now ... \r\n";
-			$awkrealm = $awkexe." -v DIR=".$awkslashdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$substitslash." -f ".$awk;
+			$awkrealm = $awkexe.$awkopt." -v DIR=".$awkslashdir." -v CONFIG=".$awkconfig. " -v CONFIGNEW=".$awkconfigtemp. "  -v SUBSTIT=".$substitslash." -f ".$awk;
 
 			if (file_exists($awk) && file_exists($awkexe) && file_exists($configreal)) {
 				$handle = popen($awkrealm, 'w'); // Fix by Wiedmann

@@ -14,6 +14,11 @@ set FINDCMD=FIND /I
 
 FOR /F "tokens=2 delims= " %%A IN ('%TASKCMD% ^| %FINDCMD% "%~0"') DO SET MyPID=%%A
 
+if exist jre\bin\java.exe (
+	set JRE_HOME=%cd%\jre
+	goto JRERUN
+)
+
 echo.
 echo [XAMPP]: Searching for JDK or JRE HOME with reg query ...
 set JDKKeyName64=HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit
@@ -88,8 +93,10 @@ echo [XAMPP]: Using JRE
 set "CURRENT_DIR=%cd%"
 set "CATALINA_HOME=%CURRENT_DIR%\tomcat"
 
-set Cmd=reg query "%KeyName%" /s
-for /f "tokens=2*" %%i in ('%Cmd% ^| find "JavaHome"') do set JRE_HOME=%%j
+if not defined JRE_HOME (
+	set Cmd=reg query "%KeyName%" /s
+	for /f "tokens=2*" %%i in ('%Cmd% ^| find "JavaHome"') do set JRE_HOME=%%j
+)
 
 echo.
 echo [XAMPP]: Seems fine!
