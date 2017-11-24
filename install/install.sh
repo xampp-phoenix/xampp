@@ -9,6 +9,8 @@ URL_TOMCAT=https://tomcat.apache.org/download-70.cgi
 URL_PHPMYADMIN=https://www.phpmyadmin.net/files/
 URL_PYTHON=https://www.python.org/downloads/windows/
 URL_JAVA=http://www.oracle.com/technetwork/java/javase/downloads/index.html
+URL_XAMPP=https://github.com/xampp-phoenix/xampp-control-panel/releases
+
 URL_CURL=http://dl.uxnr.de/build/curl/
 
 curdir=$PWD
@@ -22,8 +24,10 @@ php=$rootdir/php/php.exe
 curl=$installdir/curl.exe
 
 uname=`uname -m`
-x32='x86\|win32\|32bit\|i586'
-x64='x64\|win64\|64bit\|amd64'
+x32='x86\|win32\|32bit\|i586\|i686'
+x64='x64\|win64\|64bit\|amd64\|x86_64'
+
+init_xampp=3.2.2.0
 
 x3264=$x32
 [ "$uname" == "x86_64" ] && x3264=$x64 
@@ -185,6 +189,7 @@ get_install()
     file_java=`getlist $URL_JAVA | grep "/jre$init_java" | head -n1`
     file_java=`urljoin $URL_JAVA $file_java`
     file_java=`getlist $file_java | grep -i $x3264 | tail -n1`
+    file_xampp=`getlist $URL_XAMPP | grep -i $x3264  | grep $init_xampp | head -n1`
 
     file_apache=`urljoin $URL_APACHE $file_apache`
     file_mariadb=`urljoin $URL_MARIADB $file_mariadb`
@@ -194,6 +199,7 @@ get_install()
     file_phpmyadmin=`urljoin $URL_PHPMYADMIN $file_phpmyadmin`
     file_python=`urljoin $URL_PYTHON $file_python`
     file_java=`urljoin $URL_JAVA $file_java`
+    file_xampp=`urljoin $URL_XAMPP $file_xampp`
     echo '--------------------------------------------'
     echo ${file_apache/*\/}
     echo ${file_mariadb/*\/}
@@ -203,6 +209,7 @@ get_install()
     echo ${file_phpmyadmin/*\/}
     echo ${file_python/*\/}
     echo ${file_java/*\/}
+    echo ${file_xampp/*\/}
     echo '--------------------------------------------'
     while read -p 'These files to download?(y/n):' num
     do
@@ -223,6 +230,7 @@ get_install()
     curl $file_python     $tmpdir/${file_python/*\/}
     cookie='gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     curl $file_java       $tmpdir/${file_java/*\/}
+    curl $file_xampp       $tmpdir/${file_xampp/*\/}
 }
 
 unpack()
@@ -286,6 +294,10 @@ do_install()
     
     unpack ${file_java/*\/}
     mv $unpack/jre*/ $distdir/jre
+    rm -rf $unpack
+
+    unpack ${file_xampp/*\/}
+    mv $unpack/*.exe/ $distdir/
     rm -rf $unpack
 
     cp -a $rootdir/cgi-bin $rootdir/htdocs $rootdir/install $rootdir/licenses $rootdir/locale $distdir/
