@@ -91,6 +91,7 @@
 	$backslashrootreal[] = "$partwampp\htdocs\\xampp\\.htaccess";
 	$backslashrootreal[] = "$partwampp\security\htdocs\\.htaccess";
 	$backslashrootreal[] = "$partwampp\security\htdocs\\.htaccess";
+	$doublebackslashrootreal[] = "$partwampp\apache\conf\\extra\\httpd-xampp.conf";
 
 	$slashrootreal[] = "$partwampp\perl\lib\CPAN\\Config.pm";
 	$backslashrootreal[] = "$partwampp\perl\bin\\s2p.bat";

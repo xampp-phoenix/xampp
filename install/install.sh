@@ -264,6 +264,7 @@ do_install()
     rm -rf $distdir/mysql/mysql-test $distdir/mysql/sql-bench
     find $distdir/mysql -name '*.pdb' -delete
     cp -af $rootdir/mysql/* $distdir/mysql/ 
+    rm -f $distdir/mysql/data/ib*
     rm -rf $unpack
     
     unpack ${file_php/*\/}
@@ -300,12 +301,19 @@ do_install()
     mv $unpack/*.exe/ $distdir/
     rm -rf $unpack
 
-    cp -a $rootdir/cgi-bin $rootdir/htdocs $rootdir/install $rootdir/licenses $rootdir/locale $distdir/
+    cp -a $rootdir/cgi-bin $rootdir/htdocs $rootdir/install $rootdir/licenses $rootdir/webdav $rootdir/locale $distdir/
     cp -a $rootdir/*.bat $rootdir/*.txt $distdir/
     cp -f $rootdir/src/xampp-usb-lite/setup_xampp.bat $distdir/
     cp -f $rootdir/src/xampp-usb-lite/xampp-control.ini $distdir/
     mv $distdir/htdocs/xampp/.modell-usb $distdir/htdocs/xampp/.modell
-    mkdir -p $distdir/tmp $distdir/webdav
+    mkdir -p $distdir/tmp
+    sed -i -e 's@C:/strawberry@/xampp@g' $distdir/perl/lib/CPAN/Config.pm 
+    sed -i -e 's@C:\\strawberry@\\xampp@g' $distdir/perl/bin/*.bat 
+    sed -i -e 's@C:\\strawberry@\\xampp@g' $distdir/perl/lib/Config_heavy.pl
+    sed -i -e 's@C:\\strawberry@\\xampp@g' $distdir/perl/vendor/lib/ppm.xml
+    sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/CPAN/Config.pm
+    sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/CORE/config.h
+    sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/Config.pm
 }
 
 
