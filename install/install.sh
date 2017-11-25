@@ -244,10 +244,35 @@ unpack()
         zip) unzip -q $tmpdir/$n -d $tmpdir/$p;;
         gz)  tar xf $tmpdir/$n -C $tmpdir/$p;;
         msi) msiexec -a ${tmpdir//\//\\}\\$n -qn TARGETDIR=${tmpdir//\//\\}\\$p;;
+        exe) unpack_vcr11 $tmpdir/$n $tmpdir/$p;;
         *);;
     esac
     unpack=$tmpdir/$p
 }
+
+unpack_vcr11()
+{
+    rm -rf $2
+    offset=`strings -t d $1 | grep MSCF | awk -F\  '{print $1}'`
+    mkdir -p $2/tmp
+    offset1=`echo "$offset" | head -n1`
+    offset2=`echo "$offset" | head -n2 | tail -n1`
+    dd if=$1 of=$2/tmp/$1.part1.cab bs=1k skip=$offset1 iflag=skip_bytes count=`expr \( $offset2 - $offset1 \) / 1024 + 1` 
+    dd if=$1 of=$2/tmp/$1.part2.cab bs=1k skip=$offset2 iflag=skip_bytes
+    expand.exe -F:* $2/tmp/$1.part1.cab $2/tmp >/dev/null
+    expand.exe -F:* $2/tmp/$1.part2.cab $2/tmp >/dev/null
+    [ -f $2/tmp/0 ] || return 1
+    cab=`sed 's@[<>]@\n@g' $2/tmp/0 | grep 'vcRuntimeMinimum.*cab' | sed 's@.*SourcePath="\([^"]*\)".*@\1@'`
+    expand.exe -F:* $2/tmp/$cab $2
+    find $2 -name 'F_CENTRAL_*' | while read name
+    do
+        name1=${name/F_CENTRAL_/}
+        name1=${name1%_*}.dll
+        mv $name $name1
+    done
+    rm -rf $2/tmp
+}
+
 do_install()
 {
     rm -rf $distdir
