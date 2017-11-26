@@ -5,10 +5,8 @@ cd /D %~dp0
 ::::::::::::::::::::::::::::::::::::
 title %~0
 
-if exist jre\bin\java.exe (
-	set JRE_HOME=%cd%\jre
-	goto JRERUN
-)
+if exist jre\bin\java.exe set JRE_HOME=%cd%\jre
+if defined JRE_HOME goto JRERUN
 
 echo.
 echo [XAMPP]: Searching for JDK or JRE HOME with reg query ...

@@ -34,6 +34,9 @@ rem ---------XAMPP-------------------------------------------------------------
 ::  Set JAVA_HOME or JRE_HOME     ::
 ::::::::::::::::::::::::::::::::::::
 
+if exist jre\bin\java.exe set JRE_HOME=%cd%\jre
+if defined JRE_HOME goto JRERUN
+
 echo.
 echo [XAMPP]: Searching for JDK or JRE HOME with reg query ...
 set JDKKeyName64=HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit
@@ -103,14 +106,18 @@ echo [XAMPP]: Using JRE
 set "CURRENT_DIR=%cd%"
 set "CATALINA_HOME=%CURRENT_DIR%\tomcat"
 
-set Cmd=reg query "%KeyName%" /s
-for /f "tokens=2*" %%i in ('%Cmd% ^| find "JavaHome"') do set JRE_HOME=%%j
+if not defined JRE_HOME (
+	set Cmd=reg query "%KeyName%" /s
+	for /f "tokens=2*" %%i in ('%Cmd% ^| find "JavaHome"') do set JRE_HOME=%%j
+)
 
 echo.
 echo [XAMPP]: Seems fine!
 echo [XAMPP]: Set JRE_HOME : %JRE_HOME%
 echo [XAMPP]: Set CATALINA_HOME : %CATALINA_HOME%
 echo.
+
+goto NEXT
 
 :ENDERROR
 exit 1
@@ -119,8 +126,17 @@ exit 1
 
 echo [XAMPP]: Finding Java Version
 
-set Cmd=reg query "%KeyName%" /v CurrentVersion
-for /f "tokens=2*" %%i in ('%Cmd% ^| find "CurrentVersion"') do set CVERSION=%%j
+::set Cmd=reg query "%KeyName%" /v CurrentVersion
+::for /f "tokens=2*" %%i in ('%Cmd% ^| find "CurrentVersion"') do set CVERSION=%%j
+
+
+if defined JRE_HOME %JRE_HOME%\bin\java.exe -version 2>version.txt
+if defined JAVA_HOME %JAVA_HOME%\bin\java.exe -version 2>version.txt
+set Cmd=type version.txt
+for /f "tokens=2*" %%i in ('%%Cmd%% ^| find "version"') do set CVERSION=%%j
+del /q /f version.txt
+set CVERSION=%CVERSION:"=%
+set CVERSION=%CVERSION:~0,3%
 
 echo [XAMPP]: Java Version: %CVERSION%
 echo [XAMPP]: Starting Tomcat Service Install...
@@ -134,11 +150,15 @@ set "CURRENT_DIR=%cd%"
 if not "%CATALINA_HOME%" == "" goto gotHome
 set "CATALINA_HOME=%cd%"
 if exist "%CATALINA_HOME%\bin\tomcat7.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat8.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat9.exe" goto okHome
 rem CD to the upper dir
 cd ..
 set "CATALINA_HOME=%cd%"
 :gotHome
 if exist "%CATALINA_HOME%\bin\tomcat7.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat8.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat9.exe" goto okHome
 echo The tomcat.exe was not found...
 echo The CATALINA_HOME environment variable is not defined correctly.
 echo This environment variable is needed to run this program
@@ -171,7 +191,9 @@ if not "%CATALINA_BASE%" == "" goto gotBase
 set "CATALINA_BASE=%CATALINA_HOME%"
 :gotBase
 
-set "EXECUTABLE=%CATALINA_HOME%\bin\tomcat7.exe"
+if exist "%CATALINA_HOME%\bin\tomcat7.exe" set "EXECUTABLE=%CATALINA_HOME%\bin\tomcat7.exe"
+if exist "%CATALINA_HOME%\bin\tomcat8.exe" set "EXECUTABLE=%CATALINA_HOME%\bin\tomcat8.exe"
+if exist "%CATALINA_HOME%\bin\tomcat9.exe" set "EXECUTABLE=%CATALINA_HOME%\bin\tomcat9.exe"
 
 rem Set default Service name
 set SERVICE_NAME=Tomcat7
@@ -203,7 +225,7 @@ if /i %SERVICE_CMD% == uninstall goto doRemove
 echo Unknown parameter "%1"
 :displayUsage
 echo.
-echo Usage: service.bat install/remove [service_name] [/user username]
+echo Usage: catalina_service.bat install/remove [service_name] [/user username]
 goto end
 
 :doRemove

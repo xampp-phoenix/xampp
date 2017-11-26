@@ -14,10 +14,8 @@ set FINDCMD=FIND /I
 
 FOR /F "tokens=2 delims= " %%A IN ('%TASKCMD% ^| %FINDCMD% "%~0"') DO SET MyPID=%%A
 
-if exist jre\bin\java.exe (
-	set JRE_HOME=%cd%\jre
-	goto JRERUN
-)
+if exist jre\bin\java.exe set JRE_HOME=%cd%\jre
+if defined JRE_HOME goto JRERUN
 
 echo.
 echo [XAMPP]: Searching for JDK or JRE HOME with reg query ...
