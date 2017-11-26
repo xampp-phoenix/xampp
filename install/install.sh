@@ -49,7 +49,7 @@ getcurl()
 
 curl()
 {
-    echo get $1 >&2
+    echo ">> $1" >&2
     [ -f "$2" ] && return
     local u='Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)' 
     local c='_ga=GA1.3.529311640.1508686048; _gid=GA1.3.1125738004.1511274547'
@@ -137,7 +137,7 @@ init_xampp70()
 }
 init_xampp56()
 {
-    init_apache=VC14
+    init_apache=VC11
     init_php=5.6
     init_mariadb=10.1
     init_perl=5.16
@@ -339,6 +339,10 @@ do_install()
     sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/CPAN/Config.pm
     sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/CORE/config.h
     sed -i -e 's@C:\\\\strawberry@\\\\xampp@g' $distdir/perl/lib/Config.pm
+    if [ ${init_php/.*} == 5 ]; then
+        sed -i 's@php7@php5@g' $distdir/apache/conf/extra/httpd-xampp.conf
+        sed -i 's@^extension=php_ftp.dll@;\0@' $distdir/php/php.ini
+    fi
 }
 
 
