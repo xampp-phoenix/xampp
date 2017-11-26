@@ -1,0 +1,28 @@
+1 VERSIONINFO
+FILEVERSION 3,2,2,0
+PRODUCTVERSION 3,2,2,0
+FILEOS 0x4
+FILETYPE 0x1
+{
+BLOCK "StringFileInfo"
+{
+    BLOCK "040904E4"
+    {
+        VALUE "CompanyName", "\0"
+        VALUE "FileDescription", "\0"
+        VALUE "FileVersion", "3.2.2.0\0"
+        VALUE "InternalName", "xampp_control3.exe\0"
+        VALUE "LegalCopyright", "©\0"
+        VALUE "LegalTrademarks", "\0"
+        VALUE "OriginalFilename", "xampp_control3.exe\0"
+        VALUE "ProductName", "xampp_control3\0"
+        VALUE "ProductVersion", "3.2.2.0\0"
+        VALUE "Comments", "\0"
+    }
+}
+
+BLOCK "VarFileInfo"
+{
+    VALUE "Translation", 0x0409 0x04E4
+}
+}
