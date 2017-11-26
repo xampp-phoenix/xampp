@@ -6,6 +6,7 @@
 *.identcache
 *.ini
 *.log
+*.res
 __history
 __recovery
 dcc32.cfg

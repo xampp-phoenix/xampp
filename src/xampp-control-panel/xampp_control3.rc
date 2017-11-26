@@ -15,15 +15,15 @@ BLOCK "StringFileInfo"
     BLOCK "040904E4"
     {
         VALUE "CompanyName", "\0"
-        VALUE "FileDescription", "\0"
+        VALUE "FileDescription", "XAMPP Control Panel\0"
         VALUE "FileVersion", CONST_VERSION
         VALUE "InternalName", "xampp_control3.exe\0"
-        VALUE "LegalCopyright", "©\0"
+        VALUE "LegalCopyright", "©hackattack142\0"
         VALUE "LegalTrademarks", "\0"
         VALUE "OriginalFilename", "xampp_control3.exe\0"
         VALUE "ProductName", "xampp_control3\0"
         VALUE "ProductVersion", CONST_VERSION
-        VALUE "Comments", "\0"
+        VALUE "Comments", "XAMPP Control Panel\0"
     }
 }
 
