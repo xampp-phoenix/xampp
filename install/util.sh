@@ -217,7 +217,7 @@ menu_xampp()
 init_xampp()
 {
     local _v_php=$1 _v_mariadb=10.1 _v_perl=5.16 _v_tomcat=7.0 _v_phpmyadmin=4.7
-    local _v_java _v_python _v_sendmail _v_xampp_control
+    local _v_java=8 _v_python _v_sendmail _v_xampp_control
     local m r name url
     _dist=php${1/./}
     init_releases
@@ -297,12 +297,21 @@ init_menu()
     echo '--------------------------------------------'
     echo "${text}" | while read n
     do
+        if echo ${_name_tomcat} | grep -E -q '\-7.0|-8.0' ; then
+            if echo $n | grep  -E -q 'jre-9'; then
+                continue
+            fi
+        fi
         num=`expr ${num:-0} + 1`
         printf "  %-4s%s\n" ${num}. $n
     done
     echo '--------------------------------------------'
     while read -p ':' num
     do
+        case "${num}" in
+            n|no|q|quit|exit) exit 1;;
+            *);;
+        esac
         num=`echo ${num} | sed 's@[^0-9]@@g'`
         [ -n "${num}" ] || continue
         [ ${num} -gt `echo "${text}" | wc -l` ] && continue
