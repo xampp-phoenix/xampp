@@ -99,7 +99,7 @@ unpackvc()
     expand.exe -F:* ${path}/tmp/part1.cab ${path}/tmp >/dev/null
     expand.exe -F:* ${path}/tmp/part2.cab ${path}/tmp >/dev/null
     [ -f ${path}/tmp/0 ] || return 1
-    local vcr=`sed -E -e 's@[<>]@\n@g' -e '/vcRuntimeMinimum.*cab/!d' -e 's@.*SourcePath="([^"]*)".*@\1@' ${path}/tmp/0`
+    local vcr=`sed -E -e 's@[<>]@\n@g' ${path}/tmp/0 | sed -E -e '/vcRuntimeMinimum.*cab/!d' -e 's@.*SourcePath="([^"]*)".*@\1@'`
     expand.exe -F:* ${path}/tmp/${vcr} ${path} >/dev/null
     find ${path} -name 'F_CENTRAL_*' | while read name
     do
