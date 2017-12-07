@@ -1,26 +1,31 @@
-###### ApacheFriends XAMPP Version 7.1.11 ######
+###### ApacheFriends XAMPP Version 0.0.0 ######
  
 Note: The Portable Version does not contain the FileZilla FTP and the Mercury Mail Server. The service installations are also disabled here.
 
 
-Important! PHP in this package needs the Microsoft Visual C++ 2008 Redistributable package from
-http://www.microsoft.com/en-us/download/details.aspx?id=5582. Please ensure that the VC++ 2008 runtime
-libraries are installed on your system.    
+Important! PHP in this package needs the Microsoft Visual C++ 2008/2012/2015/2017 Redistributable package from
+http://www.microsoft.com/en-us/download/details.aspx?id=5582.
+PHP5.3/PHP5.4 Please ensure that the VC++ 2008 runtime libraries are installed on your system. 
+https://www.microsoft.com/en-us/download/confirmation.aspx?id=30679.
+PHP5.5/PHP5.6 Please ensure that the VC++ 2012 runtime libraries are installed on your system. 
+https://www.microsoft.com/en-us/download/confirmation.aspx?id=48145.
+PHP7.0/PHP7.1 Please ensure that the VC++ 2015 runtime libraries are installed on your system. 
+https://go.microsoft.com/fwlink/?LinkId=746571. (win32)
+https://go.microsoft.com/fwlink/?LinkId=746572. (win64)
+PHP7.2 Please ensure that the VC++ 2017 runtime libraries are installed on your system. 
+(Note: VC++ 2012/2015/2017 runtime libraries not need now.)
 
-  + Apache 2.4.29
-  + MariaDB 10.1.28
-  + PHP 7.1.11 (VC14 X86 32bit thread safe) + PEAR
-  + phpMyAdmin 4.7.4
-  + OpenSSL 1.0.2f
-  + ADOdb 518a
-  + Mercury Mail Transport System v4.63 (not included in the portable version)
-  + FileZilla FTP Server 0.9.41 (not included in the portable version)
-  + Webalizer 2.23-04 (not included in the portable version) 
-  + Strawberry Perl 5.16.1.1 Portable
-  + Tomcat 7.0.56
+  + Apache 2.2/2.4
+  + MariaDB 5.5/10.0/10.1/10.2/10.3
+  + PHP 5.5/5.6/7.0/7.1/7.2 (thread safe)
+  + phpMyAdmin 4.7
+  + OpenSSL
+  + Strawberry Perl 5 Portable
+  + Tomcat 7.0/8.0/8.5/9.0
+  + Jre 8/9.0
+  + Sendmail 1.0.0
   + XAMPP Control Panel Version 3.2.2 by hackattack142 (Great Thanks!!))
     See: http://www.apachefriends.org/f/viewtopic.php?f=16&t=46743
-  + XAMPP mailToDisk 1.0 (write emails via PHP on local disk in <xampp>\mailoutput. Activated in the php.ini as mail default.)
 
 --------------------------------------------------------------- 
 
@@ -82,18 +87,6 @@ Attention : If XAMPP is installed in a base directory with spaces (e.g. c:\progr
    Password:
    (means no password!)
 
-2) FileZilla FTP:
-
-   [ You have to create a new user on the FileZilla Interface ] 
-
-3) Mercury: 
-
-   Postmaster: postmaster (postmaster@localhost)
-   Administrator: Admin (admin@localhost)
-
-   TestUser: newuser  
-   Password: wampp
-
 4) WEBDAV:
 
    User: xampp-dav-unsecure
@@ -101,23 +94,6 @@ Attention : If XAMPP is installed in a base directory with spaces (e.g. c:\progr
    
 ---------------------------------------------------------------
 
-* ONLY FOR NT SYSTEMS! (NT4 | Windows 2000 | Windows XP):
-
-- \xampp\apache\apache_installservice.bat 
-  ===> Install Apache 2 as service
-
-- \xampp\apache\apache_uninstallservice.bat 
-  ===> Uninstall Apache 2 as service
-
-- \xampp\mysql\mysql_installservice.bat 
-  ===> Install MySQL as service
-
-- \xampp\mysql\mysql_uninstallservice.bat 
-  ===> Uninstall MySQL as service
-
-==> After all un- / installations of services, better restart system!
-
-----------------------------------------------------------------
 
 A matter of security (A MUST READ!)
 
