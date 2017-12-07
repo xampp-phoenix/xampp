@@ -225,7 +225,7 @@ init_xampp()
     do
         eval lst='${_lst_'$m'}'
         eval 'r=$_v_'$m
-        name=`get_names ${lst} | standard | sort_vr | egrep "^$r" | head -n1 | awk '{print $2}'`
+        name=`get_names ${lst} | standard | sort_vr | sed -E -e "/${unstable}/d"| egrep "^$r" | head -n1 | awk '{print $2}'`
         eval _name_$m='${name}'
         url=`fgrep "${name}" ${lst} | head -n1`
         eval _url_$m='${url}'
