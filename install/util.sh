@@ -604,6 +604,8 @@ install_new()
         sed -i 's@php7@php5@g' ${distdir}/apache/conf/extra/httpd-xampp.conf
         sed -i 's@^extension=php_ftp.dll@;\0@' ${distdir}/php/php.ini
     fi
+    local name=`find ${distdir}/tomcat -name 'tomcat?.exe' | head -n 1`
+    sed -E -i 's@(Tomcat=)tomcat..exe@\1'${name##*/}'@' ${distdir}/xampp-control.ini
 }
 
 
