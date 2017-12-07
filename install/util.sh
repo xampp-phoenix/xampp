@@ -101,13 +101,17 @@ unpackvc()
     [ -f ${path}/tmp/0 ] || return 1
     local vcr=`sed -E -e 's@[<>]@\n@g' ${path}/tmp/0 | sed -E -e '/vcRuntimeMinimum.*cab/!d' -e 's@.*SourcePath="([^"]*)".*@\1@'`
     expand.exe -F:* ${path}/tmp/${vcr} ${path} >/dev/null
+    rm -rf ${path}/tmp
     find ${path} -name 'F_CENTRAL_*' | while read name
     do
         name1=${name/F_CENTRAL_/}
         name1=${name1%_*}.dll
         mv -f ${name} ${name1}
     done
-    rm -rf ${path}/tmp
+    find ${path} -name 'api_ms_*.dll' | while read name
+    do
+        mv ${name} ${name//_/-}
+    done
 }
 
 unpack()
