@@ -265,14 +265,14 @@ init_stable()
 
 init_unstable()
 {
-    local m lst text url
+    local m lst name url
     _dist=unstable
     init_releases
     for m in ${modules}
     do
         eval lst='${_lst_'$m'}'
-        text=`get_names ${lst} | standard | sort_vr | head -n1 | awk '{print $2}'`
-        eval _name_$m='${text}'
+        name=`get_names ${lst} | standard | sort_vr | head -n1 | awk '{print $2}'`
+        eval _name_$m='${name}'
         url=`fgrep "${name}" ${lst} | head -n1`
         eval _url_$m='${url}'
     done
@@ -606,7 +606,10 @@ install_new()
     fi
     local name=`find ${distdir}/tomcat -name 'tomcat?.exe' | head -n 1`
     sed -E -i 's@(Tomcat=)tomcat..exe@\1'${name##*/}'@' ${distdir}/xampp-control.ini
-    local version=`echo  ${_name_php} | sed -E 's@.*-(([0-9]+\.){2,}[^-]+)-.*@\1@'`
+    if ! echo ${_name_mariadb} | grep -E -q '\-5.[0-9]|-10.0|-10.1' ; then
+        sed -E -i '/^innodb_additional_mem_pool_size/s@^.@#\0@' ${distdir}/mysql/bin/my.ini
+    fi
+    version=`echo  ${_name_php} | sed -E 's@.*-(([0-9]+\.){2,}[^-]+)-.*@\1@'`
     echo "${version}" > ${distdir}/htdocs/xampp/.version
     sed -E -i "/<h2>/s@0.0.0@${version}@" ${distdir}/htdocs/dashboard/index.html
     sed -E -i "/<h2>/s@0.0.0@${version}@" ${distdir}/htdocs/dashboard/*/index.html
