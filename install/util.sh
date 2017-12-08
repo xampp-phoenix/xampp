@@ -1,6 +1,6 @@
 #!/bin/sh
 
-debug=1
+#debug=1
 
 URL_BUSYBOX='https://frippery.org/files/busybox/'
 URL_CURL='http://dl.uxnr.de/build/curl/'
@@ -606,6 +606,12 @@ install_new()
     fi
     local name=`find ${distdir}/tomcat -name 'tomcat?.exe' | head -n 1`
     sed -E -i 's@(Tomcat=)tomcat..exe@\1'${name##*/}'@' ${distdir}/xampp-control.ini
+    local version=`echo  ${_name_php} | sed -E 's@.*-(([0-9]+\.){2,}[^-]+)-.*@\1@'`
+    echo "${version}" > ${distdir}/htdocs/xampp/.version
+    sed -E -i "/<h2>/s@0.0.0@${version}@" ${distdir}/htdocs/dashboard/index.html
+    sed -E -i "/<h2>/s@0.0.0@${version}@" ${distdir}/htdocs/dashboard/*/index.html
+    sed -E -i "/xamppversion/s@0.0.0@${version}@" ${distdir}/install/.version
+    sed -E -i "/^######/s@0.0.0@${version}@" ${distdir}/readme_*.txt
 }
 
 
