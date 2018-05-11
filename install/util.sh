@@ -254,7 +254,7 @@ init_stable()
         elif [ "$m" == "tomcat" ];then
             local v=`echo ${name} | sed -E -e 's@.*-([0-9]+[.u][0-9]+[^-_]*(-(alpha|beta|rc)[0-9]*)?)[-_.].*@\1@g'`
             download download-${v//.*}0.cgi ${URL_TOMCAT}
-            if egrep -q -i 'alpha|beta|rc|release candidate' ${download}; then
+            if egrep -q -i 'alpha|beta|release candidate' ${download}; then
                 name=`echo "${text}" | head -n2 | tail -n1`
             fi
             [ -n "${debug}" ] || rm -f ${download}
