@@ -190,26 +190,30 @@ menu_xampp()
 {
     local num
     echo '--------------------------------------------'
-    echo '  1. Compatible with XAMPP 7.2.x'
-    echo '  2. Compatible with XAMPP 7.1.x'
-    echo '  3. Compatible with XAMPP 7.0.x'
-    echo '  4. Compatible with XAMPP 5.6.x'
-    echo '  5. All newest stable releases'
-    echo '  6. All newest unstable releases'
+    echo '  1. Compatible with XAMPP 5.6.x'
+    echo '  2. Compatible with XAMPP 7.0.x'
+    echo '  3. Compatible with XAMPP 7.1.x'
+    echo '  4. Compatible with XAMPP 7.2.x'
+    echo '  5. Compatible with XAMPP 7.3.x'
+    echo '  6. Compatible with XAMPP 7.4.x'
+    echo '  90. All newest stable releases'
+    echo '  91. All newest unstable releases'
     echo '    ...'
-    echo '  9. Manual'
+    echo '  99. Manual'
     echo '  0. Cancel'
     echo '--------------------------------------------'
     while read -p ':' num
     do
         case $num in
-            1) init_xampp 7.2;break;;
-            2) init_xampp 7.1;break;;
-            3) init_xampp 7.0;break;;
-            4) init_xampp 5.6;break;;
-            5) init_stable;break;;
-            6) init_unstable;break;;
-            9) init_manual;break;;
+            6) init_xampp 7.4;break;;
+            5) init_xampp 7.3;break;;
+            4) init_xampp 7.2;break;;
+            3) init_xampp 7.1;break;;
+            2) init_xampp 7.0;break;;
+            1) init_xampp 5.6;break;;
+            90) init_stable;break;;
+            91) init_unstable;break;;
+            99) init_manual;break;;
             0|q|n|c) echo 'Canceled...';exit 0;;
             *) echo 'Invalid!';;
         esac
