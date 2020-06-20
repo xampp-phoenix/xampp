@@ -35,6 +35,10 @@ init_linux()
     wget=${wget:-nofound}
     curl=${curl:-nofound}
     busybox=${busybox:-nofound}
+    if ! which cabextract >/dev/null; then
+        echo "cabextract not found, can not unpack vc_redist."
+        exit 1;
+    fi
 }
 
 init_win32()
@@ -42,6 +46,10 @@ init_win32()
     wget=${tmpdir}/wget.exe
     curl=${tmpdir}/curl.exe
     busybox=${tmpdir}/busybox.exe
+    if ! which expand.exe >/dev/null; then
+        echo "expand.exe not found, can not unpack vc_redist."
+        exit 1;
+    fi
     cachedir=${tmpdir}/cache/x${bit}
     local name=wget-1.16.1-win${bit}.zip
     download ${name} ${URL_WGET}
@@ -383,7 +391,7 @@ init_version_stable()
     init_list_release
     for m in ${modules} ${modules2}
     do
-        eval "lst='\${lst_$m}"
+        eval "lst=\${lst_$m}"
         text=$(get_names ${lst} | standard | sort_vr | sed -E -e "/${unstable}/d" | unique)
         name=$(echo "${text}" | head -n1)
         if [ "$m" = "mariadb" ]; then
@@ -476,7 +484,11 @@ install_print()
     do
         eval "name=\${name_$m}"
         eval "url=\${url_$m}"
-        [ -n "${name}" ] && echo -e "  ${name}\n\t\t${url}"
+        if [ -n "${name}" ]; then
+            echo -e "  $m:\n\t${name}\n\t${url}"
+        else
+            echo -e "  $m:\n\tnofound"
+        fi
     done
     echo '--------------------------------------------'
     while read -p ':' num
@@ -527,7 +539,9 @@ install_unpack()
     for m in apache fcgid xsendfile ${modules} ${modules2} vc wget curl
     do
         eval "name=\${name_$m}"
-        if unpack ${cachedir}/${name}; then
+        if [ -z "${name}" ]; then
+            echo "nofound: $m"
+        elif unpack ${cachedir}/${name}; then
             case ${m} in
                 apache)
                     mv ${unpack}/Apache24/ ${distdir}/apache
