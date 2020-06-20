@@ -137,13 +137,13 @@ unpackvc()
         cabextract -q -d ${path} ${path}/tmp/${vcname}
     fi
     rm -rf ${path}/tmp
-    find ${path} -name 'F_CENTRAL_*' -printf '%f\n' | while read name
+    find ${path} -name 'F_CENTRAL_*' -exec basename {} \; | while read name
     do
         name1=${name/F_CENTRAL_/}
         name1=${name1%_*}.dll
         mv -f ${path}/${name} ${path}/${name1}
     done
-    find ${path} -name 'api_ms_*.dll' -printf '%f\n' | while read name
+    find ${path} -name 'api_ms_*.dll' -exec basename {} \; | while read name
     do
         mv ${path}/${name} ${path}/${name//_/-}
     done
@@ -546,7 +546,7 @@ install_unpack()
                     mv ${unpack}/mariadb-*/ ${distdir}/mysql
                     rm -rf ${distdir}/mysql/mysql-test ${distdir}/mysql/sql-bench
                     rm -f ${distdir}/mysql/data/ib*
-                    find ${distdir}/mysql -name '*.pdb' -delete
+                    find ${distdir}/mysql -name '*.pdb' -exec rm -f {} \;
                     cp -af ${rootdir}/mysql/* ${distdir}/mysql/
                     ;;
                 phpmyadmin)
