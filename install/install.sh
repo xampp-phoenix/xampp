@@ -87,7 +87,7 @@ download()
         ${curl} --progress-bar --tlsv1 --retry 5 --retry-connrefused --ssl-no-revoke --location \
             --user-agent "${user_agent}" --cookie "${user_cookie}" --referer "${baseurl}" --output ${name}.tmp ${url}
     elif [ -f ${busybox} ]; then
-        ${busybox} wget --user-agent="${user_agent}" --header "Cookie: ${user_cookie}" --output-document=${name}.tmp ${url}
+        ${busybox} wget --user-agent="${user_agent}" --header "referer: ${baseurl}" --header "Cookie: ${user_cookie}" --output-document=${name}.tmp ${url}
     else
         echo 'Nerthor curl nor wget.'
         exit 1
