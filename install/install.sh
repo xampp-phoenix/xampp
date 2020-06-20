@@ -160,9 +160,9 @@ unpackvc()
 html2txt()
 {
     local name=$1 name1=${tmpdir}/${1##*/}.txt
-    sed -E -e 's@<a @\n\0@gi' -e 's@>@\0\n@g' ${name} >${name1}
-    sed -i -E -e '/href=|HREF=|"filepath":|"url":/!d' \
-        -e 's@.*(href=|"filepath":|"url":)"([^"]*)".*@\2@ig' -e 's@\.zip/from/.*$@.zip@' \
+    sed -E -e ':a' -e 'N' -e '$!ba' -e 's@[\r\n]@ @g' -e 's@<a @\n\0@gi' -e 's@>@\0\n@g' ${name} >${name1}
+    sed -i -E -e '/href=|HREF=|"filepath":|"url":|data-file=/!d' \
+        -e 's@.*(href=|"filepath":|"url":)"([^"]*)".*@\2@ig' -e "s@.*data-file='([^']*)'.*@\1@ig" -e 's@\.zip/from/.*$@.zip@' \
         -e '/-src|-source|-[dD]ebug|-pdb|-nts|-latest|-test|-devel|-no64/d' ${name1}
     html2txt=${name1}
     [ -n "${debug}" ] || rm -f ${name}
@@ -310,27 +310,28 @@ init_url_flat()
 
 init_url_deep()
 {
-    local name=$1 url rbit n idx lst=${tmpdir}/lst-url-$1.txt
+    local name=$1 url rbit n lst=${tmpdir}/lst-url-$1.txt lst1
     eval "rbit=\${win${mbit}}"
     eval "url=\${URL_$(echo ${name} | tr a-z A-Z)}"
     rm -f ${lst}
     if [ "${name}" == "php" ]; then
         local domain=$(echo ${url} | sed 's@.*//\([^/]*\)/.*@\1@')
         local hash=$(echo ${url} | sha1sum | cut -c1-8)
-        idx=${tmpdir}/${domain}-${hash}.htm.txt
-        echo -e "releases\nreleases/archives\nqa" >${idx}
+        lst1=${tmpdir}/${domain}-${hash}.htm.txt
+        echo -e "releases\nreleases/archives\nqa" >${lst1}
     else
         download ${url}
         html2txt ${download}
-        idx=${html2txt}
+        lst1=${html2txt}
         case ${name} in
-            apache) sed -i -E -e '/^\/download.*\/$/!d' ${idx};;
-            tomcat) sed -i -E -e '/download-[0-9][0-9]\.cgi/!d' ${idx};;
-            java) sed -i -E -e '/\/jre[^-]*-downloads/!d' ${idx};;
+            apache) sed -i -E -e '/^\/download.*\/$/!d' ${lst1};;
+            tomcat) sed -i -E -e '/download-[0-9][0-9]\.cgi/!d' ${lst1};;
+            #java) sed -i -E -e '/\/jre[^-]*-downloads/!d' ${lst1};;
+            java) sed -i -E -e '/javase[0-9]/!d' -e '/javase11/d' ${lst1};;
             *);;
         esac
-        sort -u -o ${idx}.tmp ${idx}
-        mv -f ${idx}.tmp ${idx}
+        sort -u -o ${lst1}.tmp ${lst1}
+        mv -f ${lst1}.tmp ${lst1}
     fi
     while read n
     do
@@ -338,11 +339,14 @@ init_url_deep()
         html2txt ${download}
         cat ${html2txt} >> ${lst}
         rm -f ${html2txt}
-    done <${idx}
-    rm -f ${idx}
+    done <${lst1}
+    rm -f ${lst1}
     case ${name} in
         apache|php|tomcat) sed -i -E -e '/.zip$/!d' -e "/${rbit}/!d" ${lst};;
-        java) sed -i -E -e '/.tar.gz$/!d' -e '/[-_]windows/!d' -e "/$rbit/!d" ${lst};;
+        java)
+            sed -i -E -e 's@^//@https:\0@' ${lst}
+            sed -i -E -e '/server-jre/d' -e '/.tar.gz$/!d' -e '/[-_]windows/!d' -e "/$rbit/!d" ${lst}
+            ;;
         *);;
     esac
     [ "${mbit}" == "32" ] && sed -i -E -e "/${win64}/d" ${lst}
@@ -673,7 +677,8 @@ URL_PHPMYADMIN='https://www.phpmyadmin.net/files/'
 
 URL_PYTHON='https://www.python.org/downloads/windows/'
 URL_TOMCAT='https://tomcat.apache.org/'
-URL_JAVA='http://www.oracle.com/technetwork/java/javase/downloads/index.html'
+#URL_JAVA='http://www.oracle.com/technetwork/java/javase/downloads/index.html'
+URL_JAVA='https://www.oracle.com/java/technologies/oracle-java-archive-downloads.html'
 
 URL_VC11='https://www.microsoft.com/en-us/download/confirmation.aspx?id=30679'
 URL_VC14='https://www.microsoft.com/en-us/download/confirmation.aspx?id=48145'
@@ -686,4 +691,5 @@ URL_XAMPP_CONTROL='https://github.com/xampp-phoenix/xampp-control-panel/releases
 #modules='php mariadb phpmyadmin perl python java tomcat'
 modules='php mariadb phpmyadmin perl'
 modules2="sendmail xampp_control"
+#modules='php java'
 main "$@"
