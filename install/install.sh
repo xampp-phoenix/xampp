@@ -373,6 +373,18 @@ init_version_xampp()
     local v_php=$1 v_mariadb=10.1 v_perl=5.16 v_tomcat=7.0 v_phpmyadmin=4.7
     local v_java=8 v_python v_sendmail v_xampp_control
     local m v name url
+    case $1 in
+        5.6|7.0);;
+        7.1|7.2) v_phpmyadmin=4.8;;
+        7.3)
+            v_mariadb=10.4
+            v_phpmyadmin=4.9;;
+        7.4)
+            v_perl=5.30
+            v_mariadb=10.4
+            v_phpmyadmin=5.0;;
+        *);;
+    esac
     dist=php${1/./}
     init_list_release
     for m in ${modules} ${modules2}
