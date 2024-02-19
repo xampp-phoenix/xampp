@@ -91,10 +91,8 @@ This is a desktop entry for the XAMPP Control Panel. It allows you to start and 
 8) **Terminal**: This specifies whether the application should run in a terminal. Here, it's set to `true`.
 
 For more details:
-
-Youtube: https://www.youtube.com/watch?v=SjQsBzrrJdw
-
-Channel: Murugan S.
+- Youtube: https://www.youtube.com/watch?v=SjQsBzrrJdw
+- Channel: Murugan S.
 
 ---------------------------------------------------------------
 
