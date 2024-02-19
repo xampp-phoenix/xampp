@@ -71,7 +71,7 @@ But before please shutdown the apache and mysql.
 
 This is a desktop entry for the XAMPP Control Panel. It allows you to start and stop XAMPP directly from your desktop.
 
-## Details
+* Details
 
     [Desktop Entry]
     Encoding=UTF-8
