@@ -67,6 +67,35 @@ But before please shutdown the apache and mysql.
 
 ---------------------------------------------------------------
 
+* XAMPP Control Panel Desktop Icon
+
+This is a desktop entry for the XAMPP Control Panel. It allows you to start and stop XAMPP directly from your desktop.
+
+    [Desktop Entry]
+    Encoding=UTF-8
+    Name=XAMPP Control Panel
+    Comment=Start and Stop XAMPP
+    Exec=sudo /opt/lampp/manager-linux-x64.run
+    Icon=/opt/lampp/htdocs/favicon.ico
+    Categories=Application
+    Type=Application
+    Terminal=true
+
+1) **Encoding**: UTF-8
+2) **Name**: XAMPP Control Panel
+3) **Comment**: Start and Stop XAMPP
+4) **Exec**: This is the command that gets executed when you click on the desktop entry. Here, it's set to `sudo /opt/lampp/manager-linux-x64.run`.
+5) **Icon**: This is the icon that will be displayed for this desktop entry. It's set to `/opt/lampp/htdocs/favicon.ico`.
+6) **Categories**: This specifies the category of the application. Here, it's set to `Application`.
+7) **Type**: This specifies the type of the desktop entry. Here, it's set to `Application`.
+8) **Terminal**: This specifies whether the application should run in a terminal. Here, it's set to `true`.
+
+For more details:
+1) Youtube: https://www.youtube.com/watch?v=SjQsBzrrJdw
+2) Channel: Murugan S.
+
+---------------------------------------------------------------
+
 * PHP MAIL FUNCTION:
 
 There are three ways to work with the PHP Mail function.
