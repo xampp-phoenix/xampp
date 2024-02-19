@@ -81,8 +81,8 @@ This is a desktop entry for the XAMPP Control Panel. It allows you to start and 
     Type=Application
     Terminal=true
 
-1) Encoding: UTF-8
-2) Name: XAMPP Control Panel
+1) **Encoding**: UTF-8
+2) **Name**: XAMPP Control Panel
 3) **Comment**: Start and Stop XAMPP
 4) **Exec**: This is the command that gets executed when you click on the desktop entry. Here, it's set to `sudo /opt/lampp/manager-linux-x64.run`.
 5) **Icon**: This is the icon that will be displayed for this desktop entry. It's set to `/opt/lampp/htdocs/favicon.ico`.
