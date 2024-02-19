@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 ###### ApacheFriends XAMPP Version 0.0.0 ######
  
 Note: The Portable Version does not contain the FileZilla FTP and the Mercury Mail Server. The service installations are also disabled here.
@@ -165,4 +163,3 @@ So first the 'root' password is queried by the MySQL server, before phpMyAdmin m
 ---------------------------------------------------------------    
 
 		Have a lot of fun! | Viel Spaß! | Bonne Chance!
->>>>>>> 26a32ff98de3b93a5c8d0c75caf72f52bb4ff461
