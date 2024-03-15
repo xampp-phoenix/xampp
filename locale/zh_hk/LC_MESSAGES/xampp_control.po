@@ -1,0 +1,1294 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: XAMPP ZH_HK\n"
+"POT-Creation-Date: 2024-01-01 00:00\n"
+"PO-Revision-Date: 2024-01-01 00:00+0800\n"
+"Last-Translator: oldcookie <jxky2004@gmail.com>\n"
+"Language-Team: \n"
+"Language: zh_HK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#. fConfig..Caption
+#: uConfig.dfm:4
+msgid "Configuration of Control Panel"
+msgstr "控制面板的配置"
+
+#. fConfig..lblEditor..Caption
+#: uConfig.dfm:33
+msgid "Editor:"
+msgstr "編輯："
+
+#. fConfig..lblBrowser..Caption
+#: uConfig.dfm:44
+msgid "Browser (empty = system default)"
+msgstr "瀏覽器（空=系統預設）"
+
+#. fConfig..bSave..Caption
+#. fConfigUserDefined..bSave..Caption
+#. fLanguage..bOkay..Caption
+#. fLogOptions..bSave..Caption
+#. fServiceSettings..bSave..Caption
+#: uConfig.dfm:108 uConfigUserDefined.dfm:69 uLanguage.dfm:191
+#: uLogOptions.dfm:92 uServiceSettings.dfm:43
+msgid "Save"
+msgstr "儲存"
+
+#. fConfig..bAbort..Caption
+#. fConfigUserDefined..bAbort..Caption
+#. fLanguage..bAbort..Caption
+#. fLogOptions..bCancel..Caption
+#. fServiceSettings..bCancel..Caption
+#: uConfig.dfm:151 uConfigUserDefined.dfm:112 uLanguage.dfm:233
+#: uLogOptions.dfm:134 uServiceSettings.dfm:79
+msgid "Abort"
+msgstr "放棄"
+
+#. fConfig..cbDebug..Caption
+#: uConfig.dfm:245
+msgid "Show debug information"
+msgstr "更多資訊"
+
+#. fConfig..cbDebugDetails....Items.Strings
+#: uConfig.dfm:261
+msgid "Details"
+msgstr "詳細資料"
+
+#. fConfig..cbDebugDetails....Items.Strings
+#: uConfig.dfm:262
+msgid "More Details"
+msgstr "編輯詳細資訊"
+
+#. fConfig..grpAutostart..Caption
+#: uConfig.dfm:274
+msgid " Autostart of modules "
+msgstr "模塊自動啟動"
+
+#. fConfig..grpAutostart..lblAutostart....Caption
+#: uConfig.dfm:292
+msgid "Selected modules will be started on next launch of the Control Panel."
+msgstr "選定的模組將在下次啟動控制面板時啟動。"
+
+#. fConfig..grpAutostart..cbASApache..Caption
+#. fConfigUserDefined..pcUserDefConf..pApache..Caption
+#. fMain..gbModules..pApacheStatus..Caption
+#. fMain..puSystray..ApacheTray..Caption
+#. fServiceSettings..pcSettings..pApache..Caption
+#: uConfig.dfm:312 uConfigUserDefined.dfm:153 uMain.dfm:1487 uMain.dfm:3003
+#: uServiceSettings.dfm:118
+msgid "Apache"
+msgstr "Apache"
+
+#. fConfig..grpAutostart..cbASMySQL..Caption
+#. fConfigUserDefined..pcUserDefConf..pMySQL..Caption
+#. fMain..gbModules..pMySQLStatus..Caption
+#. fMain..puSystray..MySQLTray..Caption
+#. fServiceSettings..pcSettings..pMySQL..Caption
+#: uConfig.dfm:324 uConfigUserDefined.dfm:223 uMain.dfm:1592 uMain.dfm:3011
+#: uServiceSettings.dfm:193
+msgid "MySQL"
+msgstr "MySQL"
+
+#. fConfig..grpAutostart..cbASFileZilla..Caption
+#. fConfigUserDefined..pcUserDefConf..pFileZilla..Caption
+#. fMain..gbModules..pFileZillaStatus..Caption
+#. fMain..puSystray..FileZillaTray..Caption
+#. fServiceSettings..pcSettings..pFileZilla..Caption
+#: uConfig.dfm:336 uConfigUserDefined.dfm:294 uMain.dfm:1606 uMain.dfm:3019
+#: uServiceSettings.dfm:250
+msgid "FileZilla"
+msgstr "FileZilla"
+
+#. fConfig..grpAutostart..cbASMercury..Caption
+#. fConfigUserDefined..pcUserDefConf..pMercury..Caption
+#. fMain..gbModules..pMercuryStatus..Caption
+#. fMain..puSystray..MercuryTray..Caption
+#. fServiceSettings..pcSettings..pMercury..Caption
+#: uConfig.dfm:348 uConfigUserDefined.dfm:365 uMain.dfm:1620 uMain.dfm:3027
+#: uServiceSettings.dfm:327
+msgid "Mercury"
+msgstr "Mercury"
+
+#. fConfig..grpAutostart..cbASTomcat..Caption
+#. fConfigUserDefined..pcUserDefConf..TabSheet5..Caption
+#. fMain..gbModules..pTomcatStatus..Caption
+#. fMain..puSystray..TomcatTray..Caption
+#. fServiceSettings..pcSettings..pTomcat..Caption
+#: uConfig.dfm:356 uConfigUserDefined.dfm:436 uMain.dfm:1725 uMain.dfm:3035
+#: uServiceSettings.dfm:484
+msgid "Tomcat"
+msgstr "Tomcat"
+
+#. fConfig..cbCheckDefaultPorts..Caption
+#: uConfig.dfm:369
+msgid "Check default ports on startup"
+msgstr "啟動時檢查預設埠"
+
+#. fConfig..bLanguage..Caption
+#: uConfig.dfm:382
+msgid "Change Language"
+msgstr "更改語言"
+
+#. fConfig..bConfigUserdefined..Caption
+#: uConfig.dfm:396
+msgid "User Defined Files"
+msgstr "使用者定義的檔"
+
+#. fConfig..cbTomcatVisible..Caption
+#: uConfig.dfm:411
+msgid "Enable Tomcat output window"
+msgstr "啟用 Tomcat 輸出視窗"
+
+#. fConfig..bLogSettings..Caption
+#. fLogOptions..Caption
+#: uConfig.dfm:420 uLogOptions.dfm:4
+msgid "Log Options"
+msgstr "日誌選項"
+
+#. fConfig..bServiceSettings..Caption
+#: uConfig.dfm:429
+msgid "Service and Port Settings"
+msgstr "服務和埠設置"
+
+#. fConfig..OpenDialog1..DefaultExt
+#: uConfig.dfm:434
+msgid "exe"
+msgstr "exe檔"
+
+#. fConfig..OpenDialog1..Filter
+#: uConfig.dfm:435
+msgid "Executables (*.exe)|*.exe|All files (*.*)|*.*"
+msgstr "可執行檔 (*.exe)|*.exe|All files (*.*)|*.*"
+
+#. fConfigUserDefined..Caption
+#: uConfigUserDefined.dfm:4
+msgid "User-defined log/config-files"
+msgstr "用戶定義的日誌/配置檔"
+
+#. fConfigUserDefined..lblDescription1....Caption
+#: uConfigUserDefined.dfm:34
+msgid "Enter user defined files. Files must be relative to xampp-basedir!"
+msgstr "輸入使用者定義的檔。文件必須相對於 xampp-basedir！"
+
+#. fConfigUserDefined..lblDescription2..Caption
+#: uConfigUserDefined.dfm:51
+msgid "Example: \"apache\\conf\\extra\\httpd-info.conf\""
+msgstr "示例：“apache\\conf\\extra\\httpd-info.conf”"
+
+#. fConfigUserDefined..pcUserDefConf..pApache..pnlApache..lblApacheConf..Caption
+#. fConfigUserDefined..pcUserDefConf..pMySQL..pnlMySQL..lblMySQLConf..Caption
+#. fConfigUserDefined..pcUserDefConf..pFileZilla..pnlFileZilla..lblFileZillaConf..Caption
+#. fConfigUserDefined..pcUserDefConf..pMercury..pnlMercury..lblMercuryConf..Caption
+#. fConfigUserDefined..pcUserDefConf..TabSheet5..pnlTomcat..lblTomcatConf..Caption
+#. fMain..bConfig..Caption
+#. fMain..gbModules..bApacheConfig..Caption
+#. fMain..gbModules..bMySQLConfig..Caption
+#. fMain..gbModules..bFileZillaConfig..Caption
+#. fMain..gbModules..bMercuryConfig..Caption
+#. fMain..gbModules..bTomcatConfig..Caption
+#: uConfigUserDefined.dfm:171 uConfigUserDefined.dfm:242
+#: uConfigUserDefined.dfm:313 uConfigUserDefined.dfm:384
+#: uConfigUserDefined.dfm:455 uMain.dfm:1049 uMain.dfm:1500 uMain.dfm:1526
+#: uMain.dfm:1552 uMain.dfm:1578 uMain.dfm:1711
+msgid "Config"
+msgstr "設定"
+
+#. fConfigUserDefined..pcUserDefConf..pApache..pnlApache..lblApacheLogs..Caption
+#. fConfigUserDefined..pcUserDefConf..pMySQL..pnlMySQL..lblMySQLLogs..Caption
+#. fConfigUserDefined..pcUserDefConf..pFileZilla..pnlFileZilla..lblFileZillaLogs..Caption
+#. fConfigUserDefined..pcUserDefConf..pMercury..pnlMercury..lblMercuryLogs..Caption
+#. fConfigUserDefined..pcUserDefConf..TabSheet5..pnlTomcat..lblTomcatLogs..Caption
+#. fMain..gbModules..bApacheLogs..Caption
+#. fMain..gbModules..bMySQLLogs..Caption
+#. fMain..gbModules..bFileZillaLogs..Caption
+#. fMain..gbModules..bMercurylogs..Caption
+#. fMain..gbModules..bTomcatLogs..Caption
+#: uConfigUserDefined.dfm:188 uConfigUserDefined.dfm:259
+#: uConfigUserDefined.dfm:330 uConfigUserDefined.dfm:401
+#: uConfigUserDefined.dfm:472 uMain.dfm:1513 uMain.dfm:1539 uMain.dfm:1565
+#: uMain.dfm:1672 uMain.dfm:1738
+msgid "Logs"
+msgstr "記錄"
+
+#. fHelp..Caption
+#. fMain..bHelp..Caption
+#: uHelp.dfm:4 uMain.dfm:1834
+msgid "Help"
+msgstr "說明"
+
+#. fHelp..lblMainProg..Caption
+#: uHelp.dfm:30
+msgid "Programmed by Steffen Strueber"
+msgstr "由 Steffen Strueber 程式設計"
+
+#. fHelp..lblSecondProg..Caption
+#: uHelp.dfm:47
+msgid "Enhanced by hackattack142"
+msgstr "由 hackattack142 增強"
+
+#. fHelp..lblHelpEng..Caption
+#: uHelp.dfm:64
+msgid "Need Help? Visit the XAMPP forums (English):"
+msgstr "需要説明嗎？存取 XAMPP 論壇（英文版）："
+
+#. fHelp..lblHelpGer..Caption
+#: uHelp.dfm:81
+msgid "Need Help? Visit the XAMPP forums (German):"
+msgstr "需要説明嗎？存取 XAMPP 論壇（德語）："
+
+#. fHelp..bHelpClose..Caption
+#: uHelp.dfm:127
+msgid "Close"
+msgstr "關閉"
+
+#. fHelp..bReadMe..Caption
+#: uHelp.dfm:136
+msgid "View ReadMe"
+msgstr "查看自述檔"
+
+#. fLanguage..Caption
+#: uLanguage.dfm:5
+msgid "Language"
+msgstr "語言"
+
+#. fLogOptions..lblLogFont..Caption
+#: uLogOptions.dfm:23
+msgid "Log Font"
+msgstr "日誌字體"
+
+#. fLogOptions..lblLogFontSize..Caption
+#: uLogOptions.dfm:36
+msgid "Log Font Size"
+msgstr "日誌字體大小"
+
+#. fLogOptions..bSelect..Caption
+#: uLogOptions.dfm:63
+msgid "Select Font"
+msgstr "選擇字體"
+
+#. fMain..Caption
+#. fMain..lHeader..Caption
+#: uMain.dfm:4 uMain.dfm:1011
+msgid "XAMPP Control Panel v"
+msgstr "XAMPP 控制面板 v"
+
+#. fMain..bSCM..Caption
+#: uMain.dfm:1095
+msgid "Services"
+msgstr "服務"
+
+#. fMain..gbModules..Caption
+#: uMain.dfm:1141
+msgid " Modules "
+msgstr " 模組 "
+
+#. fMain..gbModules..lPIDs..Caption
+#: uMain.dfm:1159
+msgid "PID(s)"
+msgstr "PID(s)"
+
+#. fMain..gbModules..lPorts..Caption
+#: uMain.dfm:1177
+msgid "Port(s)"
+msgstr "Port(s)"
+
+#. fMain..gbModules..Label1..Caption
+#: uMain.dfm:1303 uTools.pas:482
+msgid "Service"
+msgstr "服務"
+
+#. fMain..gbModules..Label2..Caption
+#: uMain.dfm:1321
+msgid "Module"
+msgstr "模組"
+
+#. fMain..gbModules..Label3..Caption
+#: uMain.dfm:1338
+msgid "Actions"
+msgstr "動作"
+
+#. fMain..gbModules..bApacheAction..Caption
+#. fMain..gbModules..bMySQLAction..Caption
+#. fMain..gbModules..bFileZillaAction..Caption
+#. fMain..gbModules..bMercuryAction..Caption
+#. fMain..gbModules..bTomcatAction..Caption
+#. fMain..puSystray..ApacheTray..ApacheTrayControl..Caption
+#. fMain..puSystray..MySQLTray..MySQLTrayControl..Caption
+#. fMain..puSystray..FileZillaTray..FileZillaTrayControl..Caption
+#. fMain..puSystray..MercuryTray..MercuryTrayControl..Caption
+#. fMain..puSystray..TomcatTray..TomcatTrayControl..Caption
+#: uMain.dfm:1382 uMain.dfm:1408 uMain.dfm:1434 uMain.dfm:1460 uMain.dfm:1685
+#: uMain.dfm:3006 uMain.dfm:3014 uMain.dfm:3022 uMain.dfm:3030 uMain.dfm:3038
+#: uApache.pas:478 uApache.pas:481 uFileZilla.pas:369 uFileZilla.pas:372
+#: uMercury.pas:342 uMercury.pas:345 uMySQL.pas:384 uMySQL.pas:387
+#: uTomcat.pas:442 uTomcat.pas:445
+msgid "Start"
+msgstr "開始"
+
+#. fMain..gbModules..bApacheAdmin..Caption
+#. fMain..gbModules..bMySQLAdmin..Caption
+#. fMain..gbModules..bFileZillaAdmin..Caption
+#. fMain..gbModules..bMercuryAdmin..Caption
+#. fMain..gbModules..bTomcatAdmin..Caption
+#: uMain.dfm:1395 uMain.dfm:1421 uMain.dfm:1447 uMain.dfm:1473 uMain.dfm:1698
+msgid "Admin"
+msgstr "管理員"
+
+#. fMain..gbModules..bApacheService..Hint
+#: uMain.dfm:1653
+msgid "Install Apache as a Windows Service"
+msgstr "將 Apache 安裝為 Windows 服務"
+
+#. fMain..bQuit..Caption
+#. fMain..puSystray..miTerminate..Caption
+#: uMain.dfm:1788 uMain.dfm:3046
+msgid "Quit"
+msgstr "退出"
+
+#. fMain..bExplorer..Caption
+#: uMain.dfm:1880
+msgid "Explorer"
+msgstr "檔案總管"
+
+#. fMain..bNetstat..Caption
+#: uMain.dfm:1926
+msgid "Netstat"
+msgstr "Netstat"
+
+#. fMain..bXamppShell..Caption
+#: uMain.dfm:1972
+msgid "Shell"
+msgstr "Shell"
+
+#. fMain..puSystray..miShowHide..Caption
+#: uMain.dfm:2995
+msgid "Show / Hide"
+msgstr "顯示/隱藏"
+
+#. fMain..puLog..Copy1..Caption
+#: uMain.dfm:3735
+msgid "Copy"
+msgstr "複製"
+
+#. fMain..puLog..SelectAll1..Caption
+#: uMain.dfm:3739
+msgid "Select All"
+msgstr "全部選取"
+
+#. fNetstat..Caption
+#: uNetstat.dfm:5
+msgid "Netstat - TCP Listening sockets"
+msgstr "Netstat - TCP Listening sockets"
+
+#. fNetstat..lvSockets......Caption
+#: uNetstat.dfm:37
+msgid "Address"
+msgstr "地址"
+
+#. fNetstat..lvSockets......Caption
+#: uNetstat.dfm:42
+msgid "Port"
+msgstr "埠"
+
+#. fNetstat..lvSockets......Caption
+#: uNetstat.dfm:47
+msgid "PID"
+msgstr "PID"
+
+#. fNetstat..lvSockets......Caption
+#: uNetstat.dfm:51
+msgid "Name"
+msgstr "名稱"
+
+#. fNetstat..bRefresh..Caption
+#: uNetstat.dfm:81
+msgid "Refresh"
+msgstr "重新整理"
+
+#. fNetstat..pnlActiveExample..Caption
+#: uNetstat.dfm:107
+msgid "Active socket"
+msgstr "有源socket"
+
+#. fNetstat..pnlOldExample..Caption
+#: uNetstat.dfm:127
+msgid "Old socket"
+msgstr "舊socket"
+
+#. fNetstat..pnlNewExample..Caption
+#: uNetstat.dfm:147
+msgid "New socket"
+msgstr "新socket"
+
+#. fServiceSettings..Caption
+#: uServiceSettings.dfm:4
+msgid "Service Settings"
+msgstr "設置取餐方式"
+
+#. fServiceSettings..lMain....Caption
+#: uServiceSettings.dfm:29
+msgid ""
+"Use this form to set service-specific and default port settings.  You can "
+"set the name and default ports the XAMPP Control Panel will check.  Do not "
+"include spaces or quotes in names.  This does NOT change the ports that the "
+"services and programs use.  You still need to change those in the services' "
+"configuration files."
+msgstr ""
+"使用此表單可以設置特定於服務的埠設置和預設埠設置。 您可以設定 XAMPP 控制面板"
+"將檢查的名稱和預設埠。 名稱中不要包含空格或引號。 這不會更改服務和程式使用的"
+"埠。 您仍然需要在服務的設定檔中更改這些內容。"
+
+#. fServiceSettings..pcSettings..pApache..gApache..Caption
+#: uServiceSettings.dfm:125
+msgid "Apache Settings"
+msgstr "Apache 設置"
+
+#. fServiceSettings..pcSettings..pApache..gApache..lApacheName..Caption
+#. fServiceSettings..pcSettings..pMySQL..gMySQL..lMySQLName..Caption
+#. fServiceSettings..pcSettings..pFileZilla..gFileZilla..lFileZillaName..Caption
+#. fServiceSettings..pcSettings..pTomcat..gTomcat..lTomcatName..Caption
+#: uServiceSettings.dfm:135 uServiceSettings.dfm:219 uServiceSettings.dfm:276
+#: uServiceSettings.dfm:524
+msgid "Service Name"
+msgstr "服務名稱"
+
+#. fServiceSettings..pcSettings..pApache..gApache..lApacheMain..Caption
+#. fServiceSettings..pcSettings..pMySQL..gMySQL..lMySQLMain..Caption
+#. fServiceSettings..pcSettings..pFileZilla..gFileZilla..lFileZillaMain..Caption
+#. fServiceSettings..pcSettings..pTomcat..gTomcat..lTomcatMain..Caption
+#: uServiceSettings.dfm:142 uServiceSettings.dfm:212 uServiceSettings.dfm:269
+#: uServiceSettings.dfm:503
+msgid "Main Port"
+msgstr "主埠"
+
+#. fServiceSettings..pcSettings..pApache..gApache..lApacheSSL..Caption
+#: uServiceSettings.dfm:149
+msgid "SSL Port"
+msgstr "SSL埠"
+
+#. fServiceSettings..pcSettings..pMySQL..gMySQL..Caption
+#: uServiceSettings.dfm:202
+msgid "MySQL Settings"
+msgstr "MySQL設置"
+
+#. fServiceSettings..pcSettings..pFileZilla..gFileZilla..Caption
+#: uServiceSettings.dfm:259
+msgid "FileZilla Settings"
+msgstr "FileZilla 設置"
+
+#. fServiceSettings..pcSettings..pFileZilla..gFileZilla..lFileZillaAdmin..Caption
+#: uServiceSettings.dfm:283
+msgid "Admin Port"
+msgstr "管理埠"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..Caption
+#: uServiceSettings.dfm:336
+msgid "Mercury Settings"
+msgstr "Mercury 設置"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP1..Caption
+#: uServiceSettings.dfm:346
+msgid "Port 1"
+msgstr "埠 1"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP2..Caption
+#: uServiceSettings.dfm:353
+msgid "Port 2"
+msgstr "埠 2"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP3..Caption
+#: uServiceSettings.dfm:360
+msgid "Port 3"
+msgstr "埠 3"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP4..Caption
+#: uServiceSettings.dfm:367
+msgid "Port 4"
+msgstr "埠 4"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP5..Caption
+#: uServiceSettings.dfm:374
+msgid "Port 5"
+msgstr "埠 5"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP6..Caption
+#: uServiceSettings.dfm:381
+msgid "Port 6"
+msgstr "埠 6"
+
+#. fServiceSettings..pcSettings..pMercury..gMercury..lMercuryP7..Caption
+#: uServiceSettings.dfm:388
+msgid "Port 7"
+msgstr "埠 7"
+
+#. fServiceSettings..pcSettings..pTomcat..gTomcat..Caption
+#: uServiceSettings.dfm:493
+msgid "Tomcat Settings"
+msgstr "Tomcat 設置"
+
+#. fServiceSettings..pcSettings..pTomcat..gTomcat..lTomcatHTTP..Caption
+#: uServiceSettings.dfm:510
+msgid "HTTP Port"
+msgstr "HTTP 埠"
+
+#. fServiceSettings..pcSettings..pTomcat..gTomcat..lTomcatAJP..Caption
+#: uServiceSettings.dfm:517
+msgid "AJP Port"
+msgstr "AJP 埠"
+
+#. 64 bit? dann DIESE shell starten!
+#. 64 bit? dann DIESE shell starten!
+#: uApache.pas:56 uFileZilla.pas:199 uMySQL.pas:49 uTomcat.pas:48
+#: uTomcat.pas:207 uTomcat.pas:230 uTomcat.pas:270 uTomcat.pas:313
+msgid "Executing \"%s\" \"%s\""
+msgstr "執行“%s”“%s”"
+
+#. AddLog(Format(_('Executing "%s" "%s"'), [App, Param]), ltDebug);
+#. AddLog(Format(_('Executing "%s" "%s"'), [App, Param]), ltDebug);
+#: uApache.pas:61 uApache.pas:274 uFileZilla.pas:42 uFileZilla.pas:217
+#: uFileZilla.pas:231 uFileZilla.pas:251 uFileZilla.pas:265 uMain.pas:228
+#: uMain.pas:394 uMain.pas:683 uMercury.pas:189 uMySQL.pas:54 uMySQL.pas:210
+#: uMySQL.pas:224 uMySQL.pas:247 uTomcat.pas:53 uTomcat.pas:252 uTomcat.pas:295
+msgid "Executing \"%s\""
+msgstr "執行“%s”"
+
+#: uApache.pas:73 uFileZilla.pas:54 uMySQL.pas:66 uTomcat.pas:65
+msgid "Service installed"
+msgstr "已安裝服務"
+
+#: uApache.pas:77 uFileZilla.pas:58 uMySQL.pas:70 uTomcat.pas:69
+msgid "Service not installed"
+msgstr "未安裝服務"
+
+#: uApache.pas:78 uFileZilla.pas:59 uMySQL.pas:71 uTomcat.pas:70
+msgid "Checking for service (name=\"%s\"): %s"
+msgstr "檢查服務 （name=“%s”）： %s"
+
+#: uApache.pas:82 uFileZilla.pas:63 uMySQL.pas:75 uTomcat.pas:74
+msgid "Service Path: %s"
+msgstr "服務路徑：%s"
+
+#: uApache.pas:86
+msgid "Apache Service detected with wrong path"
+msgstr "檢測到路徑錯誤的 Apache 服務"
+
+#: uApache.pas:87
+msgid "Change XAMPP Apache settings or"
+msgstr "更改 XAMPP Apache 設定或"
+
+#: uApache.pas:88 uFileZilla.pas:69 uMySQL.pas:81 uTomcat.pas:80
+msgid "Uninstall/disable the other service manually first"
+msgstr "首先手動卸載/禁用其他服務"
+
+#: uApache.pas:89 uFileZilla.pas:70 uMySQL.pas:82 uTomcat.pas:81
+msgid "Found Path: %s"
+msgstr "找到路徑：%s"
+
+#: uApache.pas:90
+msgid "Expected Path: \"%sapache\\bin\\%s\" -k runservice"
+msgstr "預期路徑：「%sapache\\bin\\%s“ -k runservice"
+
+#: uApache.pas:94 uFileZilla.pas:75 uMySQL.pas:87 uTomcat.pas:86
+msgid "Service Path: Service Not Installed"
+msgstr "服務路徑：未安裝服務"
+
+#. =(Config.ServicePorts.Apache,Config.ServicePorts.ApacheSSL);
+#. DidShowRunningWarn:=false;
+#. PID:=-1;
+#: uApache.pas:112 uFileZilla.pas:90 uMercury.pas:103 uMySQL.pas:100
+#: uTomcat.pas:106
+msgid "Initializing module..."
+msgstr "初始化模組..."
+
+#: uApache.pas:115 uFileZilla.pas:95 uMercury.pas:106 uMySQL.pas:103
+#: uTomcat.pas:111
+msgid "Checking for module existence..."
+msgstr "檢查模組是否存在..."
+
+#: uApache.pas:119
+msgid "Problem detected: Apache Not Found!"
+msgstr "檢測到問題：找不到 Apache！"
+
+#: uApache.pas:120
+msgid "Disabling Apache buttons"
+msgstr "禁用 Apache 按鈕"
+
+#: uApache.pas:121 uFileZilla.pas:104 uMercury.pas:112 uMySQL.pas:109
+#: uTomcat.pas:117
+msgid "Run this program from your XAMPP root directory!"
+msgstr "從您的 XAMPP 根目錄運行此程式！"
+
+#: uApache.pas:129 uFileZilla.pas:115 uMySQL.pas:117 uTomcat.pas:125
+msgid "Apache Service is disabled."
+msgstr "Apache 服務已禁用。"
+
+#: uApache.pas:133 uFileZilla.pas:119 uMercury.pas:118 uMySQL.pas:121
+#: uTomcat.pas:129
+msgid "Checking for required tools..."
+msgstr "檢查所需的工具..."
+
+#: uApache.pas:144 uFileZilla.pas:126 uMercury.pas:126 uMySQL.pas:133
+#: uTomcat.pas:151
+msgid "Checking default ports..."
+msgstr "檢查預設連接埠..."
+
+#. if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
+#. if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
+#. if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
+#. if (LowerCase(PortBlocker) = LowerCase(ServerApp)) then
+#. if (LowerCase(PortBlocker) = LowerCase('java.exe')) or (LowerCase(PortBlocker) = LowerCase('javaw.exe')) then
+#: uApache.pas:152 uFileZilla.pas:134 uMercury.pas:134 uMySQL.pas:138
+#: uTomcat.pas:160
+msgid "Portblocker Detected: %s"
+msgstr "偵測到埠攔截器：%s"
+
+#: uApache.pas:153 uFileZilla.pas:135 uMercury.pas:135 uMySQL.pas:139
+#: uTomcat.pas:161
+msgid "Checking for App: %s"
+msgstr "檢查應用程式：%s"
+
+#: uApache.pas:155 uFileZilla.pas:137 uMySQL.pas:141 uTomcat.pas:163
+msgid "Checking for Service: %s"
+msgstr "檢查服務：%s"
+
+#. AddLog(Format(_('"%s" seems to be running on port %d?'),[ServerApp,Ports[p]]),ltError);
+#: uApache.pas:159
+msgid "XAMPP Apache is already running on port %d"
+msgstr "XAMPP Apache 已經在埠 %d 上運行"
+
+#: uApache.pas:163
+msgid "XAMPP Apache Service is already running on port %d"
+msgstr "XAMPP Apache 服務已在埠 %d 上運行"
+
+#. AddLog('Possible problem detected: Port ' + InttoStr(Ports[p]) + ' in use by "' + PortBlocker + '"!', ltError);
+#: uApache.pas:168 uFileZilla.pas:149 uMercury.pas:150 uMySQL.pas:153
+#: uTomcat.pas:180
+msgid "Problem detected!"
+msgstr "檢測到問題！"
+
+#: uApache.pas:169 uFileZilla.pas:150 uMercury.pas:151 uMySQL.pas:154
+#: uTomcat.pas:181
+msgid "Port %d in use by \"%s\"!"
+msgstr "“%s”正在使用的埠%d！"
+
+#: uApache.pas:170
+msgid "Apache WILL NOT start without the configured ports free!"
+msgstr "如果沒有配置的埠，Apache將無法啟動！"
+
+#: uApache.pas:171 uFileZilla.pas:152 uMercury.pas:153 uMySQL.pas:156
+#: uTomcat.pas:183
+msgid "You need to uninstall/disable/reconfigure the blocking application"
+msgstr "您需要卸載/禁用/重新配置阻止應用程式"
+
+#: uApache.pas:172
+msgid "or reconfigure Apache to listen on a different port"
+msgstr "或重新配置 Apache 以偵聽其他埠"
+
+#: uApache.pas:190 uMain.pas:883 uMySQL.pas:176 uMySQL.pas:192
+msgid "Executing %s %s"
+msgstr "執行%s %s"
+
+#. RunAsAdmin(App, Param3, SW_HIDE);
+#: uApache.pas:201 uFileZilla.pas:182 uMySQL.pas:175 uTomcat.pas:206
+msgid "Installing service..."
+msgstr "安裝服務..."
+
+#: uApache.pas:202 uApache.pas:218 uApache.pas:235 uFileZilla.pas:175
+#: uFileZilla.pas:179 uFileZilla.pas:183
+msgid "Executing \"%s %s\""
+msgstr "執行“%s %s”"
+
+#. RC := RunAsAdmin('net', App, SW_HIDE);
+#. RC := RunAsAdmin('net', App, SW_HIDE);
+#. RC := RunAsAdmin(App, Param, SW_HIDE);
+#. RC := RunAsAdmin(App, Param, SW_HIDE);
+#. RC:=ShellExecute_AndWait('open', App, Param, '', SW_HIDE, true);
+#. RC:=ShellExecute_AndWait('open', App, Param, '', SW_HIDE, true);
+#: uApache.pas:205 uApache.pas:221 uApache.pas:253 uApache.pas:277
+#: uApache.pas:312 uFileZilla.pas:186 uFileZilla.pas:202 uFileZilla.pas:220
+#: uFileZilla.pas:235 uFileZilla.pas:254 uFileZilla.pas:269 uMercury.pas:192
+#: uMySQL.pas:179 uMySQL.pas:195 uMySQL.pas:213 uMySQL.pas:227 uMySQL.pas:250
+#: uTomcat.pas:210 uTomcat.pas:233 uTomcat.pas:255 uTomcat.pas:275
+#: uTomcat.pas:298
+msgid "Return code: %d"
+msgstr "返回代碼：%d"
+
+#. ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
+#. ErrMsg := SysUtils.SysErrorMessage(System.GetLastError);
+#: uApache.pas:207 uApache.pas:223 uApache.pas:257 uApache.pas:281
+#: uApache.pas:316 uFileZilla.pas:188 uFileZilla.pas:204 uFileZilla.pas:222
+#: uFileZilla.pas:237 uFileZilla.pas:256 uFileZilla.pas:271 uMercury.pas:194
+#: uMySQL.pas:181 uMySQL.pas:197 uMySQL.pas:216 uMySQL.pas:230 uMySQL.pas:253
+#: uTomcat.pas:259 uTomcat.pas:302
+msgid "There may be an error, return code: %d - %s"
+msgstr "可能有錯誤，返回代碼：%d - %s"
+
+#: uApache.pas:217 uTomcat.pas:229
+msgid "Uninstalling service..."
+msgstr "正在卸載服務..."
+
+#. , Param: string;
+#: uApache.pas:247 uFileZilla.pas:215 uMySQL.pas:208 uTomcat.pas:250
+msgid "Attempting to start %s service..."
+msgstr "嘗試啟動%s服務..."
+
+#. AddLog(Format(_('%s'), [ErrMsg]), ltError);
+#. AddLog(Format(_('%s'), [ErrMsg]), ltError);
+#. AddLog(Format(_('%s'), [ErrMsg]), ltError);
+#: uApache.pas:264 uApache.pas:288 uApache.pas:323
+msgid "You appear to be missing the VC9 Runtime Files"
+msgstr "您似乎缺少 VC9 執行時檔"
+
+#: uApache.pas:265 uApache.pas:289 uApache.pas:324
+msgid ""
+"You need to download and install the Microsoft Visual C++ 2008 SP1 (x86) "
+"Runtimes"
+msgstr "您需要下載並安裝 Microsoft Visual C++ 2008 SP1 （x86） 運行時"
+
+#. Param := '-compat -start';
+#. AddLog(Format(_('%s'), [SysUtils.SysErrorMessage(System.GetLastError)]), ltError);
+#: uApache.pas:272 uFileZilla.pas:229 uMercury.pas:188 uMySQL.pas:222
+#: uTomcat.pas:264
+msgid "Attempting to start %s app..."
+msgstr "試著啟動%s應用程式..."
+
+#. App, ErrMsg: string;
+#. , Param: string;
+#: uApache.pas:306 uFileZilla.pas:249 uMySQL.pas:245 uTomcat.pas:293
+msgid "Attempting to stop %s service..."
+msgstr "正在嘗試停止%s服務..."
+
+#. AddLog(Format(_('There may be an error, return code: %d - %s'), [RC, SystemErrorMessage(RC)]), ltError);
+#: uApache.pas:336 uMercury.pas:219 uMySQL.pas:264
+msgid "Attempting to stop"
+msgstr "試圖停止"
+
+#. RC := RunProcess(App, SW_HIDE, false);
+#: uApache.pas:342 uMercury.pas:222 uMySQL.pas:267
+msgid "Problem killing PID %d"
+msgstr "殺死 PID %d的問題"
+
+#: uApache.pas:343 uMercury.pas:223 uMySQL.pas:268
+msgid "Check that you have the proper privileges"
+msgstr "檢查您是否具有適當的許可權"
+
+#. end;
+#. end;
+#: uApache.pas:367 uMercury.pas:229 uMySQL.pas:284
+msgid "No PIDs found?!"
+msgstr "沒有發現PID？！"
+
+#. Change Status
+#: uApache.pas:438 uFileZilla.pas:340 uMercury.pas:313 uMySQL.pas:353
+#: uTomcat.pas:413
+msgid "running"
+msgstr "運行中"
+
+#: uApache.pas:441 uFileZilla.pas:343 uMercury.pas:316 uMySQL.pas:356
+#: uTomcat.pas:416
+msgid "stopped"
+msgstr "停止"
+
+#: uApache.pas:445 uFileZilla.pas:347 uMercury.pas:320 uMySQL.pas:360
+#: uTomcat.pas:420
+msgid "Status change detected:"
+msgstr "偵測到狀態變更："
+
+#: uApache.pas:449
+msgid "Error: Apache shutdown unexpectedly."
+msgstr "錯誤：Apache 意外關閉。"
+
+#: uApache.pas:450 uFileZilla.pas:352 uMercury.pas:325 uMySQL.pas:365
+#: uTomcat.pas:425
+msgid "This may be due to a blocked port, missing dependencies, "
+msgstr "這可能是由於埠被阻塞、缺少依賴項、"
+
+#: uApache.pas:451 uFileZilla.pas:353 uMercury.pas:326 uMySQL.pas:366
+#: uTomcat.pas:426
+msgid "improper privileges, a crash, or a shutdown by another method."
+msgstr "許可權不當、崩潰或通過其他方法關閉。"
+
+#: uApache.pas:452
+msgid "Check the \"/xampp/apache/logs/error.log\" file"
+msgstr "檢查“/xampp/apache/logs/error.log”檔"
+
+#: uApache.pas:453 uMySQL.pas:368
+msgid "and the Windows Event Viewer for more clues"
+msgstr "和 Windows 事件查看器以獲取更多線索"
+
+#: uApache.pas:463 uApache.pas:466 uApache.pas:471 uFileZilla.pas:361
+#: uFileZilla.pas:364 uMercury.pas:334 uMercury.pas:337 uMySQL.pas:376
+#: uMySQL.pas:379 uTomcat.pas:434 uTomcat.pas:437
+msgid "Stop"
+msgstr "停止"
+
+#: uApache.pas:492
+msgid "Autostart aborted: Apache is already running"
+msgstr "自動啟動已中止：Apache 已在運行"
+
+#: uApache.pas:496 uFileZilla.pas:385 uMercury.pas:358 uMySQL.pas:400
+#: uTomcat.pas:459
+msgid "Autostart active: starting..."
+msgstr "自動啟動活動：正在啟動..."
+
+#: uFileZilla.pas:67
+msgid "FileZilla Service detected with wrong path"
+msgstr "檢測到路徑錯誤的 FileZilla 服務"
+
+#: uFileZilla.pas:68
+msgid "Change XAMPP FileZilla settings or"
+msgstr "更改 XAMPP FileZilla 設定或"
+
+#: uFileZilla.pas:71
+msgid "Expected Path: \"%sFileZillaFTP\\%s\""
+msgstr "預期路徑：“%sFileZillaFTP\\%s”"
+
+#: uFileZilla.pas:98
+msgid "Checking for alternate module existence..."
+msgstr "檢查備用模組是否存在..."
+
+#: uFileZilla.pas:102
+msgid "Problem detected: FileZilla Not Found!"
+msgstr "檢測到問題：找不到 FileZilla！"
+
+#: uFileZilla.pas:103
+msgid "Disabling FileZilla buttons"
+msgstr "禁用 FileZilla 按鈕"
+
+#: uFileZilla.pas:140
+msgid "XAMPP FileZilla FTP Server is already running on port %d"
+msgstr "XAMPP FileZilla FTP Server 已在埠 %d 上運行"
+
+#: uFileZilla.pas:144
+msgid "XAMPP FileZilla FTP Server Service is already running on port %d"
+msgstr "XAMPP FileZilla FTP 伺服器服務已在埠 %d 上運行"
+
+#: uFileZilla.pas:151
+msgid "FileZilla WILL NOT start without the configured ports free!"
+msgstr "FileZilla 不會在沒有配置的埠的情況下啟動！"
+
+#: uFileZilla.pas:153
+msgid "or reconfigure FileZilla to listen on a different port"
+msgstr "或重新配置 FileZilla 以偵聽其他埠"
+
+#: uFileZilla.pas:174
+msgid "Setting Service Name..."
+msgstr "設定服務名稱..."
+
+#. RunAsAdmin(App, Param2, SW_HIDE);
+#: uFileZilla.pas:178
+msgid "Setting Service Display Name..."
+msgstr "設定服務顯示名稱..."
+
+#. Param := '-compat -stop';
+#: uFileZilla.pas:263
+msgid "Attempting to stop %s app..."
+msgstr "試著停止%s應用程式..."
+
+#: uFileZilla.pas:351
+msgid "Error: FileZilla shutdown unexpectedly."
+msgstr "錯誤：FileZilla 意外關閉。"
+
+#: uFileZilla.pas:381
+msgid "Autostart aborted: FileZilla is already running"
+msgstr "自動啟動已中止：FileZilla 已在運行"
+
+#: uLanguage.pas:55
+msgid "Restart application to apply changes!"
+msgstr "重新啟動應用程式以應用更改！"
+
+#: uMain.pas:424 uMain.pas:433 uMain.pas:566 uMain.pas:574 uMain.pas:610
+#: uMain.pas:620 uMain.pas:716 uMain.pas:725 uMain.pas:908 uMain.pas:909
+#: uMain.pas:910 uMain.pas:922 uMain.pas:923
+msgid "<Browse>"
+msgstr "<Browse>"
+
+#: uMain.pas:445 uMain.pas:498 uMain.pas:632 uMain.pas:737
+msgid ""
+"Services cannot be installed or uninstalled while the service is running!"
+msgstr "服務運行時無法安裝或卸載服務！"
+
+#: uMain.pas:450 uMain.pas:504 uMain.pas:637 uMain.pas:742
+msgid "Click Yes to uninstall the %s service"
+msgstr "按兩下「是卸載%s服務"
+
+#: uMain.pas:461 uMain.pas:515 uMain.pas:648 uMain.pas:753
+msgid "Click Yes to install the %s service"
+msgstr "按兩下「安裝%s服務"
+
+#: uMain.pas:473 uMain.pas:527 uMain.pas:660 uMain.pas:765
+msgid "Service was NOT (un)installed!"
+msgstr "服務未（卸載）安裝！"
+
+#. WinXP
+#. WinXP
+#. WinXP
+#. WinXP
+#: uMain.pas:476 uMain.pas:530 uMain.pas:663 uMain.pas:768
+msgid ""
+"One possible reason for failure: On windows security box you !!!MUST "
+"UNCHECK!!! the \"Protect my computer and data from unauthorized program "
+"activity\" checkbox!!!"
+msgstr ""
+"失敗的一個可能原因：在 Windows 安全框上，您！！必須取消選中！！“保護我的計算"
+"機和數據免受未經授權的程序活動”複選框！！"
+
+#: uMain.pas:481 uMain.pas:535 uMain.pas:668 uMain.pas:773
+msgid "Successful!"
+msgstr "成功!"
+
+#: uMain.pas:580
+msgid "Mercury cannot be run as service!"
+msgstr "Mercury 不能作為服務運行！"
+
+#: uMain.pas:798
+msgid "File \"%s\" not found. Should it be created now?"
+msgstr "找不到檔“%s”。現在應該創建它嗎？"
+
+#: uMain.pas:807 uTools.pas:250 uTools.pas:343
+msgid "Error"
+msgstr "錯誤"
+
+#: uMain.pas:844
+msgid "User defined"
+msgstr "用戶自定"
+
+#: uMain.pas:971
+msgid "Initializing Control Panel"
+msgstr "初始化控制面板"
+
+#: uMain.pas:989
+msgid "Windows Version: %s %s %s"
+msgstr "Windows 版本： %s %s %s"
+
+#: uMain.pas:996
+msgid "WARNING: Your Operating System is too old and is not supported"
+msgstr "警告：您的操作系統太舊，不受支援"
+
+#. else
+#: uMain.pas:1020
+msgid "Running with Administrator rights - good!"
+msgstr "使用管理員許可權運行 - 很好！"
+
+#: uMain.pas:1024
+msgid "You are not running with administrator rights! This will work for"
+msgstr "您沒有使用管理員許可權運行！這將適用於"
+
+#: uMain.pas:1025
+msgid "most application stuff but whenever you do something with services"
+msgstr "大多數應用程式的東西，但每當你用服務做一些事情時"
+
+#: uMain.pas:1026
+msgid "there will be a security dialogue or things will break! So think "
+msgstr "將進行安全對話，否則事情會破裂！所以想想"
+
+#: uMain.pas:1027
+msgid "about running this application with administrator rights!"
+msgstr "關於使用管理員許可權運行此應用程式！"
+
+#: uMain.pas:1030
+msgid "XAMPP Installation Directory: \"%s\""
+msgstr "XAMPP 安裝目錄：“%s”"
+
+#: uMain.pas:1033
+msgid ""
+"WARNING: Your install directory contains spaces.  This may break programs/"
+"scripts"
+msgstr "警告：您的安裝目錄包含空格。 這可能會破壞程式/腳本"
+
+#: uMain.pas:1058
+msgid ""
+"WARNING: Your install directory contains special characters.  This may break "
+"programs/scripts"
+msgstr "警告：您的安裝目錄包含特殊字元。 這可能會破壞程式/腳本"
+
+#: uMain.pas:1066
+msgid "Checking for prerequisites"
+msgstr "檢查先決條件"
+
+#: uMain.pas:1075
+msgid "Required XAMPP prerequisite not found!"
+msgstr "未找到所需的 XAMPP 先決條件！"
+
+#: uMain.pas:1076
+msgid ""
+"You do not appear to have the Microsoft Visual C++ 2008 Runtimes installed"
+msgstr "您似乎沒有安裝 Microsoft Visual C++ 2008 運行時"
+
+#: uMain.pas:1077
+msgid "This is required for XAMPP to fully function"
+msgstr "這是 XAMPP 完全正常運行所必需的"
+
+#: uMain.pas:1081
+msgid "All prerequisites found"
+msgstr "找到所有先決條件"
+
+#: uMain.pas:1088
+msgid "VC++ checking is disabled"
+msgstr "VC++ 檢查已禁用"
+
+#: uMain.pas:1091
+msgid "Initializing Modules"
+msgstr "初始化模組"
+
+#: uMain.pas:1098
+msgid "The Apache module is disabled"
+msgstr "Apache 模組已禁用"
+
+#: uMain.pas:1112
+msgid "The MySQL module is disabled"
+msgstr "MySQL模組已禁用"
+
+#: uMain.pas:1126
+msgid "The FileZilla module is disabled"
+msgstr "FileZilla 模組已禁用"
+
+#: uMain.pas:1140
+msgid "The Mercury module is disabled"
+msgstr "Mercury 模組已禁用"
+
+#: uMain.pas:1153
+msgid "The Tomcat module is disabled"
+msgstr "Tomcat 模組已禁用"
+
+#: uMain.pas:1167 uMain.pas:1175 uMain.pas:1183 uMain.pas:1191 uMain.pas:1199
+msgid "Enabling autostart for module \"%s\""
+msgstr "為模組“%s”啟用自動啟動"
+
+#: uMain.pas:1203
+msgid "Starting"
+msgstr "啟動中"
+
+#. TimerUpdateStatus.Enabled := True;
+#: uMain.pas:1206
+msgid "Control Panel Ready"
+msgstr "控制面板就緒"
+
+#: uMain.pas:1212
+msgid "Deinitializing Modules"
+msgstr "取消初始化模組"
+
+#: uMain.pas:1233
+msgid "Deinitializing Control Panel"
+msgstr "取消初始化控制面板"
+
+#: uMercury.pas:110
+msgid "Problem detected: Mercury Not Found!"
+msgstr "檢測到問題：未找到汞！"
+
+#: uMercury.pas:111
+msgid "Disabling Mercury buttons"
+msgstr "禁用 Mercury 按鈕"
+
+#: uMercury.pas:152
+msgid "Mercury WILL NOT start without the configured ports free!"
+msgstr "如果沒有配置的埠，Mercury 將無法啟動！"
+
+#: uMercury.pas:154
+msgid "or reconfigure Mercury to listen on a different port"
+msgstr "或重新配置 Mercury 以偵聽其他埠"
+
+#: uMercury.pas:160
+msgid "XAMPP Mercury is already running"
+msgstr "XAMPP Mercury 已經在運行"
+
+#: uMercury.pas:161
+msgid "Ports in use: %s"
+msgstr "使用的埠：%s"
+
+#: uMercury.pas:324
+msgid "Error: Mercury shutdown unexpectedly."
+msgstr "錯誤：Mercury 意外關閉。"
+
+#: uMercury.pas:354
+msgid "Autostart aborted: Mercury is already running"
+msgstr "自動啟動已中止：Mercury 已在運行"
+
+#: uMySQL.pas:79
+msgid "MySQL Service detected with wrong path"
+msgstr "檢測到 MySQL 服務路徑錯誤"
+
+#: uMySQL.pas:80
+msgid "Change XAMPP MySQL settings or"
+msgstr "更改 XAMPP MySQL 設定或"
+
+#: uMySQL.pas:83
+msgid "Expected Path: %smysql\\bin\\%s --defaults-file=%smysql\\bin\\my.ini %s"
+msgstr "預期路徑：%smysql\\bin\\%s --defaults-file=%smysql\\bin\\my.ini %s"
+
+#: uMySQL.pas:107
+msgid "Problem detected: MySQL Not Found!"
+msgstr "檢測到問題：找不到MySQL！"
+
+#: uMySQL.pas:108
+msgid "Disabling MySQL buttons"
+msgstr "禁用 MySQL 按鈕"
+
+#: uMySQL.pas:144
+msgid "XAMPP MySQL is already running on port %d"
+msgstr "XAMPP MySQL 已經在埠 %d 上運行"
+
+#: uMySQL.pas:148
+msgid "XAMPP MySQL Service is already running on port %d"
+msgstr "XAMPP MySQL 服務已在埠 %d 上運行"
+
+#: uMySQL.pas:155
+msgid "MySQL WILL NOT start without the configured ports free!"
+msgstr "如果沒有配置的埠，MySQL將無法啟動！"
+
+#: uMySQL.pas:157
+msgid "or reconfigure MySQL to listen on a different port"
+msgstr "或重新配置MySQL以偵聽其他埠"
+
+#: uMySQL.pas:254
+msgid "%s"
+msgstr "%s"
+
+#: uMySQL.pas:364
+msgid "Error: MySQL shutdown unexpectedly."
+msgstr "錯誤：MySQL 意外關閉。"
+
+#: uMySQL.pas:367
+msgid "Check the \"/xampp/mysql/data/mysql_error.log\" file"
+msgstr "檢查“/xampp/mysql/data/mysql_error.log”檔"
+
+#: uMySQL.pas:396
+msgid "Autostart aborted: MySQL is already running"
+msgstr "自動啟動已中止：MySQL已在運行"
+
+#: uNetstat.pas:261
+msgid "New listening socket: %s:%d"
+msgstr "新的收聽socket：%s：%d"
+
+#: uNetstat.pas:283
+msgid "Listening socket closed: %s:%d"
+msgstr "收聽socket關閉：%s：%d"
+
+#: uNetstatTable.pas:129
+msgid "unknown program"
+msgstr "未知程式"
+
+#: uProcesses.pas:140 uProcesses.pas:230
+msgid "Deleting PID-entry %d: %s"
+msgstr "刪除 PID 條目%d：%s"
+
+#. ProcInfo.ExePath := LowerCase(GetProcessPath(TProcessEntry.th32ProcessID));
+#: uProcesses.pas:217
+msgid "Creating PID-entry %d: %s"
+msgstr "建立 PID 條目%d：%s"
+
+#: uServices.pas:27 uServices.pas:47
+msgid "Searching for service %s"
+msgstr "搜尋服務%s"
+
+#: uServices.pas:32
+msgid "Found service, attempting to start"
+msgstr "找到服務，正在嘗試啟動"
+
+#: uServices.pas:38 uServices.pas:58
+msgid "Return Code %d"
+msgstr "返回代碼%d"
+
+#: uServices.pas:52
+msgid "Found service, attempting to stop"
+msgstr "找到服務，正在嘗試停止"
+
+#: uTomcat.pas:78
+msgid "Tomcat Service detected with wrong path"
+msgstr "檢測到 Tomcat 服務路徑錯誤"
+
+#: uTomcat.pas:79
+msgid "Change XAMPP Tomcat settings or"
+msgstr "更改 XAMPP Tomcat 設定或"
+
+#: uTomcat.pas:82
+msgid "Expected Path: %stomcat\\bin\\%s //RS//%s"
+msgstr "預期路徑：%stomcat\\bin\\%s /RS/%s"
+
+#: uTomcat.pas:115
+msgid "Problem detected: Tomcat Not Found!"
+msgstr "檢測到問題：未找到Tomcat！"
+
+#: uTomcat.pas:116
+msgid "Disabling Tomcat buttons"
+msgstr "禁用 Tomcat 按鈕"
+
+#: uTomcat.pas:133
+msgid "Problem detected: Required Tool catalina_start.bat Not Found!"
+msgstr "檢測到問題：找不到所需的工具catalina_start.bat！"
+
+#: uTomcat.pas:138
+msgid "Problem detected: Required Tool catalina_stop.bat Not Found!"
+msgstr "檢測到問題：找不到所需的工具catalina_stop.bat！"
+
+#: uTomcat.pas:143
+msgid "Problem detected: Required Tool catalina_service.bat Not Found!"
+msgstr "檢測到問題：找不到所需的工具catalina_service.bat！"
+
+#: uTomcat.pas:166
+msgid "Java is already running on port %d!"
+msgstr "Java 已經在埠 %d 上運行了！"
+
+#: uTomcat.pas:167
+msgid "Is Tomcat already running?"
+msgstr "Tomcat 已經在運行了嗎？"
+
+#: uTomcat.pas:171
+msgid "XAMPP Tomcat is already running on port %d"
+msgstr "XAMPP Tomcat 已經在埠 %d 上運行"
+
+#: uTomcat.pas:175
+msgid "XAMPP Tomcat Service is already running on port %d"
+msgstr "XAMPP Tomcat 服務已在埠 %d 上運行"
+
+#: uTomcat.pas:182
+msgid "Tomcat WILL NOT start without the configured ports free!"
+msgstr "如果沒有配置的埠，Tomcat 將無法啟動！"
+
+#: uTomcat.pas:184
+msgid "or reconfigure Tomcat to listen on a different port"
+msgstr "或重新配置 Tomcat 以偵聽其他埠"
+
+#: uTomcat.pas:213
+msgid "Tomcat Service Install stopped with errors, return code: %d"
+msgstr "Tomcat 服務安裝已停止並出現錯誤，返回代碼：%d"
+
+#: uTomcat.pas:214 uTomcat.pas:237 uTomcat.pas:279
+msgid ""
+"Make sure you have Java JDK or JRE installed and the required ports are free"
+msgstr "確保您已安裝 Java JDK 或 JRE，並且所需的埠是空閒的"
+
+#: uTomcat.pas:215 uTomcat.pas:238 uTomcat.pas:280
+msgid "Check the \"/xampp/tomcat/logs\" folder for more information"
+msgstr "查看“/xampp/tomcat/logs”資料夾以獲取更多資訊"
+
+#: uTomcat.pas:236
+msgid "Tomcat Service Uninstall stopped with errors, return code: %d"
+msgstr "Tomcat Service Uninstall stopped with errors，返回代碼：%d"
+
+#: uTomcat.pas:278
+msgid "Tomcat Started/Stopped with errors, return code: %d"
+msgstr "Tomcat 啟動/停止並出現錯誤，返回代碼：%d"
+
+#: uTomcat.pas:307
+msgid "Attempting to stop %s"
+msgstr "試圖阻止%s"
+
+#: uTomcat.pas:424
+msgid "Error: Tomcat shutdown unexpectedly."
+msgstr "錯誤：Tomcat 意外關閉。"
+
+#: uTomcat.pas:455
+msgid "Autostart aborted: Tomcat is already running"
+msgstr "自動啟動已中止：Tomcat 已在運行"
+
+#: uTools.pas:484
+msgid "Application"
+msgstr "應用程式"
